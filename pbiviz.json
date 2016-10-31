@@ -1,0 +1,22 @@
+{
+  "visual": {
+    "name": "StrippetsBrowser",
+    "displayName": "Strippets Browser",
+    "guid": "StrippetBrowser16424341054522",
+    "visualClassName": "StrippetsVisual",
+    "description": "This visual is currently in beta testing and is undergoing active development. Strippets displays document summaries with two options for level of detail. The outlines view (left) shows references to common entities across documents, while the thumbnails view (right) provides a preview of each document. Click a summary in either view to read the full document. Invoke highlighting using other components to see only documents that match. Strippets is designed for use with Facet Key and Cluster Map.",
+    "supportUrl": "",
+    "gitHubUrl": ""
+  },
+  "author": {
+    "name": "Uncharted Software, Inc.",
+    "email": ""
+  },
+  "apiVersion": "1.1.0",
+  "assets": {
+    "icon": "assets/icon.svg"
+  },
+  "style": "style/strippetsbrowser.scss",
+  "capabilities": "capabilities.json",
+  "output": "dist/essex.widget.strippetbrowser.pbiviz"
+}

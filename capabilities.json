@@ -1,0 +1,315 @@
+{
+  "dataRoles": [
+    {
+      "name": "id",
+      "displayName": "Document Id",
+      "kind": 0
+    },
+    {
+      "name": "articleValue",
+      "displayName": "Score",
+      "description": "Used for highlighting.",
+      "kind": 1
+    },
+    {
+      "name": "title",
+      "displayName": "Title",
+      "kind": 0
+    },
+    {
+      "name": "summary",
+      "displayName": "Summary",
+      "kind": 0
+    },
+    {
+      "name": "content",
+      "displayName": "Content",
+      "kind": 0
+    },
+    {
+      "name": "imageUrl",
+      "displayName": "Title Image (url)",
+      "kind": 0
+    },
+    {
+      "name": "author",
+      "displayName": "Author",
+      "kind": 0
+    },
+    {
+      "name": "source",
+      "displayName": "Source",
+      "kind": 0
+    },
+    {
+      "name": "sourceUrl",
+      "displayName": "Source URL",
+      "kind": 0
+    },
+    {
+      "name": "sourceImage",
+      "displayName": "Source Image (url)",
+      "kind": 0
+    },
+    {
+      "name": "articleDate",
+      "displayName": "Source Date",
+      "kind": 0
+    },
+    {
+      "name": "entityType",
+      "displayName": "Entity Type",
+      "kind": 0
+    },
+    {
+      "name": "entityName",
+      "displayName": "Entity Name",
+      "kind": 0
+    },
+    {
+      "name": "entityPosition",
+      "displayName": "Entity Position",
+      "kind": 0
+    },
+    {
+      "name": "entityTypeColor",
+      "displayName": "Entity Icon Color",
+      "kind": 0
+    },
+    {
+      "name": "entityTypeClass",
+      "displayName": "Entity Icon Class",
+      "kind": 0
+    }
+  ],
+  "dataViewMappings": [
+    {
+      "conditions": [
+        {
+          "id": {
+            "max": 1
+          },
+          "title": {
+            "max": 1
+          },
+          "summary": {
+            "max": 1
+          },
+          "content": {
+            "max": 1
+          },
+          "imageUrl": {
+            "max": 1
+          },
+          "author": {
+            "max": 1
+          },
+          "source": {
+            "max": 1
+          },
+          "sourceUrl": {
+            "max": 1
+          },
+          "articleDate": {
+            "max": 1
+          },
+          "sourceImage": {
+            "max": 1
+          },
+          "entityType": {
+            "max": 1
+          },
+          "entityName": {
+            "max": 1
+          },
+          "entityPosition": {
+            "max": 1
+          },
+          "entityTypeColor": {
+            "max": 1
+          },
+          "entityTypeClass": {
+            "max": 1
+          },
+          "articleValue": {
+            "max": 1
+          }
+        }
+      ],
+      "categorical": {
+        "categories": {
+          "select": [
+            {
+              "bind": {
+                "to": "id"
+              }
+            },
+            {
+              "bind": {
+                "to": "title"
+              }
+            },
+            {
+              "bind": {
+                "to": "summary"
+              }
+            },
+            {
+              "bind": {
+                "to": "content"
+              }
+            },
+            {
+              "bind": {
+                "to": "imageUrl"
+              }
+            },
+            {
+              "bind": {
+                "to": "author"
+              }
+            },
+            {
+              "bind": {
+                "to": "source"
+              }
+            },
+            {
+              "bind": {
+                "to": "sourceUrl"
+              }
+            },
+            {
+              "bind": {
+                "to": "sourceImage"
+              }
+            },
+            {
+              "bind": {
+                "to": "articleDate"
+              }
+            },
+            {
+              "bind": {
+                "to": "entityType"
+              }
+            },
+            {
+              "bind": {
+                "to": "entityName"
+              }
+            },
+            {
+              "bind": {
+                "to": "entityPosition"
+              }
+            },
+            {
+              "bind": {
+                "to": "entityTypeColor"
+              }
+            },
+            {
+              "bind": {
+                "to": "entityTypeClass"
+              }
+            }
+          ],
+          "dataReductionAlgorithm": {
+            "window": {
+              "count": 200
+            }
+          }
+        },
+        "values": {
+          "select": [
+            {
+              "bind": {
+                "to": "articleValue"
+              }
+            }
+          ],
+          "dataReductionAlgorithm": {
+            "window": {
+              "count": 200
+            }
+          }
+        }
+      }
+    }
+  ],
+  "objects": {
+    "presentation": {
+      "properties": {
+        "strippetType": {
+          "type": {
+            "enumeration": {
+              "allMembers": [
+                {
+                  "displayName": "Outlines",
+                  "value": "outlines"
+                },
+                {
+                  "displayName": "Thumbnails",
+                  "value": "thumbnails"
+                }
+              ]
+            }
+          },
+          "displayName": "Default",
+          "description": "Determines Initial Strippet to Display"
+        },
+        "viewControls": {
+          "type": {
+            "bool": true
+          },
+          "displayName": "Switch",
+          "description": "If true, view controls to switch between the strippet types will be displayed."
+        },
+        "wrap": {
+          "type": {
+            "bool": true
+          },
+          "displayName": "Wrap",
+          "description": "If true, thumbnail cards wraps on overflow."
+        }
+      },
+      "displayName": "Configuration"
+    },
+    "content": {
+      "properties": {
+        "readerContentType": {
+          "type": {
+            "enumeration": {
+              "allMembers": [
+                {
+                  "displayName": "HTML",
+                  "value": "html"
+                },
+                {
+                  "displayName": "Readability URL",
+                  "value": "readability"
+                }
+              ]
+            }
+          },
+          "displayName": "Type",
+          "description": "Specify the content format."
+        },
+        "summaryUrl": {
+          "type": {
+            "bool": true
+          },
+          "displayName": "Auto Summary URL",
+          "description": "If true, populate Summary from Content's Readability URL, if applicable. Warning: this may quickly hit your request cap."
+        }
+      },
+      "displayName": "Content"
+    }
+  },
+  "supportsHighlight": true,
+  "sorting": {
+    "default": {}
+  },
+  "suppressDefaultTitle": true
+}

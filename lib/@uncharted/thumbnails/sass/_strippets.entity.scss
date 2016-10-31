@@ -1,0 +1,97 @@
+.entity {
+  height: $entity-height + $entity-padding;
+  display: table;
+  position: absolute;
+
+  .icon {
+    width: $entity-width;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    font-size: $entity-icon-fontsize;
+  }
+  .details {
+    font-family: verdana;
+    font-size: 9px;
+    color: #000000;
+    display: table-cell;
+    vertical-align: middle;
+    width: auto;
+    max-width: $entity-width;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    .name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: bold;
+    }
+  }
+  &.highlight {
+    border-right: #00BFFF 3px solid;
+    border-left: rgba(0, 0, 0, 0) 3px solid;
+  }
+  &[data-hidden-entities] {
+    &:before {
+      font-family: FontAwesome;
+      content: "\f055";
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      font-size: 10px;
+      color: #777777;
+    }
+  }
+  &:hover[data-entities] {
+    &:after {
+      content: attr(data-entities);
+      font-size: 0.7em;
+      background-color: #eeeeee;
+      padding: 2px 5px;
+      top: $entity-height + 5;
+      position: absolute;
+      left: $entity-width/2 + 5;
+      z-index: 99;
+      font-weight: bold;
+      box-shadow: 1px 1px 1px #888888;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 300px;
+      animation-name: tooltipDelay;
+      animation-iteration-count: 1;
+      animation-duration: 0.4s;
+      animation-timing-function: steps(1, end);
+    }
+  }
+}
+
+@keyframes tooltipDelay {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.read {
+  .mainOutlineContent {
+    .entity {
+      &:hover {
+        .icon {
+          &:after {
+            content: '';
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-right: 4px solid;
+            position: absolute;
+            top: 6.5px;
+            left: -5px;
+          }
+        }
+      }
+    }
+  }
+}
