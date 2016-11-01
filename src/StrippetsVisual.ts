@@ -786,7 +786,7 @@ export default class StrippetsVisual implements IVisual {
             }
 
             // if first load, make sure outlines are filled (for situations where there are alot of entities)
-            if (options.type & powerbi.VisualUpdateType.Data && dataView.categorical) {
+            if (options.type & powerbi.VisualUpdateType.Data && dataView.categorical && dataView.categorical.categories) {
                 //Sandbox mode vs non-sandbox mode handles merge data differently.
                 const lastMergeIndex = (<DataViewCategoricalSegment>dataView.categorical).lastMergeIndex;
                 const currentDataViewSize = dataView.categorical.categories[0].values.length;
