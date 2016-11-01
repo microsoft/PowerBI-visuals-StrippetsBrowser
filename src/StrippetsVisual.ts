@@ -56,10 +56,11 @@ const HTML_WHITELIST_MEDIA = [
     "SVG",
     "VIDEO"
 ];
-const HTML_WHITELIST_SUMMARY = HTML_WHITELIST_STANDARD;
-const HTML_WHITELIST_CONTENT = HTML_WHITELIST_STANDARD.concat(HTML_WHITELIST_MEDIA);
 
 export default class StrippetsVisual implements IVisual {
+    public static HTML_WHITELIST_SUMMARY = HTML_WHITELIST_STANDARD;
+    public static HTML_WHITELIST_CONTENT = HTML_WHITELIST_STANDARD.concat(HTML_WHITELIST_MEDIA);
+
     /**
      * Default formatting settings
      */
@@ -385,7 +386,7 @@ export default class StrippetsVisual implements IVisual {
         return outlinesInstance;
     }
 
-    private static sanitizeHTML(html:string, whiteList:string[]):string {
+    public static sanitizeHTML(html:string, whiteList:string[]):string {
         var cleanHTML = "";
         if (html && whiteList && whiteList.length) {
             // Stack Overflow is all like NEVER PARSE HTML WITH REGEX
@@ -415,7 +416,7 @@ export default class StrippetsVisual implements IVisual {
                         return NodeFilter.FILTER_ACCEPT;
                     }
 
-                    return NodeFilter.FILTER_REJECT;
+                    return NodeFilter.FILTER_SKIP;
                 }
             };
 
@@ -459,7 +460,7 @@ export default class StrippetsVisual implements IVisual {
                             method: 'GET',
                             url: data.content,
                         }).done((responseBody) => {
-                            const highlightedContent = t.highlight(StrippetsVisual.sanitizeHTML(responseBody.content || responseBody, HTML_WHITELIST_CONTENT), data.entities);
+                            const highlightedContent = t.highlight(StrippetsVisual.sanitizeHTML(responseBody.content || responseBody, StrippetsVisual.HTML_WHITELIST_CONTENT), data.entities);
                             resolve({
                                 title: data.title || '',
                                 content: highlightedContent || '',
@@ -504,7 +505,7 @@ export default class StrippetsVisual implements IVisual {
             } else {
                 const readerData = {
                     title: data.title || '',
-                    content: t.highlight(StrippetsVisual.sanitizeHTML(data.content, HTML_WHITELIST_CONTENT), data.entities) || '',
+                    content: t.highlight(StrippetsVisual.sanitizeHTML(data.content, StrippetsVisual.HTML_WHITELIST_CONTENT), data.entities) || '',
                     author: data.author || '',
                     source: data.source || '',
                     sourceUrl: data.sourceUrl || '',
@@ -1039,7 +1040,7 @@ export default class StrippetsVisual implements IVisual {
                                 method: 'GET',
                                 url: item.summary,
                             }).done((responseBody) => {
-                                item.summary = StrippetsVisual.sanitizeHTML(responseBody.content || responseBody, HTML_WHITELIST_SUMMARY);
+                                item.summary = StrippetsVisual.sanitizeHTML(responseBody.content || responseBody, StrippetsVisual.HTML_WHITELIST_SUMMARY);
                                 resolve(true);
                             }).fail((err)=> {
                                 reject(err);
@@ -1047,7 +1048,7 @@ export default class StrippetsVisual implements IVisual {
                         });
                         promises.push(promise);
                     } else {
-                        item.summary = StrippetsVisual.sanitizeHTML(item.summary, HTML_WHITELIST_SUMMARY);
+                        item.summary = StrippetsVisual.sanitizeHTML(item.summary, StrippetsVisual.HTML_WHITELIST_SUMMARY);
                     }
                 }
             });
