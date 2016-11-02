@@ -28,6 +28,7 @@ import VisualConstructorOptions = powerbi.extensibility.v110.VisualConstructorOp
 import mockDataView from './test_data/mockdataview';
 import testDataValues from './test_data/testDataValues';
 import DataViewObjects = powerbi.DataViewObjects;
+import * as _ from 'lodash';
 
 var testHtmlStrings = require('./test_data/testHtmlStrings.js');
 
