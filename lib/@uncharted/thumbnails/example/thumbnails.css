@@ -109,8 +109,7 @@
       -webkit-transform: scaleX(1);
       transform: scaleX(1);
       -webkit-transform-origin: left 50%;
-      transform-origin: left 50%;
-      z-index: 2; }
+      transform-origin: left 50%; }
     #thumbnails-panel .thumbnail .card:after {
       content: "";
       position: absolute;
@@ -173,7 +172,6 @@
       position: absolute;
       font-size: 0.9286em;
       vertical-align: top;
-      overflow: hidden;
       left: 0;
       top: 0;
       transition: opacity 0.3s ease-out, width 0.3s ease-out, transform 0.3s ease-out;

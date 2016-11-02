@@ -34,7 +34,6 @@ $card-transition: opacity 0.3s ease-out, width 0.3s ease-out, transform 0.3s eas
     transform: scaleX(1);
     -webkit-transform-origin: left 50%;
     transform-origin: left 50%;
-    z-index: 2;
   }
 
   .card:after {
@@ -123,7 +122,6 @@ $card-transition: opacity 0.3s ease-out, width 0.3s ease-out, transform 0.3s eas
     position: absolute;
     font-size: 0.9286em;
     vertical-align: top;
-    overflow: hidden;
     left: 0;
     top: 0;
     transition: $card-transition;

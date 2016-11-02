@@ -1,6 +1,6 @@
 {
   "name": "@uncharted/thumbnails",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "thumbnails",
   "main": "dist/uncharted.thumbnails.js",
   "scripts": {
@@ -52,8 +52,8 @@
     "underscore": "^1.8.3",
     "velocity-animate": "^1.2.3",
     "font-awesome": "^4.4.0",
-    "@uncharted/stories.common": "^0.1.7",
-    "@uncharted/strippets": "0.4.8",
+    "@uncharted/stories.common": "0.2.0",
+    "@uncharted/strippets": "0.4.9",
     "handlebars": "^4.0.5"
   },
   "jspm": {
