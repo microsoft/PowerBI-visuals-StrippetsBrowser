@@ -18,6 +18,7 @@ import SelectionManager = powerbi.visuals.utility.SelectionManager;
 import SelectionId = powerbi.visuals.SelectionId;
 import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
+import {Bucket} from './interfaces.ts';
 
 import * as Promise from 'bluebird';
 import * as $ from 'jquery';
@@ -161,6 +162,23 @@ export default class StrippetsVisual implements IVisual {
             return $('<div />').html(value).text();
         };
 
+        const bucketMap = {};
+        const getBucket = (bucketValue:any) => {
+            if (bucketValue) {
+                if (!bucketMap[bucketValue]) {
+                    let bucket : Bucket = {
+                        key: bucketValue,
+                        value: 0,
+                    };
+                    // store the bucket value (which is probably a string) for later sorting and value generation
+                    bucketMap[bucketValue] = bucket;
+                }
+                return bucketMap[bucketValue];
+            }
+
+            return null;
+        };
+
         categoriesDV[categories['id']] && categoriesDV[categories['id']].values.slice(lastDataViewLength).forEach((id :any, adjustedIndex) => {
             // highlight table is not compensated. Since we slice the values, we need to compensate for the slice. Slicing at the highlights level
             // will result in slower performance.
@@ -204,17 +222,21 @@ export default class StrippetsVisual implements IVisual {
                 for (let i = 0, n = parsedEntityType.length; i < n; ++i) {
                     const parsedEntity = parsedEntityType[i];
                     const entity = {
+                        id: parsedEntity.entityId || null,
                         name: parsedEntity.entityValue || '',
                         type: parsedEntity.entityType || '',
                         firstPosition: parsedEntity.offsetPercentage || null,
+                        bucket: getBucket(parsedEntity.bucket)
                     };
 
                     if (entity.type && entity.name) {
                         const entityTypeId = entity.type + '_' + entity.name;
                         if (isHighlighted && !highlightedEntities[entityTypeId]) {
                             highlightedEntities[entityTypeId] = {
+                                id: entity.id,
                                 type: entity.type,
-                                name: entity.name
+                                name: entity.name,
+                                bucket: entity.bucket
                             };
                         }
                         if (updateIM && !iconMap[entityTypeId]) {
@@ -233,21 +255,27 @@ export default class StrippetsVisual implements IVisual {
             } else {
                 // fallback to reading one entity from each data field
                 const entityTypes = entityTypesString.split('||');
+                const entityIds = String((categories['entityId'] && categoriesDV[categories['entityId']].values[index]) || '').split('||');
                 const entityNames = String((categories['entityName'] && categoriesDV[categories['entityName']].values[index]) || '').split('||');
                 const entityPositions = String((categories['entityPosition'] && categoriesDV[categories['entityPosition']].values[index]) || '').split('||');
                 const entityColors = String((categories['entityTypeColor'] && categoriesDV[categories['entityTypeColor']].values[index]) || '').split('||');
                 const entityClasses = String((categories['entityTypeClass'] && categoriesDV[categories['entityTypeClass']].values[index]) || '').split('||');
+                const buckets = String((categories['bucket'] && categoriesDV[categories['bucket']].values[index]) || '').split('||');
 
-                const propertiesLength = Math.max(entityTypes.length, entityNames.length, entityPositions.length);
+                const propertiesLength = Math.max(entityTypes.length, entityIds.length, entityNames.length, entityPositions.length);
 
                 if (propertiesLength) {
                     for (let i = 0; i < propertiesLength; ++i) {
                         const entityColor = entityColors.length > i ? entityColors[i] : null;
                         const entityClass = entityClasses.length > i ? entityClasses[i] : null;
+                        let bucket: Bucket = null;
+
                         const entity = {
+                            id: entityIds.length > i ? entityIds[i] : '',
                             name: entityNames.length > i ? entityNames[i] : '',
                             type: entityTypes.length > i ? entityTypes[i] : '',
                             firstPosition: entityPositions.length > i ? parseFloat(entityPositions[i]) : null,
+                            bucket: getBucket(buckets[i]),
                             //isHighlighted: isHighlighted,
                         };
 
@@ -255,8 +283,10 @@ export default class StrippetsVisual implements IVisual {
                             const entityTypeId = entity.type + '_' + entity.name;
                             if (isHighlighted && !highlightedEntities[entityTypeId]) {
                                 highlightedEntities[entityTypeId] = {
+                                    id: entity.id,
                                     type: entity.type,
-                                    name: entity.name
+                                    name: entity.name,
+                                    bucket: entity.bucket,
                                 };
                             }
                             if (updateIM && !iconMap[entityTypeId]) {
@@ -269,6 +299,7 @@ export default class StrippetsVisual implements IVisual {
                                     isDefault: false
                                 }
                             }
+
                         }
 
                         strippetsData[id].entities.push(entity);
@@ -287,6 +318,13 @@ export default class StrippetsVisual implements IVisual {
         }, []).sort((a, b)=> {
             return a.order - b.order;
         });
+
+        const bucketList = _.sortBy(bucketMap, (bucket : Bucket) => bucket.key);
+        const numBuckets: number = Math.max(1, bucketList.length);
+        bucketList.map(function(bucket, index) {
+            bucket.value = index / numBuckets;
+        });
+
         return {
             items: items,
             iconMap: updateIM ? Object.keys(iconMap).map(key => {
