@@ -1100,11 +1100,17 @@ export default class StrippetsVisual implements IVisual {
                 this.wrapThumbnails(wrapped);
             });
         } else {
-            var newThumbnailItems = data.items.filter((item) => {
-                return !this.thumbnails.instance._thumbnailItems.some((thumbnail)=> {
-                    return thumbnail.data.id === item.id
+            var newThumbnailItems;
+            if (append) {
+                newThumbnailItems = data.items.filter((item) => {
+                    return !this.thumbnails.instance._thumbnailItems.some((thumbnail)=> {
+                        return thumbnail.data.id === item.id
+                    });
                 });
-            });
+            }
+            else {
+                newThumbnailItems = data.items;
+            }
             if (newThumbnailItems && newThumbnailItems.length > 0) {
                 this.thumbnails.instance.iconMap = data.iconMap;
                 this.thumbnails.instance.loadData(newThumbnailItems, append);
