@@ -77,6 +77,11 @@
       "kind": 0
     },
     {
+      "name": "bucket",
+      "displayName": "Bucket",
+      "kind": 0
+    },
+    {
       "name": "entityTypeColor",
       "displayName": "Entity Icon Color",
       "kind": 0
@@ -84,11 +89,6 @@
     {
       "name": "entityTypeClass",
       "displayName": "Entity Icon Class",
-      "kind": 0
-    },
-    {
-      "name": "bucket",
-      "displayName": "Bucket",
       "kind": 0
     }
   ],

@@ -377,6 +377,9 @@ export default class StrippetsVisual implements IVisual {
             if (this.outlines.instance) {
                 this.outlines.instance.resize();
             }
+            else if (this.thumbnails.instance) {
+                this.thumbnails.instance.resize();
+            }
         }, ENTITIES_REPOSITION_DELAY).bind(this);
     }
 
