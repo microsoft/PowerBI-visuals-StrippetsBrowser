@@ -125,4 +125,48 @@ describe("The Strippets Browser Component", function () {
         expect(sanitized.indexOf('<SCRIPT>')).to.equal(-1);
     });
 
+    it("recognizes URLs", function () {
+       expect(StrippetsVisual.isUrl("notAUrl")).to.be.false;
+       expect(StrippetsVisual.isUrl("http://uncharted.software")).to.be.true;
+       expect(StrippetsVisual.isUrl("https://unchartedsoftware.com")).to.be.true;
+    });
+
+    it("highlights text", function () {
+        var mock = {
+            Node: function () {
+                this.nodeValue = "citing documents leaked to Korea's SBS (via ";
+                this.hasHits = true;
+            }
+        };
+        mock.Node.prototype = {
+            parentNode: {
+                insertBefore: sinon.stub(),
+            },
+            nextSibling: {},
+            ownerDocument: {
+                createElementNS: function () {
+                    return {
+                        appendChild: sinon.stub(),
+                    };
+                },
+                createTextNode: sinon.stub(),
+            }
+        };
+        sinon.spy(mock, 'Node');
+        sinon.spy(mock.Node.prototype.ownerDocument, 'createElementNS');
+
+        var regex = /\bKorea\b/gi;
+        var node = new mock.Node();
+        var newNodeType = 'span';
+
+        StrippetsVisual.textNodeReplace(node, regex, function (match) {
+            expect(match).to.equal("Korea");
+            return {
+                name: newNodeType,
+                content: match
+            };
+        });
+        expect(mock.Node.prototype.parentNode.insertBefore).to.be.calledTwice;
+        expect(mock.Node.prototype.ownerDocument.createElementNS).to.be.calledWith(undefined, newNodeType);
+    });
 });

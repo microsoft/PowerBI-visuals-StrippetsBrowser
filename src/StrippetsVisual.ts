@@ -493,7 +493,7 @@ export default class StrippetsVisual implements IVisual {
         const t = this;
         const data = <any>t.data.items.find(d=>d.id === articleId);
         if (data) {
-            if (t.isUrl(data.content)) {
+            if (StrippetsVisual.isUrl(data.content)) {
                 if (t.settings.content.readerContentType === 'readability') {
                     return new Promise((resolve:any, reject:any)=> {
                         $.ajax({
@@ -562,7 +562,7 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
-    private isUrl(candidate) {
+    public static isUrl(candidate) {
         //weak pattern, revisit later on.
         var pattern = new RegExp('^(https?)://[^\s/$.?#].[^\s]*', 'i');
         return pattern.test(candidate);
@@ -570,7 +570,7 @@ export default class StrippetsVisual implements IVisual {
 
     // Adapted from:
     // http://stackoverflow.com/questions/22129405/replace-text-in-the-middle-of-a-textnode-with-an-element
-    private textNodeReplace(node, regex, handler) {
+    public static textNodeReplace(node, regex, handler) {
         var mom = node.parentNode, nxt = node.nextSibling,
             doc=node.ownerDocument, hits;
         if (node.hasHits) {
@@ -694,7 +694,7 @@ export default class StrippetsVisual implements IVisual {
                     for (let i = 0; i < textNodeCount; i++) {
                         let node = textNodes[i];
                         filterRegex.lastIndex = 0;
-                        t.textNodeReplace(node, filterRegex, function (match) {
+                        StrippetsVisual.textNodeReplace(node, filterRegex, function (match) {
                             return {
                                 name: 'span',
                                 attrs: {
@@ -1073,7 +1073,7 @@ export default class StrippetsVisual implements IVisual {
             data.items.forEach(item => {
                 if (!item.summary && item.content) {
                     item.summary = item.content;
-                    if (this.settings.content.readerContentType === 'readability' && this.isUrl(item.summary) &&
+                    if (this.settings.content.readerContentType === 'readability' && StrippetsVisual.isUrl(item.summary) &&
                         this.settings.content.summaryUrl) {
                         const promise = new Promise((resolve:any, reject:any)=> {
                             $.ajax({
@@ -1120,8 +1120,8 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
-     private wrapThumbnails(wrapped:boolean) {
-         this.thumbnails.instance.toggleInlineDisplayMode(!wrapped);
+    private wrapThumbnails(wrapped:boolean) {
+        this.thumbnails.instance.toggleInlineDisplayMode(!wrapped);
     }
 
     public closeReader():void {
