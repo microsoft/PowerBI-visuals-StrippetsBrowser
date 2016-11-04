@@ -45,10 +45,14 @@ describe("The Strippets Browser Component", function () {
     var dataView;
     var values;
 
-    function populateData(data) {
+    function populateData(data, highlights = null) {
         dataView.categorical.categories = dataView.categorical.categories.map(function (category, index) {
             return new wrapCtor(category, data && data[index]);
         });
+
+        if (highlights) {
+            dataView.categorical.values[0].highlights = highlights;
+        }
     }
 
     before(function() {
@@ -83,9 +87,24 @@ describe("The Strippets Browser Component", function () {
         );
         const converted = StrippetsVisual.converter(dataView);
         expect(converted.items).to.be.ok;
+        expect(converted.items[0].isHighlighted).to.be.false;
         expect(converted.items[0].entities.length).to.equal(159);
         expect(converted.iconMap).to.be.ok;
         expect(converted.highlights).to.be.null;
+    });
+
+    it("converts data with highlights", function () {
+        populateData(
+            values.explodingPhones,
+            values.highlights
+        );
+        const converted = StrippetsVisual.converter(dataView);
+        expect(converted.items).to.be.ok;
+        expect(converted.items[0].entities.length).to.equal(159);
+        expect(converted.items[0].isHighlighted).to.be.ok;
+        expect(converted.iconMap).to.be.ok;
+        expect(converted.highlights).to.be.ok;
+        expect(converted.highlights.itemIds.length).to.equal(1);
     });
 
     it("converts compressed entities data", function () {
@@ -105,4 +124,5 @@ describe("The Strippets Browser Component", function () {
         expect(sanitized.indexOf('<script>')).to.equal(-1);
         expect(sanitized.indexOf('<SCRIPT>')).to.equal(-1);
     });
+
 });
