@@ -126,9 +126,10 @@ describe("The Strippets Browser Component", function () {
     });
 
     it("recognizes URLs", function () {
-       expect(StrippetsVisual.isUrl("notAUrl")).to.be.false;
-       expect(StrippetsVisual.isUrl("http://uncharted.software")).to.be.true;
-       expect(StrippetsVisual.isUrl("https://unchartedsoftware.com")).to.be.true;
+        expect(StrippetsVisual.isUrl('http://uncharted.software')).to.be.true;
+        expect(StrippetsVisual.isUrl('https://unchartedsoftware.com')).to.be.true;
+        expect(StrippetsVisual.isUrl('notAUrl')).to.be.false;
+        expect(StrippetsVisual.isUrl('<div><a href="http://uncharted.software">Uncharted Software</a></div>')).to.be.false;
     });
 
     it("highlights text", function () {
