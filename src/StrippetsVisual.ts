@@ -205,10 +205,11 @@ export default class StrippetsVisual implements IVisual {
                 // generate the instances based on the data in the JSON
                 for (let i = 0, n = parsedEntityType.length; i < n; ++i) {
                     const parsedEntity = parsedEntityType[i];
+                    const entityFirstPosition = parseFloat(parsedEntity.offsetPercentage);
                     const entity = {
                         name: parsedEntity.entityValue || '',
                         type: parsedEntity.entityType || '',
-                        firstPosition: parsedEntity.offsetPercentage || null,
+                        firstPosition: isNaN(entityFirstPosition) ? null : entityFirstPosition,
                     };
 
                     if (entity.type && entity.name) {
