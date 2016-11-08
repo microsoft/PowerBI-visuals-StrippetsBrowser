@@ -199,7 +199,9 @@ export default class StrippetsVisual implements IVisual {
             })(entityTypesString);
 
             if (parsedEntityType instanceof Array &&
-                parsedEntityType[0].entityType && parsedEntityType[0].entityValue && parsedEntityType[0].offsetPercentage) {
+                'entityType' in parsedEntityType[0] &&
+                'entityValue' in parsedEntityType[0] &&
+                'offsetPercentage' in parsedEntityType[0]) {
                 // generate the instances based on the data in the JSON
                 for (let i = 0, n = parsedEntityType.length; i < n; ++i) {
                     const parsedEntity = parsedEntityType[i];
