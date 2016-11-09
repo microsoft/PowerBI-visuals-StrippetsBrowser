@@ -18,6 +18,7 @@ import SelectionManager = powerbi.visuals.utility.SelectionManager;
 import SelectionId = powerbi.visuals.SelectionId;
 import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
+import {Bucket} from './interfaces.ts';
 
 import * as Promise from 'bluebird';
 import * as $ from 'jquery';
@@ -110,6 +111,14 @@ export default class StrippetsVisual implements IVisual {
     private resizeOutlines:Function;
     private thumbnailsWrapTimeout:any = null;
 
+    /**
+     * Convert PowerBI data into a format compatible with the Thumbnails and Outlines (Strippets) components.
+     * @param {DataView} dataView - data from PowerBI
+     * @param {Boolean=} updateIconMap - true if the entity icon data structure needs to be updated
+     * @param {Object=} appendTo - if provided, the previous data, to which the contents of dataView should be appended (deprecated use case)
+     * @param {Number=} lastDataViewLength - If we're appending, the number of rows in the previous dataView
+     * @returns {{items: *, iconMap: any, highlights: {entities: any, itemIds: any}}} data in the components' internal format
+     */
     public static converter(dataView:DataView, updateIconMap:boolean = false, appendTo?:any, lastDataViewLength:number = 0) {
         const categoricalDV = dataView.categorical;
         const categoriesDV = categoricalDV.categories;
@@ -161,6 +170,23 @@ export default class StrippetsVisual implements IVisual {
             return $('<div />').html(value).text();
         };
 
+        const bucketMap = {};
+        const getBucket = (bucketValue:any) => {
+            if (bucketValue) {
+                if (!bucketMap[bucketValue]) {
+                    let bucket : Bucket = {
+                        key: bucketValue,
+                        value: 0,
+                    };
+                    // store the bucket value (which is probably a string) for later sorting and value generation
+                    bucketMap[bucketValue] = bucket;
+                }
+                return bucketMap[bucketValue];
+            }
+
+            return null;
+        };
+
         categoriesDV[categories['id']] && categoriesDV[categories['id']].values.slice(lastDataViewLength).forEach((id :any, adjustedIndex) => {
             // highlight table is not compensated. Since we slice the values, we need to compensate for the slice. Slicing at the highlights level
             // will result in slower performance.
@@ -207,6 +233,7 @@ export default class StrippetsVisual implements IVisual {
                     const parsedEntity = parsedEntityType[i];
                     const entityFirstPosition = parseFloat(parsedEntity.offsetPercentage);
                     const entity = {
+                        id: parsedEntity.entityId || null,
                         name: parsedEntity.entityValue || '',
                         type: parsedEntity.entityType || '',
                         firstPosition: isNaN(entityFirstPosition) ? null : entityFirstPosition,
@@ -216,6 +243,7 @@ export default class StrippetsVisual implements IVisual {
                         const entityTypeId = entity.type + '_' + entity.name;
                         if (isHighlighted && !highlightedEntities[entityTypeId]) {
                             highlightedEntities[entityTypeId] = {
+                                id: entity.id,
                                 type: entity.type,
                                 name: entity.name
                             };
@@ -236,21 +264,27 @@ export default class StrippetsVisual implements IVisual {
             } else {
                 // fallback to reading one entity from each data field
                 const entityTypes = entityTypesString.split('||');
+                const entityIds = String((categories['entityId'] && categoriesDV[categories['entityId']].values[index]) || '').split('||');
                 const entityNames = String((categories['entityName'] && categoriesDV[categories['entityName']].values[index]) || '').split('||');
                 const entityPositions = String((categories['entityPosition'] && categoriesDV[categories['entityPosition']].values[index]) || '').split('||');
                 const entityColors = String((categories['entityTypeColor'] && categoriesDV[categories['entityTypeColor']].values[index]) || '').split('||');
                 const entityClasses = String((categories['entityTypeClass'] && categoriesDV[categories['entityTypeClass']].values[index]) || '').split('||');
+                const buckets = String((categories['bucket'] && categoriesDV[categories['bucket']].values[index]) || '').split('||');
 
-                const propertiesLength = Math.max(entityTypes.length, entityNames.length, entityPositions.length);
+                const propertiesLength = Math.max(entityTypes.length, entityIds.length, entityNames.length, entityPositions.length);
 
                 if (propertiesLength) {
                     for (let i = 0; i < propertiesLength; ++i) {
                         const entityColor = entityColors.length > i ? entityColors[i] : null;
                         const entityClass = entityClasses.length > i ? entityClasses[i] : null;
+                        let bucket: Bucket = null;
+
                         const entity = {
+                            id: entityIds.length > i ? entityIds[i] : '',
                             name: entityNames.length > i ? entityNames[i] : '',
                             type: entityTypes.length > i ? entityTypes[i] : '',
                             firstPosition: entityPositions.length > i ? parseFloat(entityPositions[i]) : null,
+                            bucket: getBucket(buckets[i]),
                             //isHighlighted: isHighlighted,
                         };
 
@@ -258,8 +292,10 @@ export default class StrippetsVisual implements IVisual {
                             const entityTypeId = entity.type + '_' + entity.name;
                             if (isHighlighted && !highlightedEntities[entityTypeId]) {
                                 highlightedEntities[entityTypeId] = {
+                                    id: entity.id,
                                     type: entity.type,
-                                    name: entity.name
+                                    name: entity.name,
+                                    bucket: entity.bucket,
                                 };
                             }
                             if (updateIM && !iconMap[entityTypeId]) {
@@ -272,6 +308,7 @@ export default class StrippetsVisual implements IVisual {
                                     isDefault: false
                                 }
                             }
+
                         }
 
                         strippetsData[id].entities.push(entity);
@@ -290,6 +327,13 @@ export default class StrippetsVisual implements IVisual {
         }, []).sort((a, b)=> {
             return a.order - b.order;
         });
+
+        const bucketList = _.sortBy(bucketMap, (bucket : Bucket) => bucket.key);
+        const numBuckets: number = Math.max(1, bucketList.length);
+        bucketList.map(function(bucket, index) {
+            bucket.value = index / numBuckets;
+        });
+
         return {
             items: items,
             iconMap: updateIM ? Object.keys(iconMap).map(key => {
@@ -313,7 +357,7 @@ export default class StrippetsVisual implements IVisual {
     /**
      * Initializes an instance of the IVisual.
      *
-     * @param options Initialization options for the visual.
+     * @param {VisualConstructorOptions} options Initialization options for the visual.
      */
     constructor(options: VisualConstructorOptions) {
         const template = require('./../templates/strippets.handlebars');
@@ -342,10 +386,17 @@ export default class StrippetsVisual implements IVisual {
             if (this.outlines.instance) {
                 this.outlines.instance.resize();
             }
+            else if (this.thumbnails.instance) {
+                this.thumbnails.instance.resize();
+            }
         }, ENTITIES_REPOSITION_DELAY).bind(this);
     }
 
-    private initializeOutlines($container:JQuery):any {
+    /**
+     * Instantiates and configures the Outlines (Strippets) component
+     * @returns {*|exports|module.exports}
+     */
+    private initializeOutlines():any {
         const t = this;
         const Outlines = require("@uncharted/strippets");
         const $outlines = t.outlines.$elem;
@@ -389,6 +440,12 @@ export default class StrippetsVisual implements IVisual {
         return outlinesInstance;
     }
 
+    /**
+     * Removes dangerous tags, such as scripts, from the given HTML content.
+     * @param {String} html - HTML content to clean
+     * @param {Array} whiteList - Array of HTML tag names to accept
+     * @returns {String} HTML content, devoid of any tags not in the whitelist
+     */
     public static sanitizeHTML(html:string, whiteList:string[]):string {
         var cleanHTML = "";
         if (html && whiteList && whiteList.length) {
@@ -451,11 +508,17 @@ export default class StrippetsVisual implements IVisual {
         return cleanHTML;
     }
 
+    /**
+     * Handler for the readers to call when an article is ready to load.
+     * If the article content is a readabilitiy URL, the actual article text will first be fetched.
+     * The artile is cleaned and highlighted before being returned in a Promise, as part of a reader config object.
+     * @param {String} articleId - primary key value for the datum containing the article to load.
+     */
     private onLoadArticle(articleId:string):any {
         const t = this;
         const data = <any>t.data.items.find(d=>d.id === articleId);
         if (data) {
-            if (t.isUrl(data.content)) {
+            if (StrippetsVisual.isUrl(data.content)) {
                 if (t.settings.content.readerContentType === 'readability') {
                     return new Promise((resolve:any, reject:any)=> {
                         $.ajax({
@@ -524,15 +587,32 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
-    private isUrl(candidate) {
+    /**
+     * Regular expression used to determine if a given string represents a URL.
+     * @type {RegExp}
+     */
+    private static URL_PATTERN = new RegExp('^(https?)://[^\s/$.?#].[^\s]*', 'i');
+
+    /**
+     * Test if the given string is a URL.
+     * @param {string} candidate - Check if this string is a URL
+     * @returns {boolean} true if the candidate looks like a URL
+     */
+    public static isUrl(candidate) {
         //weak pattern, revisit later on.
-        var pattern = new RegExp('^(https?)://[^\s/$.?#].[^\s]*', 'i');
-        return pattern.test(candidate);
+        return StrippetsVisual.URL_PATTERN.test(candidate);
     }
 
-    // Adapted from:
-    // http://stackoverflow.com/questions/22129405/replace-text-in-the-middle-of-a-textnode-with-an-element
-    private textNodeReplace(node, regex, handler) {
+    /**
+     * Within the given HTMl Text node, replace text matching the given regex using the given handler.
+     * Adapted from:
+     * http://stackoverflow.com/questions/22129405/replace-text-in-the-middle-of-a-textnode-with-an-element
+     * @param {Object} node - An HTML Text node (a text run from between tags)
+     * @param {Object} regex - a RegExp to test for the string we're replacing
+     * @param {Function} handler - a method to perform the actual replacement,
+     * accepting one argument: an array of hits as returned by regex.exec()
+     */
+    public static textNodeReplace(node, regex, handler) {
         var mom = node.parentNode, nxt = node.nextSibling,
             doc=node.ownerDocument, hits;
         if (node.hasHits) {
@@ -542,7 +622,7 @@ export default class StrippetsVisual implements IVisual {
                     node = handleResult( node, hits, handler.apply(this, hits) );
                 }
             } else if (hits = regex.exec(node.nodeValue)) {
-                handleResult( node, hits, handler.apply(this,hits) );
+                handleResult( node, hits, handler.apply(this, hits) );
             }
         }
 
@@ -567,6 +647,12 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
+    /**
+     * Highlight the given entities within the given content by surrounding the entity text with suitably-styled span elements.
+     * @param {string} content - HTML passage to search for & highlight entities
+     * @param {Array} entities - Array of entity Objects; instances of their names within content will be replaced by HTML to visually highlight them.
+     * @returns {string} content with any found entities highlighted
+     */
     private highlight(content, entities) {
         let highlightedContent = content;
 
@@ -656,7 +742,7 @@ export default class StrippetsVisual implements IVisual {
                     for (let i = 0; i < textNodeCount; i++) {
                         let node = textNodes[i];
                         filterRegex.lastIndex = 0;
-                        t.textNodeReplace(node, filterRegex, function (match) {
+                        StrippetsVisual.textNodeReplace(node, filterRegex, function (match) {
                             return {
                                 name: 'span',
                                 attrs: {
@@ -679,7 +765,11 @@ export default class StrippetsVisual implements IVisual {
         return highlightedContent;
     }
 
-    private initializeThumbnails($container:JQuery):any {
+    /**
+     * Instantiates and configures the Thumbnails component
+     * @returns {Thumbnails|exports|module.exports}
+     */
+    private initializeThumbnails():any {
         const t = this;
         const Thumbnails = require("@uncharted/thumbnails/src/thumbnails");
         const $thumbnails = t.thumbnails.$elem;
@@ -737,6 +827,10 @@ export default class StrippetsVisual implements IVisual {
         return thumbnailsInstance;
     }
 
+    /**
+     * Binds click event handlers to the Thumbnails and Outlines tab controls.
+     * @param {JQuery} $container - jquery-wrapped parent Element of the tabs
+     */
     private initializeTabs($container:JQuery):void {
         const t = this;
         const $thumbnailsTab = $container.find('#thumbnailsNav');
@@ -763,6 +857,7 @@ export default class StrippetsVisual implements IVisual {
 
     /**
      * Notifies the IVisual of an update (data, viewmode, size change).
+     * @param {VisualUpdateOptions} options - data and config from PowerBI
      */
     public update(options:VisualUpdateOptions):void {
         this.element.css({width: options.viewport.width, height: options.viewport.height});
@@ -789,7 +884,7 @@ export default class StrippetsVisual implements IVisual {
             }
 
             // if first load, make sure outlines are filled (for situations where there are alot of entities)
-            if (options.type & powerbi.VisualUpdateType.Data && dataView.categorical) {
+            if (options.type & powerbi.VisualUpdateType.Data && dataView.categorical && dataView.categorical.categories) {
                 //Sandbox mode vs non-sandbox mode handles merge data differently.
                 const lastMergeIndex = (<DataViewCategoricalSegment>dataView.categorical).lastMergeIndex;
                 const currentDataViewSize = dataView.categorical.categories[0].values.length;
@@ -930,6 +1025,10 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
+    /**
+     * Adds or removes the highlight CSS style from the container Element.
+     * @param {Boolean} state - true if we are highlighting
+     */
     private setHighlighting(state:boolean) {
         const highlightClass = 'no-highlight';
         if (state) {
@@ -939,6 +1038,11 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
+    /**
+     * Switch to Outlines view, closing the Thumbnails reader if it's open, and instantiating Outlines, if necessary.
+     * @param {Object} data - converted PowerBI data to render as outlines (strippets)
+     * @param {Boolean} append - true if the data contains new values only, and existing thumbnails should be preserved (deprecated use case)
+     */
     private showOutlines(data:any, append:boolean = false) {
         // highlight outline tab
         this.$tabs.find('.navItem').removeClass('selected');
@@ -968,6 +1072,11 @@ export default class StrippetsVisual implements IVisual {
 
     }
 
+    /**
+     * Switch to Thumbnails view, detaching the Outlines reader if it's open, and instantiating Thumbnails, if necessary.
+     * @param {Object} data - converted PowerBI data to render as thumbnails
+     * @param {Boolean} append - true if the data contains new values only, and existing thumbnails should be preserved (deprecated use case)
+     */
     private showThumbnails(data:any, append:boolean = false) {
         // highlight thumbnail tab
         this.$tabs.find('.navItem').removeClass('selected');
@@ -979,7 +1088,7 @@ export default class StrippetsVisual implements IVisual {
         }
         //Initialize Thumbnails if it hasn't been created yet.
         if (!this.thumbnails.instance) {
-            this.thumbnails.instance = this.initializeThumbnails.call(this, this.$container);
+            this.thumbnails.instance = this.initializeThumbnails.call(this);
         }
         if (!$.contains(this.$container[0], this.thumbnails.$elem[0])) {
             this.$container.append(this.thumbnails.$elem[0]);
@@ -992,6 +1101,11 @@ export default class StrippetsVisual implements IVisual {
         this.updateThumbnails.call(this, data, append, this.settings.presentation.wrap);
     }
 
+    /**
+     * Update the Outlines component's data
+     * @param {Object} data - converted PowerBI data to render as outlines (strippets)
+     * @param {Boolean} append - true if the data contains new values only, and existing strippets should be preserved (deprecated use case)
+     */
     private updateOutlines(data:any, append:boolean):any {
         if (!data.highlights) {
             //Initialize Outlines if it hasn't been created yet.
@@ -1023,6 +1137,12 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
+    /**
+     * Update the Thumbnails component's data
+     * @param {Object} data - converted PowerBI data to render as thumbnails
+     * @param {Boolean} append - true if the data contains new values only, and existing thumbnails should be preserved (deprecated use case)
+     * @param {Boolean} wrapped - true if thumbnails should be rendered in multiple rows; false to keep them all in one row
+     */
     private updateThumbnails(data:any, append:boolean, wrapped:boolean):any {
         if (!data.highlights) {
             this.thumbnails.instance.iconMap = data.iconMap;
@@ -1035,7 +1155,7 @@ export default class StrippetsVisual implements IVisual {
             data.items.forEach(item => {
                 if (!item.summary && item.content) {
                     item.summary = item.content;
-                    if (this.settings.content.readerContentType === 'readability' && this.isUrl(item.summary) &&
+                    if (this.settings.content.readerContentType === 'readability' && StrippetsVisual.isUrl(item.summary) &&
                         this.settings.content.summaryUrl) {
                         const promise = new Promise((resolve:any, reject:any)=> {
                             $.ajax({
@@ -1062,11 +1182,17 @@ export default class StrippetsVisual implements IVisual {
                 this.wrapThumbnails(wrapped);
             });
         } else {
-            var newThumbnailItems = data.items.filter((item) => {
-                return !this.thumbnails.instance._thumbnailItems.some((thumbnail)=> {
-                    return thumbnail.data.id === item.id
+            var newThumbnailItems;
+            if (append) {
+                newThumbnailItems = data.items.filter((item) => {
+                    return !this.thumbnails.instance._thumbnailItems.some((thumbnail)=> {
+                        return thumbnail.data.id === item.id
+                    });
                 });
-            });
+            }
+            else {
+                newThumbnailItems = data.items;
+            }
             if (newThumbnailItems && newThumbnailItems.length > 0) {
                 this.thumbnails.instance.iconMap = data.iconMap;
                 this.thumbnails.instance.loadData(newThumbnailItems, append);
@@ -1076,10 +1202,17 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
-     private wrapThumbnails(wrapped:boolean) {
-         this.thumbnails.instance.toggleInlineDisplayMode(!wrapped);
+    /**
+     * Set the wrapping state of the thumbnails component.
+     * @param {Boolean} wrapped - true if thumbnails should be rendered in multiple rows; false to keep them all in one row
+     */
+    private wrapThumbnails(wrapped:boolean) {
+        this.thumbnails.instance.toggleInlineDisplayMode(!wrapped);
     }
 
+    /**
+     * Close any open reader,
+     */
     public closeReader():void {
         if (this.settings.presentation.strippetType === 'outlines') {
             const openOutline = this.outlines.instance._items.find((outline)=> {
@@ -1094,6 +1227,10 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
+    /**
+     * Open the appropriate reader, given the current view mode, for the datum of the given id.
+     * @param {any} id - primary key value of the story to display in the reader
+     */
     public openReader(id:any):void {
         if (this.settings.presentation.strippetType === 'outlines') {
             const outline = this.outlines.instance._items.find((o)=> {
@@ -1113,6 +1250,9 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
+    /**
+     * Show the animated loading icon.
+     */
     private showLoader():void {
         if (this.settings.presentation.strippetType === 'outlines') {
             this.outlines.instance.$chartContainer.append(this.$loaderElement);
@@ -1122,6 +1262,9 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
+    /**
+     * Hide the animated loading icon.
+     */
     private hideLoader():void {
         if (this.settings.presentation.strippetType === 'outlines') {
             this.$loaderElement.detach();

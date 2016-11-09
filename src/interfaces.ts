@@ -61,3 +61,8 @@ export interface IStrippets {
      */
     resize();
 }
+
+export interface Bucket {
+    key: any,
+    value: number
+}

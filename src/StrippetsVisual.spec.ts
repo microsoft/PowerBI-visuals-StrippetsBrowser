@@ -45,10 +45,14 @@ describe("The Strippets Browser Component", function () {
     var dataView;
     var values;
 
-    function populateData(data) {
+    function populateData(data, highlights = null) {
         dataView.categorical.categories = dataView.categorical.categories.map(function (category, index) {
             return new wrapCtor(category, data && data[index]);
         });
+
+        if (highlights) {
+            dataView.categorical.values[0].highlights = highlights;
+        }
     }
 
     before(function() {
@@ -83,9 +87,24 @@ describe("The Strippets Browser Component", function () {
         );
         const converted = StrippetsVisual.converter(dataView);
         expect(converted.items).to.be.ok;
+        expect(converted.items[0].isHighlighted).to.be.false;
         expect(converted.items[0].entities.length).to.equal(159);
         expect(converted.iconMap).to.be.ok;
         expect(converted.highlights).to.be.null;
+    });
+
+    it("converts data with highlights", function () {
+        populateData(
+            values.explodingPhones,
+            values.highlights
+        );
+        const converted = StrippetsVisual.converter(dataView);
+        expect(converted.items).to.be.ok;
+        expect(converted.items[0].entities.length).to.equal(159);
+        expect(converted.items[0].isHighlighted).to.be.ok;
+        expect(converted.iconMap).to.be.ok;
+        expect(converted.highlights).to.be.ok;
+        expect(converted.highlights.itemIds.length).to.equal(1);
     });
 
     it("converts compressed entities data", function () {
@@ -104,5 +123,51 @@ describe("The Strippets Browser Component", function () {
         expect(sanitized).to.be.ok;
         expect(sanitized.indexOf('<script>')).to.equal(-1);
         expect(sanitized.indexOf('<SCRIPT>')).to.equal(-1);
+    });
+
+    it("recognizes URLs", function () {
+        expect(StrippetsVisual.isUrl('http://uncharted.software')).to.be.true;
+        expect(StrippetsVisual.isUrl('https://unchartedsoftware.com')).to.be.true;
+        expect(StrippetsVisual.isUrl('notAUrl')).to.be.false;
+        expect(StrippetsVisual.isUrl('<div><a href="http://uncharted.software">Uncharted Software</a></div>')).to.be.false;
+    });
+
+    it("highlights text", function () {
+        var mock = {
+            Node: function () {
+                this.nodeValue = "citing documents leaked to Korea's SBS (via ";
+                this.hasHits = true;
+            }
+        };
+        mock.Node.prototype = {
+            parentNode: {
+                insertBefore: sinon.stub(),
+            },
+            nextSibling: {},
+            ownerDocument: {
+                createElementNS: function () {
+                    return {
+                        appendChild: sinon.stub(),
+                    };
+                },
+                createTextNode: sinon.stub(),
+            }
+        };
+        sinon.spy(mock, 'Node');
+        sinon.spy(mock.Node.prototype.ownerDocument, 'createElementNS');
+
+        var regex = /\bKorea\b/gi;
+        var node = new mock.Node();
+        var newNodeType = 'span';
+
+        StrippetsVisual.textNodeReplace(node, regex, function (match) {
+            expect(match).to.equal("Korea");
+            return {
+                name: newNodeType,
+                content: match
+            };
+        });
+        expect(mock.Node.prototype.parentNode.insertBefore).to.be.calledTwice;
+        expect(mock.Node.prototype.ownerDocument.createElementNS).to.be.calledWith(undefined, newNodeType);
     });
 });
