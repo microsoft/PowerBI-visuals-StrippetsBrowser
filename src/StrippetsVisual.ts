@@ -771,6 +771,7 @@ export default class StrippetsVisual implements IVisual {
     private initializeThumbnails():any {
         const t = this;
         const Thumbnails = require("@uncharted/thumbnails/src/thumbnails");
+        const defaults = require("@uncharted/thumbnails/src/thumbnails.defaults");
         const $thumbnails = t.thumbnails.$elem;
         const thumbnailsInstance = new Thumbnails({
             container: $thumbnails,
@@ -795,7 +796,7 @@ export default class StrippetsVisual implements IVisual {
         //set up infinite scroll
         let infiniteScrollTimeoutId:any;
         thumbnailsInstance._$element.on('scroll', (e)=> {
-            if ($(e.target).hasClass('horizontal-align')) {
+            if ($(e.target).hasClass(defaults.classes.thumbnails.inlineThumbnails.slice(1))) {
                 if ($(e.target).width() + e.target.scrollLeft >= e.target.scrollWidth) {
                     infiniteScrollTimeoutId = setTimeout(()=> {
                         clearTimeout(infiniteScrollTimeoutId);

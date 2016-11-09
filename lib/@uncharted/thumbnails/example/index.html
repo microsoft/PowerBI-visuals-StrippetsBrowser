@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<div id="thumbnails-parent" style="top: 0; bottom: 45px; position: absolute; overflow: hidden; z-index: 0">
+<div id="thumbnails-parent" style="top: 0; bottom: 45px; position: absolute; width: 100%; overflow: hidden; z-index: 0">
     <div id="thumbnails-panel" ></div>
 </div>
 <div id="interactions" style="background: #fff; text-align: center; height: 45px; bottom: 0; position: absolute; z-index: 1">
@@ -69,6 +69,7 @@
         },
     });
     var id = 1;
+    const entitiesRepositionDelay = 500;
     $("#thumbnails-panel").thumbnails("loaddata", JSON.parse(JSON.stringify(thumbnailsSampleData)).map(function (data) { data.id = id++; return data; }));
     $("#applyFilter").on("click", function() {
         $("#thumbnails-panel").thumbnails("filter", [1, 5, 7]);
@@ -104,7 +105,9 @@
         inlineDisplayMode = !inlineDisplayMode;
         $("#thumbnails-panel").thumbnails("toggleInlineDisplayMode", inlineDisplayMode);
     });
-
+    $(window).resize(_.debounce(function () {
+        $("#thumbnails-panel").thumbnails("resize", undefined);
+    }, entitiesRepositionDelay));
 </script>
 </body>
 </html>

@@ -24,7 +24,7 @@
   "license": "MIT",
   "privateSubmodules": {
     "@uncharted/stories.common": "0.2.0",
-    "@uncharted/strippets": "0.4.10",
+    "@uncharted/strippets": "0.4.11",
     "@uncharted/thumbnails": "0.4.5"
   },
   "devDependencies": {
@@ -51,7 +51,7 @@
     "memory-fs": "^0.3.0",
     "mkdirp": "^0.5.1",
     "mocha": "^3.1.2",
-    "node-sass": "^3.10.1",
+    "node-sass": "^3.11.2",
     "node-zip": "^1.1.1",
     "npm-run-all": "^3.1.0",
     "onchange": "^3.0.2",
