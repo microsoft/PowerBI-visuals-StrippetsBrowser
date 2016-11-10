@@ -147,16 +147,34 @@ export default class StrippetsVisual implements IVisual {
     private data:any;
 
     /**
-     *
+     * True if the visual is sandboxed in an iframe.
      */
-    private iconMap:any[];
     private inSandbox:boolean;
 
+    /**
+     * The number of rows in the most recent dataView
+     * @type {number}
+     */
     private lastDataViewLength:number = 0;
 
+    /**
+     * True if the visual is requesting additional data from the host (rather than the initial load)
+     */
     private isLoadingMore:boolean;
+
+    /**
+     * True if the host has more data available
+     */
     private hasMoreData:boolean;
+
+    /**
+     * The visual's interface to PowerBI services.
+     */
     private host:IVisualHostServices;
+
+    /**
+     * Allows the visual to notify the host of changes in selection state.
+     */
     private selectionManager:SelectionManager;
     private settings = $.extend({}, StrippetsVisual.DEFAULT_SETTINGS);
     private baseRowsLoaded:number = 0;
