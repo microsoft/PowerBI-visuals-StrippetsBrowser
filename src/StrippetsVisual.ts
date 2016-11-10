@@ -18,7 +18,7 @@ import SelectionManager = powerbi.visuals.utility.SelectionManager;
 import SelectionId = powerbi.visuals.SelectionId;
 import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
-import {Bucket} from './interfaces.ts';
+import {Bucket, HitNode} from './interfaces.ts';
 
 import * as Promise from 'bluebird';
 import * as $ from 'jquery';
@@ -521,8 +521,8 @@ export default class StrippetsVisual implements IVisual {
             //for (i = 0; i < length; i++) {
             //    whiteList[i] = whiteList[i].toUpperCase();
             //}
-            let filter = {
-                acceptNode : function (node : Node) : number {
+            let filter: NodeFilter = {
+                acceptNode: (node) => {
                     if (whiteList.indexOf(node.nodeName.toUpperCase()) === -1) {
                         return NodeFilter.FILTER_ACCEPT;
                     }
@@ -747,7 +747,7 @@ export default class StrippetsVisual implements IVisual {
             // search for entities.
             let filterRegex = null;
             let filter: NodeFilter = {
-                acceptNode: (node) => {
+                acceptNode: (node : HitNode) => {
                     if ($(node.parentNode).hasClass(highlightClass)) {
                         return NodeFilter.FILTER_REJECT;
                     }

@@ -64,5 +64,9 @@ export interface IStrippets {
 
 export interface Bucket {
     key: any,
-    value: number
+    value: number,
+}
+
+export interface HitNode extends Node {
+    hasHits: boolean,
 }
