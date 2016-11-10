@@ -26,11 +26,35 @@ import * as _ from 'lodash';
 
 require('velocity-animate');
 const moment = require('moment');
+
+/**
+ * Default entity colors for when no colors are specified by the data
+ * @type {string[]}
+ */
 const COLOR_PALETTE = ['#FF001F', '#FF8000', '#AC8000', '#95AF00', '#1BBB6A', '#00C6E1', '#B44AE7', '#DB00B0'];
-//const COLOR_HIGHLIGHT = '#00BFFF';
+
+/**
+ * Number of documents expected per load.
+ * @type {number}
+ */
 const DOCUMENT_REQUEST_COUNT = 200;
+
+/**
+ * Width of one outline, in pixels.
+ * @type {number}
+ */
 const OUTLINE_WIDTH = 24;
+
+/**
+ * Debounce interval for resizing thumbnails and outline components while the visual is being resized.
+ * @type {number}
+ */
 const ENTITIES_REPOSITION_DELAY = 500;
+
+/**
+ * White list of HTML tags allowed in either the content or summary
+ * @type {string[]}
+ */
 const HTML_WHITELIST_STANDARD = [
     "A", "ABBR", "ACRONYM", "ADDRESS", "AREA", "ARTICLE", "ASIDE", "AUDIO",
     "B", "BDI", "BDO", "BLOCKQUOTE", "BR",
@@ -51,6 +75,11 @@ const HTML_WHITELIST_STANDARD = [
     "U", "UL",
     "VAR",
 ];
+
+/**
+ * White list of HTML tags, for media, which are allowed only in the content
+ * @type {string[]}
+ */
 const HTML_WHITELIST_MEDIA = [
     "IMG",
     "PICTURE",
@@ -58,6 +87,11 @@ const HTML_WHITELIST_MEDIA = [
     "VIDEO"
 ];
 
+/**
+ * Strippet Browser visual definition.
+ * The Strippet Browser has two tabs, corresponding to its two view: Thumbnails and Outlines,
+ * which are implemented by the dynamically-loaded thumbnails and strippets components, respectively.
+ */
 export default class StrippetsVisual implements IVisual {
     public static HTML_WHITELIST_SUMMARY = HTML_WHITELIST_STANDARD;
     public static HTML_WHITELIST_CONTENT = HTML_WHITELIST_STANDARD.concat(HTML_WHITELIST_MEDIA);
@@ -77,25 +111,49 @@ export default class StrippetsVisual implements IVisual {
         }
     };
 
+    /**
+     * Root div of the visual, parented to PowerBI's container
+     */
+    private element:JQuery;
 
     /**
-     * My Strippets Instance
+     * Inner container: contains Thumbnails & Outlines, but not the nav tab buttons to switch between them
      */
-    //private $outlines:JQuery;
-    private element:JQuery;
     private $container:JQuery;
+
+    /**
+     * Size of the visual, including Thumbnails, Outlines, and the nav tabs
+     */
     private viewportSize:any;
+
+    /**
+     * Navigation tabs, for switching between Thumbnails and Outlines
+     */
     private $tabs:JQuery;
+
+    /**
+     * An object holding the Outlines instance and its JQuery-wrapped element
+     */
     private outlines:any;
+
+    /**
+     * An object holding the Thumbnails instance and its JQuery-wrapped element
+     */
     private thumbnails:any;
-    //private dataView:DataView;
+
+    /**
+     * Local copy of the converted data
+     */
     private data:any;
+
+    /**
+     *
+     */
     private iconMap:any[];
     private inSandbox:boolean;
 
     private lastDataViewLength:number = 0;
 
-    //private previousData:any;
     private isLoadingMore:boolean;
     private hasMoreData:boolean;
     private host:IVisualHostServices;
@@ -112,7 +170,7 @@ export default class StrippetsVisual implements IVisual {
     private thumbnailsWrapTimeout:any = null;
 
     /**
-     * Convert PowerBI data into a format compatible with the Thumbnails and Outlines (Strippets) components.
+     * Convert PowerBI data into a format compatible with the Thumbnails and Outlines components.
      * @param {DataView} dataView - data from PowerBI
      * @param {Boolean=} updateIconMap - true if the entity icon data structure needs to be updated
      * @param {Object=} appendTo - if provided, the previous data, to which the contents of dataView should be appended (deprecated use case)
@@ -125,7 +183,6 @@ export default class StrippetsVisual implements IVisual {
         const valuesDV = categoricalDV.values;
         const categories = <any>{};
         const colors = COLOR_PALETTE.slice();
-        //const DEFAULT_GREY = '#DDDDDD';
 
         categoriesDV.forEach((category, index) => {
             Object.keys(category.source.roles).forEach(categoryName => categories[categoryName] = index)
@@ -146,7 +203,6 @@ export default class StrippetsVisual implements IVisual {
                 color: im.color,
                 type: im.type,
                 name: im.name,
-                //isHighlight: im.isHighlight,
                 isDefault: im.isDefault
             };
             return memo;
@@ -284,7 +340,6 @@ export default class StrippetsVisual implements IVisual {
                             type: entityTypes.length > i ? entityTypes[i] : '',
                             firstPosition: entityPositions.length > i ? parseFloat(entityPositions[i]) : null,
                             bucket: getBucket(buckets[i]),
-                            //isHighlighted: isHighlighted,
                         };
 
                         if (entity.type && entity.name) {
@@ -303,7 +358,6 @@ export default class StrippetsVisual implements IVisual {
                                     color: entityColor === null ? colors.shift() : entityColor,
                                     type: entity.type,
                                     name: entity.name,
-                                    //isHighlight: isHighlighted,
                                     isDefault: false
                                 }
                             }
@@ -362,10 +416,8 @@ export default class StrippetsVisual implements IVisual {
         const template = require('./../templates/strippets.handlebars');
         this.$loaderElement = $(require('./../templates/loader.handlebars')());
         this.element = $('<div/>');
-        //this.element.css({width: options.viewport.width, height: options.viewport.height});
         this.element.append(template());
         $(options.element).append(this.element);
-        //this.element.prepend($('<st' + 'yle>' + this.getCss().join('\n') + '</st' + 'yle>'));
         this.$container = this.element.find('#strippets-container');
         this.$tabs = this.element.find('.nav');
         this.host = options.host.createSelectionManager()['hostServices'];
@@ -373,7 +425,7 @@ export default class StrippetsVisual implements IVisual {
 
         this.inSandbox = this.element.parents('body.visual-sandbox').length > 0;
 
-        this.viewportSize = {width: this.$container.parent().width(), height: this.$container.parent().height()}; //options.viewport;
+        this.viewportSize = {width: this.$container.parent().width(), height: this.$container.parent().height()};
         this.$container.width(this.viewportSize.width - this.$tabs.width());
         this.minOutlineCount = this.viewportSize.width / OUTLINE_WIDTH + 10;
         this.outlines = {$elem: this.$container.find('#outlines-panel')};
@@ -392,7 +444,7 @@ export default class StrippetsVisual implements IVisual {
     }
 
     /**
-     * Instantiates and configures the Outlines (Strippets) component
+     * Instantiates and configures the Outlines component
      * @returns {*|exports|module.exports}
      */
     private initializeOutlines():any {
@@ -694,7 +746,7 @@ export default class StrippetsVisual implements IVisual {
             // Create a tree walker (hierarchical iterator) that only exposes non-highlighted text nodes, which we'll
             // search for entities.
             let filterRegex = null;
-            let filter = {
+            let filter: NodeFilter = {
                 acceptNode: (node) => {
                     if ($(node.parentNode).hasClass(highlightClass)) {
                         return NodeFilter.FILTER_REJECT;
@@ -1033,7 +1085,7 @@ export default class StrippetsVisual implements IVisual {
 
     /**
      * Switch to Outlines view, closing the Thumbnails reader if it's open, and instantiating Outlines, if necessary.
-     * @param {Object} data - converted PowerBI data to render as outlines (strippets)
+     * @param {Object} data - converted PowerBI data to render as outlines
      * @param {Boolean} append - true if the data contains new values only, and existing thumbnails should be preserved (deprecated use case)
      */
     private showOutlines(data:any, append:boolean = false) {
@@ -1096,8 +1148,8 @@ export default class StrippetsVisual implements IVisual {
 
     /**
      * Update the Outlines component's data
-     * @param {Object} data - converted PowerBI data to render as outlines (strippets)
-     * @param {Boolean} append - true if the data contains new values only, and existing strippets should be preserved (deprecated use case)
+     * @param {Object} data - converted PowerBI data to render as outlines
+     * @param {Boolean} append - true if the data contains new values only, and existing outlines should be preserved (deprecated use case)
      */
     private updateOutlines(data:any, append:boolean):any {
         if (!data.highlights) {
