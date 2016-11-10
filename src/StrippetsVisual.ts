@@ -886,23 +886,16 @@ export default class StrippetsVisual implements IVisual {
             // if first load, make sure outlines are filled (for situations where there are alot of entities)
             if (options.type & powerbi.VisualUpdateType.Data && dataView.categorical && dataView.categorical.categories) {
                 //Sandbox mode vs non-sandbox mode handles merge data differently.
-                const lastMergeIndex = (<DataViewCategoricalSegment>dataView.categorical).lastMergeIndex;
                 const currentDataViewSize = dataView.categorical.categories[0].values.length;
                 let currentRowCount = dataView.categorical.categories[0].values.length;
                 let loadedPreviously = false;
-                if (lastMergeIndex !== undefined) {
-                    loadedPreviously = !!this.data;
-                    currentRowCount = (DOCUMENT_REQUEST_COUNT * lastMergeIndex || 0) + currentDataViewSize;
-                } else {
-                    // assume that if the dataview length <= the document request size, then its new data.
-                    if (currentDataViewSize > DOCUMENT_REQUEST_COUNT) {
-                        loadedPreviously = true;
-                        currentRowCount = currentDataViewSize;
-                    }
+                // assume that if the dataview length <= the document request size, then its new data.
+                if (currentDataViewSize > DOCUMENT_REQUEST_COUNT) {
+                    loadedPreviously = true;
+                    currentRowCount = currentDataViewSize;
                 }
 
                 const previousLastItemIndex = loadedPreviously ? this.data.items.length - 1 : 0;
-
 
                 const isHighlighting = dataView.categorical.values
                     && dataView.categorical.values[0].highlights
@@ -914,7 +907,7 @@ export default class StrippetsVisual implements IVisual {
                 }
                 this.hasMoreData = !!dataView.metadata.segment;
 
-                const data = StrippetsVisual.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, (loadedPreviously && lastMergeIndex === undefined) ? this.lastDataViewLength : 0);
+                const data = StrippetsVisual.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, loadedPreviously ? this.lastDataViewLength : 0);
                 this.lastDataViewLength = currentDataViewSize;
 
                 //  initialize with highlighting disabled
