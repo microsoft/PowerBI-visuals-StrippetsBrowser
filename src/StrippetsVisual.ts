@@ -187,7 +187,7 @@ export default class StrippetsVisual implements IVisual {
         };
 
         const populateUncertaintyFields = function (entity, entityIds, buckets, index) {
-            if (entityIds.length > index) {
+            if (entityIds.length > index && (entityIds[index] || entityIds[index] === 0)) {
                 entity.id = entityIds[index];
                 if (buckets.length > index) {
                     entity.bucket = getBucket(buckets[index]);
