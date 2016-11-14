@@ -89,6 +89,12 @@
           opacity: 0.15;
         }
       }
+
+      .sourceLink {
+        display: block;
+        height: $outline-title-height;
+        width: 100%;
+      }
     }
   }
   &.expanded {

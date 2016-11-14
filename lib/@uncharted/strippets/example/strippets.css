@@ -168,6 +168,10 @@
         transition: opacity 0.5s ease-out; }
       .strippets .outlineItemContainer.read .outlineItem:hover .readingSlider {
         opacity: 0.15; }
+      .strippets .outlineItemContainer.read .outlineItem .sourceLink {
+        display: block;
+        height: 40px;
+        width: 100%; }
     .strippets .outlineItemContainer.hidden .outlineItem {
       cursor: default; }
     .strippets .outlineItemContainer.minimized .outlineHeader .sourceText {

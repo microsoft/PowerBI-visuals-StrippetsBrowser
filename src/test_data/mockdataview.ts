@@ -1,24 +1,62 @@
 export default {
-    metadata: {
-        columns: [
+    "metadata": {
+        "columns": [
             {
-                roles: {
-                    id: true
+                "roles": {
+                    "id": true
                 },
-                type: {
-                    underlyingType: 260,
-                    category: null
+                "type": {
+                    "underlyingType": 260,
+                    "category": null
                 },
-                format: "0",
-                displayName: "article_id",
-                queryName: "documents.article_id",
-                expr: {
+                "format": "0",
+                "displayName": "article_id",
+                "queryName": "documents.article_id",
+                "expr": {
                     "_kind": 2,
                     "source": {
                         "_kind": 0,
                         "entity": "documents"
                     },
                     "ref": "article_id"
+                }
+            },
+            {
+                "roles": {
+                    "bucket": true
+                },
+                "type": {
+                    "underlyingType": 1,
+                    "category": null
+                },
+                "displayName": "bucket",
+                "queryName": "documentConcepts.bucket",
+                "expr": {
+                    "_kind": 2,
+                    "source": {
+                        "_kind": 0,
+                        "entity": "documentConcepts"
+                    },
+                    "ref": "bucket"
+                }
+            },
+            {
+                "roles": {
+                    "entityId": true
+                },
+                "type": {
+                    "underlyingType": 1,
+                    "category": null
+                },
+                "displayName": "concept_id",
+                "queryName": "concepts.concept_id",
+                "expr": {
+                    "_kind": 2,
+                    "source": {
+                        "_kind": 0,
+                        "entity": "concepts"
+                    },
+                    "ref": "concept_id"
                 }
             },
             {
@@ -42,21 +80,21 @@ export default {
             },
             {
                 "roles": {
-                    "content": true
+                    "entityType": true
                 },
                 "type": {
                     "underlyingType": 1,
                     "category": null
                 },
-                "displayName": "content",
-                "queryName": "documents.content",
+                "displayName": "facet",
+                "queryName": "concepts.facet",
                 "expr": {
                     "_kind": 2,
                     "source": {
                         "_kind": 0,
-                        "entity": "documents"
+                        "entity": "concepts"
                     },
-                    "ref": "content"
+                    "ref": "facet"
                 }
             },
             {
@@ -76,6 +114,25 @@ export default {
                         "entity": "documents"
                     },
                     "ref": "summary"
+                }
+            },
+            {
+                "roles": {
+                    "content": true
+                },
+                "type": {
+                    "underlyingType": 1,
+                    "category": null
+                },
+                "displayName": "content",
+                "queryName": "documents.content",
+                "expr": {
+                    "_kind": 2,
+                    "source": {
+                        "_kind": 0,
+                        "entity": "documents"
+                    },
+                    "ref": "content"
                 }
             },
             {
@@ -105,76 +162,15 @@ export default {
                     "underlyingType": 1,
                     "category": null
                 },
-                "displayName": " author",
-                "queryName": "documents. author",
+                "displayName": "author",
+                "queryName": "documents.author",
                 "expr": {
                     "_kind": 2,
                     "source": {
                         "_kind": 0,
                         "entity": "documents"
                     },
-                    "ref": " author"
-                }
-            },
-            {
-                "roles": {
-                    "articleDate": true
-                },
-                "type": {
-                    "underlyingType": 519,
-                    "category": null,
-                    "temporalType": {
-                        "underlyingType": 519
-                    }
-                },
-                "format": "dddd\\, MMMM %d\\, yyyy",
-                "displayName": "source_date",
-                "queryName": "documents.source_date",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
-                    },
-                    "ref": "source_date"
-                }
-            },
-            {
-                "roles": {
-                    "sourceImage": true
-                },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
-                },
-                "displayName": "source_image",
-                "queryName": "documents.source_image",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
-                    },
-                    "ref": "source_image"
-                }
-            },
-            {
-                "roles": {
-                    "sourceUrl": true
-                },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
-                },
-                "displayName": "source_url",
-                "queryName": "documents.source_url",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
-                    },
-                    "ref": "source_url"
+                    "ref": "author"
                 }
             },
             {
@@ -198,21 +194,63 @@ export default {
             },
             {
                 "roles": {
-                    "entityType": true
+                    "sourceUrl": true
                 },
                 "type": {
                     "underlyingType": 1,
                     "category": null
                 },
-                "displayName": "facet",
-                "queryName": "concepts.facet",
+                "displayName": "source_url",
+                "queryName": "documents.source_url",
                 "expr": {
                     "_kind": 2,
                     "source": {
                         "_kind": 0,
-                        "entity": "concepts"
+                        "entity": "documents"
                     },
-                    "ref": "facet"
+                    "ref": "source_url"
+                }
+            },
+            {
+                "roles": {
+                    "sourceImage": true
+                },
+                "type": {
+                    "underlyingType": 1,
+                    "category": null
+                },
+                "displayName": "source_image",
+                "queryName": "documents.source_image",
+                "expr": {
+                    "_kind": 2,
+                    "source": {
+                        "_kind": 0,
+                        "entity": "documents"
+                    },
+                    "ref": "source_image"
+                }
+            },
+            {
+                "roles": {
+                    "articleDate": true
+                },
+                "type": {
+                    "underlyingType": 519,
+                    "category": null,
+                    "temporalType": {
+                        "underlyingType": 519
+                    }
+                },
+                "format": "dddd\\, MMMM %d\\, yyyy",
+                "displayName": "source_date",
+                "queryName": "documents.source_date",
+                "expr": {
+                    "_kind": 2,
+                    "source": {
+                        "_kind": 0,
+                        "entity": "documents"
+                    },
+                    "ref": "source_date"
                 }
             },
             {
@@ -300,29 +338,24 @@ export default {
                     "category": null
                 },
                 "displayName": "Count of article_id",
-                "queryName": "CountNonNull(documentConcepts.article_id)",
+                "queryName": "CountNonNull(documents.article_id)",
                 "expr": {
                     "_kind": 4,
                     "arg": {
                         "_kind": 2,
                         "source": {
                             "_kind": 0,
-                            "entity": "documentConcepts"
+                            "entity": "documents"
                         },
                         "ref": "article_id"
                     },
                     "func": 5
                 }
             }
-        ],
-        objects: {
-            "presentation": {
-                "wrap": true
-            }
-        }
+        ]
     },
-    categorical: {
-        categories: [
+    "categorical": {
+        "categories": [
             {
                 "source": {
                     "roles": {
@@ -438,15 +471,15 @@ export default {
                         "underlyingType": 1,
                         "category": null
                     },
-                    "displayName": " author",
-                    "queryName": "documents. author",
+                    "displayName": "author",
+                    "queryName": "documents.author",
                     "expr": {
                         "_kind": 2,
                         "source": {
                             "_kind": 0,
                             "entity": "documents"
                         },
-                        "ref": " author"
+                        "ref": "author"
                     }
                 }
             },
@@ -562,6 +595,27 @@ export default {
             {
                 "source": {
                     "roles": {
+                        "entityId": true
+                    },
+                    "type": {
+                        "underlyingType": 1,
+                        "category": null
+                    },
+                    "displayName": "concept_id",
+                    "queryName": "concepts.concept_id",
+                    "expr": {
+                        "_kind": 2,
+                        "source": {
+                            "_kind": 0,
+                            "entity": "concepts"
+                        },
+                        "ref": "concept_id"
+                    }
+                }
+            },
+            {
+                "source": {
+                    "roles": {
                         "entityName": true
                     },
                     "type": {
@@ -642,33 +696,55 @@ export default {
                         "ref": "class"
                     }
                 }
-            }
-        ],
-        values: [ {
-            "source": {
-                "roles": {
-                    "articleValue": true
-                },
-                "type": {
-                    "underlyingType": 260,
-                    "category": null
-                },
-                "displayName": "Count of article_id",
-                "queryName": "CountNonNull(documentConcepts.article_id)",
-                "expr": {
-                    "_kind": 4,
-                    "arg": {
+            },
+            {
+                "source": {
+                    "roles": {
+                        "bucket": true
+                    },
+                    "type": {
+                        "underlyingType": 1,
+                        "category": null
+                    },
+                    "displayName": "bucket",
+                    "queryName": "documentConcepts.bucket",
+                    "expr": {
                         "_kind": 2,
                         "source": {
                             "_kind": 0,
                             "entity": "documentConcepts"
                         },
-                        "ref": "article_id"
-                    },
-                    "func": 5
+                        "ref": "bucket"
+                    }
                 }
             }
-        }
+        ],
+        "values": [
+            {
+                "source": {
+                    "roles": {
+                        "articleValue": true
+                    },
+                    "type": {
+                        "underlyingType": 260,
+                        "category": null
+                    },
+                    "displayName": "Count of article_id",
+                    "queryName": "CountNonNull(documents.article_id)",
+                    "expr": {
+                        "_kind": 4,
+                        "arg": {
+                            "_kind": 2,
+                            "source": {
+                                "_kind": 0,
+                                "entity": "documents"
+                            },
+                            "ref": "article_id"
+                        },
+                        "func": 5
+                    }
+                }
+            }
         ]
     }
 }

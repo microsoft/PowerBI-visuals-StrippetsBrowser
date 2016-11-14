@@ -91,6 +91,8 @@ describe("The Strippets Browser Component", function () {
         expect(converted.items[0].entities.length).to.equal(159);
         expect(converted.iconMap).to.be.ok;
         expect(converted.highlights).to.be.null;
+        expect(converted.items[0].entities[0].bucket).to.be.ok;
+        expect(converted.items[0].entities[0].bucket.key).to.equal('Level 1');
     });
 
     it("converts data with highlights", function () {

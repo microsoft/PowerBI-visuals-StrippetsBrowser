@@ -366,6 +366,10 @@
         transition: opacity 0.5s ease-out; }
       #thumbnails-panel .outlineItemContainer.read .outlineItem:hover .readingSlider {
         opacity: 0.15; }
+      #thumbnails-panel .outlineItemContainer.read .outlineItem .sourceLink {
+        display: block;
+        height: 40px;
+        width: 100%; }
     #thumbnails-panel .outlineItemContainer.hidden .outlineItem {
       cursor: default; }
     #thumbnails-panel .outlineItemContainer.minimized .outlineHeader .sourceText {

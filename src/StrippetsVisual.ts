@@ -3,13 +3,14 @@
 
 import IVisual = powerbi.extensibility.v110.IVisual;
 import VisualConstructorOptions = powerbi.extensibility.v110.VisualConstructorOptions;
-import VisualUpdateOptions = powerbi.extensibility.v110.VisualUpdateOptions;
+import VisualUpdateOptions = powerbi.VisualUpdateOptions;
 import DataView = powerbi.DataView;
 import IEnumType = powerbi.IEnumType;
 import IVisualStyle = powerbi.IVisualStyle;
 import VisualCapabilities = powerbi.VisualCapabilities;
 import VisualInitOptions = powerbi.VisualInitOptions;
 import VisualDataRoleKind = powerbi.VisualDataRoleKind;
+import VisualDataChangeOperationKind = powerbi.VisualDataChangeOperationKind;
 import IDataColorPalette = powerbi.IDataColorPalette;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 import IVisualHostServices = powerbi.IVisualHostServices;
@@ -27,8 +28,6 @@ import * as _ from 'lodash';
 require('velocity-animate');
 const moment = require('moment');
 const COLOR_PALETTE = ['#FF001F', '#FF8000', '#AC8000', '#95AF00', '#1BBB6A', '#00C6E1', '#B44AE7', '#DB00B0'];
-//const COLOR_HIGHLIGHT = '#00BFFF';
-const DOCUMENT_REQUEST_COUNT = 200;
 const OUTLINE_WIDTH = 24;
 const ENTITIES_REPOSITION_DELAY = 500;
 const HTML_WHITELIST_STANDARD = [
@@ -187,6 +186,24 @@ export default class StrippetsVisual implements IVisual {
             return null;
         };
 
+        const populateUncertaintyFields = function (entity, entityIds, buckets, index) {
+            if (entityIds.length > index && (entityIds[index] || entityIds[index] === 0)) {
+                entity.id = entityIds[index];
+                if (buckets.length > index) {
+                    entity.bucket = getBucket(buckets[index]);
+                }
+            }
+        };
+
+        const populateUncertaintyFieldsCompressed = function (entity, parsedEntity) {
+            if (parsedEntity.hasOwnProperty('entityId')) {
+                entity.id = parsedEntity.entityId;
+                if (parsedEntity.hasOwnProperty('bucket')) {
+                    entity.bucket = getBucket(parsedEntity);
+                }
+            }
+        };
+
         categoriesDV[categories['id']] && categoriesDV[categories['id']].values.slice(lastDataViewLength).forEach((id :any, adjustedIndex) => {
             // highlight table is not compensated. Since we slice the values, we need to compensate for the slice. Slicing at the highlights level
             // will result in slower performance.
@@ -213,8 +230,6 @@ export default class StrippetsVisual implements IVisual {
                 };
             }
 
-
-
             const entityTypesString = String((categories['entityType'] && categoriesDV[categories['entityType']].values[index]) || '');
             const parsedEntityType = (toParse => {
                 try {
@@ -229,24 +244,29 @@ export default class StrippetsVisual implements IVisual {
                 'entityValue' in parsedEntityType[0] &&
                 'offsetPercentage' in parsedEntityType[0]) {
                 // generate the instances based on the data in the JSON
+
                 for (let i = 0, n = parsedEntityType.length; i < n; ++i) {
                     const parsedEntity = parsedEntityType[i];
                     const entityFirstPosition = parseFloat(parsedEntity.offsetPercentage);
-                    const entity = {
+                    const entity: any = {
                         id: parsedEntity.entityId || null,
                         name: parsedEntity.entityValue || '',
                         type: parsedEntity.entityType || '',
                         firstPosition: isNaN(entityFirstPosition) ? null : entityFirstPosition,
+                        bucket: getBucket(parsedEntity.bucket)
                     };
+
+                    populateUncertaintyFieldsCompressed(entity, parsedEntity);
 
                     if (entity.type && entity.name) {
                         const entityTypeId = entity.type + '_' + entity.name;
                         if (isHighlighted && !highlightedEntities[entityTypeId]) {
                             highlightedEntities[entityTypeId] = {
-                                id: entity.id,
                                 type: entity.type,
-                                name: entity.name
+                                name: entity.name,
+                                bucket: entity.bucket
                             };
+                            populateUncertaintyFieldsCompressed(entity, parsedEntity);
                         }
                         if (updateIM && !iconMap[entityTypeId]) {
                             iconMap[entityTypeId] = {
@@ -279,14 +299,13 @@ export default class StrippetsVisual implements IVisual {
                         const entityClass = entityClasses.length > i ? entityClasses[i] : null;
                         let bucket: Bucket = null;
 
-                        const entity = {
-                            id: entityIds.length > i ? entityIds[i] : '',
+                        let entity: any = {
                             name: entityNames.length > i ? entityNames[i] : '',
                             type: entityTypes.length > i ? entityTypes[i] : '',
                             firstPosition: entityPositions.length > i ? parseFloat(entityPositions[i]) : null,
-                            bucket: getBucket(buckets[i]),
-                            //isHighlighted: isHighlighted,
                         };
+
+                        populateUncertaintyFields(entity, entityIds, buckets, i);
 
                         if (entity.type && entity.name) {
                             const entityTypeId = entity.type + '_' + entity.name;
@@ -772,6 +791,7 @@ export default class StrippetsVisual implements IVisual {
     private initializeThumbnails():any {
         const t = this;
         const Thumbnails = require("@uncharted/thumbnails/src/thumbnails");
+        const thumbnailsDefaults = require("@uncharted/thumbnails/src/thumbnails.defaults");
         const $thumbnails = t.thumbnails.$elem;
         const thumbnailsInstance = new Thumbnails({
             container: $thumbnails,
@@ -796,7 +816,7 @@ export default class StrippetsVisual implements IVisual {
         //set up infinite scroll
         let infiniteScrollTimeoutId:any;
         thumbnailsInstance._$element.on('scroll', (e)=> {
-            if ($(e.target).hasClass('horizontal-align')) {
+            if ($(e.target).hasClass(thumbnailsDefaults.classes.thumbnails.inlineThumbnails.slice(1))) {
                 if ($(e.target).width() + e.target.scrollLeft >= e.target.scrollWidth) {
                     infiniteScrollTimeoutId = setTimeout(()=> {
                         clearTimeout(infiniteScrollTimeoutId);
@@ -886,23 +906,16 @@ export default class StrippetsVisual implements IVisual {
             // if first load, make sure outlines are filled (for situations where there are alot of entities)
             if (options.type & powerbi.VisualUpdateType.Data && dataView.categorical && dataView.categorical.categories) {
                 //Sandbox mode vs non-sandbox mode handles merge data differently.
-                const lastMergeIndex = (<DataViewCategoricalSegment>dataView.categorical).lastMergeIndex;
                 const currentDataViewSize = dataView.categorical.categories[0].values.length;
                 let currentRowCount = dataView.categorical.categories[0].values.length;
                 let loadedPreviously = false;
-                if (lastMergeIndex !== undefined) {
-                    loadedPreviously = !!this.data;
-                    currentRowCount = (DOCUMENT_REQUEST_COUNT * lastMergeIndex || 0) + currentDataViewSize;
-                } else {
-                    // assume that if the dataview length <= the document request size, then its new data.
-                    if (currentDataViewSize > DOCUMENT_REQUEST_COUNT) {
-                        loadedPreviously = true;
-                        currentRowCount = currentDataViewSize;
-                    }
+
+                if (options.operationKind === VisualDataChangeOperationKind.Append) {
+                    loadedPreviously = true;
+                    currentRowCount = currentDataViewSize;
                 }
 
                 const previousLastItemIndex = loadedPreviously ? this.data.items.length - 1 : 0;
-
 
                 const isHighlighting = dataView.categorical.values
                     && dataView.categorical.values[0].highlights
@@ -914,7 +927,7 @@ export default class StrippetsVisual implements IVisual {
                 }
                 this.hasMoreData = !!dataView.metadata.segment;
 
-                const data = StrippetsVisual.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, (loadedPreviously && lastMergeIndex === undefined) ? this.lastDataViewLength : 0);
+                const data = StrippetsVisual.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, loadedPreviously ? this.lastDataViewLength : 0);
                 this.lastDataViewLength = currentDataViewSize;
 
                 //  initialize with highlighting disabled
