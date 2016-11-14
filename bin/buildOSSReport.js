@@ -53,7 +53,7 @@ function parseNPMLL(cb) {
             try {
                 parsed = JSON.parse(output);
             } catch (e) {
-                console.log('Cannot parse `npm ll` output:', e);
+                console.warn('Cannot parse `npm ll` output:', e);
                 parsed = null;
             }
             cb(parsed);
