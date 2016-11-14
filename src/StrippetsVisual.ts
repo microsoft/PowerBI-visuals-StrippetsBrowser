@@ -240,15 +240,20 @@ export default class StrippetsVisual implements IVisual {
             })(entityTypesString);
 
             if (parsedEntityType instanceof Array &&
-                parsedEntityType[0].entityType && parsedEntityType[0].entityValue && parsedEntityType[0].offsetPercentage) {
+                'entityType' in parsedEntityType[0] &&
+                'entityValue' in parsedEntityType[0] &&
+                'offsetPercentage' in parsedEntityType[0]) {
                 // generate the instances based on the data in the JSON
 
                 for (let i = 0, n = parsedEntityType.length; i < n; ++i) {
                     const parsedEntity = parsedEntityType[i];
-                    let entity: any = {
+                    const entityFirstPosition = parseFloat(parsedEntity.offsetPercentage);
+                    const entity: any = {
+                        id: parsedEntity.entityId || null,
                         name: parsedEntity.entityValue || '',
                         type: parsedEntity.entityType || '',
-                        firstPosition: parsedEntity.offsetPercentage || null,
+                        firstPosition: isNaN(entityFirstPosition) ? null : entityFirstPosition,
+                        bucket: getBucket(parsedEntity.bucket)
                     };
 
                     populateUncertaintyFieldsCompressed(entity, parsedEntity);
@@ -259,6 +264,7 @@ export default class StrippetsVisual implements IVisual {
                             highlightedEntities[entityTypeId] = {
                                 type: entity.type,
                                 name: entity.name,
+                                bucket: entity.bucket
                             };
                             populateUncertaintyFieldsCompressed(entity, parsedEntity);
                         }
