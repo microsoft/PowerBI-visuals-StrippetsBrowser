@@ -1,3 +1,26 @@
+/**
+ * Copyright (c) 2016 Uncharted Software Inc.
+ * http://www.uncharted.software/
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 // fake powerbi functions
 window['powerbi'] = {
     DataViewObjects: {
@@ -85,11 +108,17 @@ describe("The Strippets Browser Component", function () {
         populateData(
             values.explodingPhones
         );
-        const converted = StrippetsVisual.converter(dataView);
+        const converted = StrippetsVisual.converter(dataView, true);
         expect(converted.items).to.be.ok;
         expect(converted.items[0].isHighlighted).to.be.false;
         expect(converted.items[0].entities.length).to.equal(159);
+
         expect(converted.iconMap).to.be.ok;
+        expect(converted.iconMap.length).to.equal(117);
+        expect(converted.iconMap[114].name).to.equal('Jeff Dahn');
+        expect(converted.iconMap[115].class).to.equal('fa fa-circle');
+        expect(converted.iconMap[116].type).to.equal('person');
+
         expect(converted.highlights).to.be.null;
         expect(converted.items[0].entities[0].bucket).to.be.ok;
         expect(converted.items[0].entities[0].bucket.key).to.equal('Level 1');
