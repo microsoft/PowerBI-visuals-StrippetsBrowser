@@ -1,13 +1,13 @@
 {
   "name": "@uncharted/thumbnails",
-  "version": "0.4.6",
-  "description": "thumbnails",
+  "version": "0.4.7",
+  "description": "Uncharted Software Inc. Thumbnails visual component",
   "main": "dist/uncharted.thumbnails.js",
   "scripts": {
     "test": "sh ./thumbnails.sh -t"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "browserify": "^12.0.1",
     "browserify-handlebars": "^1.0.0",
@@ -56,7 +56,7 @@
     "velocity-animate": "^1.2.3",
     "font-awesome": "^4.4.0",
     "@uncharted/stories.common": "0.2.0",
-    "@uncharted/strippets": "0.4.12",
+    "@uncharted/strippets": "0.4.13",
     "handlebars": "^4.0.5"
   },
   "jspm": {
