@@ -95,7 +95,7 @@
   /************** Reading Mode **************/
   &.read {
     .outlineItem {
-      margin: 0px 5px 0px 5px;
+      margin: 0 5px 0 5px;
       float: right;
       z-index: 1;
 
@@ -119,6 +119,9 @@
         width: 100%;
       }
     }
+    .fa-window-close-o {
+      visibility: visible;
+    }
   }
   &.expanded {
 
@@ -127,10 +130,16 @@
     .outlineItem {
       cursor: default;
     }
+    .fa-window-close-o {
+      visibility: hidden;
+    }
   }
   &.minimized {
     .outlineHeader .sourceText {
       width: 0;
+    }
+    .fa-window-close-o {
+      visibility: hidden;
     }
   }
 }

@@ -596,7 +596,7 @@
       float: right;
       position: relative; }
     #thumbnails-panel .outlineItemContainer.read .outlineItem {
-      margin: 0px 5px 0px 5px;
+      margin: 0 5px 0 5px;
       float: right;
       z-index: 1; }
       #thumbnails-panel .outlineItemContainer.read .outlineItem .readingSlider {
@@ -612,10 +612,16 @@
         display: block;
         height: 40px;
         width: 100%; }
+    #thumbnails-panel .outlineItemContainer.read .fa-window-close-o {
+      visibility: visible; }
     #thumbnails-panel .outlineItemContainer.hidden .outlineItem {
       cursor: default; }
+    #thumbnails-panel .outlineItemContainer.hidden .fa-window-close-o {
+      visibility: hidden; }
     #thumbnails-panel .outlineItemContainer.minimized .outlineHeader .sourceText {
       width: 0; }
+    #thumbnails-panel .outlineItemContainer.minimized .fa-window-close-o {
+      visibility: hidden; }
   #thumbnails-panel .mainOutlineContent {
     float: left;
     height: calc(100% - 32px);
@@ -862,10 +868,8 @@
         display: table-caption;
         caption-side: bottom; }
       #thumbnails-panel .reader .readerContentBody .meta-line {
-        margin-bottom: 10px;
-        margin-top: 0px;
         list-style: none;
-        margin: 0 0 10 0;
+        margin: 0 0 10px 0;
         padding: 0;
         overflow: hidden; }
       #thumbnails-panel .reader .readerContentBody .meta-line li {
@@ -944,6 +948,14 @@
       #thumbnails-panel .reader .readerContentError .reader-broken .err-info {
         color: #aaa;
         cursor: pointer; }
+    #thumbnails-panel .reader i {
+      margin-right: 4px;
+      position: absolute;
+      top: 36px;
+      z-index: 200;
+      opacity: 0.75; }
+      #thumbnails-panel .reader i:hover {
+        opacity: 1; }
   #thumbnails-panel .outlineItemContainer {
     margin: 0;
     height: 100%; }
