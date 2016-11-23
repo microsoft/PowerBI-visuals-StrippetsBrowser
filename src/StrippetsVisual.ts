@@ -582,11 +582,6 @@ export default class StrippetsVisual implements IVisual {
             let div = $('<div/>');
             div.html(html);
 
-            // Upcase the whitelist for easier matching later
-            //length = whiteList.length;
-            //for (i = 0; i < length; i++) {
-            //    whiteList[i] = whiteList[i].toUpperCase();
-            //}
             let filter: NodeFilter = {
                 acceptNode: (node) => {
                     if (whiteList.indexOf(node.nodeName.toUpperCase()) === -1) {
