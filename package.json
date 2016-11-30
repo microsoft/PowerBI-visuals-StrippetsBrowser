@@ -23,9 +23,9 @@
   "author": "Uncharted Software Inc.",
   "license": "MIT",
   "privateSubmodules": {
-    "@uncharted/stories.common": "0.2.0",
-    "@uncharted/strippets": "0.4.15",
-    "@uncharted/thumbnails": "0.4.9"
+    "@uncharted/strippets.common": "0.2.1",
+    "@uncharted/strippets": "0.4.17",
+    "@uncharted/thumbnails": "0.4.11"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.35",

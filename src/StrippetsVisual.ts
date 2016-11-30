@@ -43,6 +43,7 @@ import SelectionManager = powerbi.visuals.utility.SelectionManager;
 import SelectionId = powerbi.visuals.SelectionId;
 import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
+import IColorInfo = powerbi.IColorInfo;
 import {Bucket, HitNode} from './interfaces.ts';
 
 import * as Promise from 'bluebird';
@@ -211,6 +212,7 @@ export default class StrippetsVisual implements IVisual {
     private thumbnailViewportHeight:number = 0;
     private resizeOutlines:Function;
     private thumbnailsWrapTimeout:any = null;
+    private colors: IColorInfo[];
 
     /**
      * Convert PowerBI data into a format compatible with the Thumbnails and Outlines components.
@@ -220,12 +222,12 @@ export default class StrippetsVisual implements IVisual {
      * @param {Number=} lastDataViewLength - If we're appending, the number of rows in the previous dataView
      * @returns {{items: *, iconMap: any, highlights: {entities: any, itemIds: any}}} data in the components' internal format
      */
-    public static converter(dataView:DataView, updateIconMap:boolean = false, appendTo?:any, lastDataViewLength:number = 0) {
+    public static converter(dataView:DataView, updateIconMap:boolean = false, appendTo?:any, lastDataViewLength:number = 0, defaultColors = []) {
         const categoricalDV = dataView.categorical;
         const categoriesDV = categoricalDV.categories;
         const valuesDV = categoricalDV.values;
         const categories = <any>{};
-        const colors = COLOR_PALETTE.slice();
+        const colors = COLOR_PALETTE.slice().concat(defaultColors.map((color: IColorInfo) => color.value));
 
         categoriesDV.forEach((category, index) => {
             Object.keys(category.source.roles).forEach(categoryName => categories[categoryName] = index)
@@ -488,6 +490,7 @@ export default class StrippetsVisual implements IVisual {
         this.$tabs = this.element.find('.nav');
         this.host = options.host.createSelectionManager()['hostServices'];
         this.selectionManager = new SelectionManager({hostServices: this.host});
+        this.colors = options.host.colors;
 
         this.inSandbox = this.element.parents('body.visual-sandbox').length > 0;
 
@@ -1020,7 +1023,7 @@ export default class StrippetsVisual implements IVisual {
                 }
                 this.hasMoreData = !!dataView.metadata.segment;
 
-                const data = StrippetsVisual.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, loadedPreviously ? this.lastDataViewLength : 0);
+                const data = StrippetsVisual.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, loadedPreviously ? this.lastDataViewLength : 0, this.colors);
                 this.lastDataViewLength = currentDataViewSize;
 
                 //  initialize with highlighting disabled
