@@ -348,15 +348,15 @@
         display: block;
         height: 40px;
         width: 100%; }
-    .strippets .outlineItemContainer.read .fa-window-close-o {
+    .strippets .outlineItemContainer.read ._window-close {
       visibility: visible; }
     .strippets .outlineItemContainer.hidden .outlineItem {
       cursor: default; }
-    .strippets .outlineItemContainer.hidden .fa-window-close-o {
+    .strippets .outlineItemContainer.hidden ._window-close {
       visibility: hidden; }
     .strippets .outlineItemContainer.minimized .outlineHeader .sourceText {
       width: 0; }
-    .strippets .outlineItemContainer.minimized .fa-window-close-o {
+    .strippets .outlineItemContainer.minimized ._window-close {
       visibility: hidden; }
   .strippets .mainOutlineContent {
     float: left;
@@ -684,11 +684,11 @@
       .strippets .reader .readerContentError .reader-broken .err-info {
         color: #aaa;
         cursor: pointer; }
-    .strippets .reader i {
-      margin-right: 4px;
+    .strippets .reader ._window-close {
+      margin-right: 6px;
       position: absolute;
       top: 36px;
       z-index: 200;
       opacity: 0.75; }
-      .strippets .reader i:hover {
+      .strippets .reader ._window-close:hover {
         opacity: 1; }
