@@ -286,18 +286,16 @@
       "properties": {
         "strippetType": {
           "type": {
-            "enumeration": {
-              "allMembers": [
-                {
-                  "displayName": "Outlines",
-                  "value": "outlines"
-                },
-                {
-                  "displayName": "Thumbnails",
-                  "value": "thumbnails"
-                }
-              ]
-            }
+            "enumeration": [
+              {
+                "displayName": "Outlines",
+                "value": "outlines"
+              },
+              {
+                "displayName": "Thumbnails",
+                "value": "thumbnails"
+              }
+            ]
           },
           "displayName": "Default",
           "description": "Determines Initial Strippet to Display"
@@ -323,18 +321,16 @@
       "properties": {
         "readerContentType": {
           "type": {
-            "enumeration": {
-              "allMembers": [
-                {
-                  "displayName": "HTML",
-                  "value": "html"
-                },
-                {
-                  "displayName": "Readability URL",
-                  "value": "readability"
-                }
-              ]
-            }
+            "enumeration": [
+              {
+                "displayName": "HTML",
+                "value": "html"
+              },
+              {
+                "displayName": "Readability URL",
+                "value": "readability"
+              }
+            ]
           },
           "displayName": "Type",
           "description": "Specify the content format."

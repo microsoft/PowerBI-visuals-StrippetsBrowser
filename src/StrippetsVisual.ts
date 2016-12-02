@@ -999,6 +999,18 @@ export default class StrippetsVisual implements IVisual {
                 this.resizeOutlines();
             }
 
+            // TODO: is this necessary to fix the default value bug?
+            // update settings
+            if (options.dataViews && options.dataViews.length > 0) {
+                const dataView = options.dataViews[0];
+                const newObjects:any = dataView && dataView.metadata && dataView.metadata.objects;
+                if (newObjects) {
+                    if (newObjects && !_.isMatch(this.settings, newObjects)) {
+                        $.extend(true, this.settings, newObjects);
+                    }
+                }
+            }
+
             // if first load, make sure outlines are filled (for situations where there are alot of entities)
             if (options.type & powerbi.VisualUpdateType.Data && dataView.categorical && dataView.categorical.categories) {
                 //Sandbox mode vs non-sandbox mode handles merge data differently.
@@ -1396,13 +1408,39 @@ export default class StrippetsVisual implements IVisual {
     //    ];
     //}
 
-    public enumerateObjectInstances(options:EnumerateVisualObjectInstancesOptions):VisualObjectInstance[] {
-        let instances:VisualObjectInstance[] = [{
+    /**
+     * Enumerates the instances for the objects that appear in the PowerBI panel.
+     *
+     * @method enumerateObjectInstances
+     * @param {EnumerateVisualObjectInstancesOptions} options - Options object containing the objects to enumerate, as provided by PowerBI.
+     * @returns {VisualObjectInstance[]}
+     */
+    public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] {
+        let instances: VisualObjectInstance[] = [{
             selector: null,
             objectName: options.objectName,
             properties: {}
         }];
         $.extend(true, instances[0].properties, this.settings[options.objectName]);
         return instances;
+    }
+
+    /**
+     * StrippetBrowser's visualization destroy method. Called by PowerBI.
+     *
+     * @method destroy
+     */
+    public destroy(): void {
+        if (this.thumbnails.instance) {
+            this.thumbnails.instance._unregisterEvents();
+            this.thumbnails.instance._resetThumbnailsContainer();
+        }
+
+        this.thumbnails = null;
+        this.outlines = null;
+
+        this.data = null;
+        this.selectionManager = null;
+        this.host = null;
     }
 }

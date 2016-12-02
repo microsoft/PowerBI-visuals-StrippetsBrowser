@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+/* tslint:disable:quotemark */
 export default {
     "metadata": {
         "columns": [
@@ -770,4 +770,4 @@ export default {
             }
         ]
     }
-}
+};
