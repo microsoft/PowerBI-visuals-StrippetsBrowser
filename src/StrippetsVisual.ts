@@ -486,6 +486,10 @@ export default class StrippetsVisual implements IVisual {
         this.element = $('<div/>');
         this.element.append(template());
         $(options.element).append(this.element);
+
+        // prevent dragging in the visual from moving the visual
+        $(options.element).on('mousedown mouseup click focus blur input pointerdown pointerup touchstart touchdown', (e) => e.stopPropagation());
+
         this.$container = this.element.find('#strippets-container');
         this.$tabs = this.element.find('.nav');
         this.host = options.host.createSelectionManager()['hostServices'];
