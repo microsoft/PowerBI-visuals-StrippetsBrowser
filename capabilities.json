@@ -3,7 +3,7 @@
     {
       "name": "id",
       "displayName": "Document Id",
-      "description": "Unique ID for each article",
+      "description": "Unique ID for the document",
       "kind": 0
     },
     {
@@ -15,7 +15,7 @@
     {
       "name": "title",
       "displayName": "Title",
-      "description": "Title of each article; shown on thumbnails and in the reader",
+      "description": "Title of the document; shown on thumbnails and in the reader",
       "kind": 0
     },
     {
@@ -33,25 +33,25 @@
     {
       "name": "imageUrl",
       "displayName": "Title Image (url)",
-      "description": "Main image for each article; displayed on thumbnails and in the reader",
+      "description": "Main image for the document; displayed on thumbnails and in the reader",
       "kind": 0
     },
     {
       "name": "author",
       "displayName": "Author",
-      "description": "Author byline for each article; displayed on thumbnails and in the reader",
+      "description": "Author for the byline displayed on thumbnails and in the reader",
       "kind": 0
     },
     {
       "name": "source",
       "displayName": "Source",
-      "description": "Source domain for each article; shown in the reader header bar",
+      "description": "Source domain for the document; shown in the reader header bar",
       "kind": 0
     },
     {
       "name": "sourceUrl",
       "displayName": "Source URL",
-      "description": "Source link for each article; accessed by clicking the reader header bar",
+      "description": "Source link for the document; accessed by clicking the reader header bar",
       "kind": 0
     },
     {
@@ -63,7 +63,7 @@
     {
       "name": "articleDate",
       "displayName": "Source Date",
-      "description": "Date for the byline for each article; displayed on thumbnails and in the reader",
+      "description": "Date for the byline displayed on thumbnails and in the reader",
       "kind": 0
     },
     {
@@ -81,31 +81,31 @@
     {
       "name": "entityName",
       "displayName": "Entity Name",
-      "description": "Display name of an entity, shown in Outline tooltips",
+      "description": "Display name of an entity; shown in Outline tooltips",
       "kind": 0
     },
     {
       "name": "entityPosition",
       "displayName": "Entity Position",
-      "description": "Normalized position of the entity within the document; used to layout entity icons in Outlines",
+      "description": "Normalized position of an entity within the document; used to layout entity icons in Outlines",
       "kind": 0
     },
     {
       "name": "bucket",
-      "displayName": "Bucket",
-      "description": "Used to segment entities with uncertain type",
+      "displayName": "Segmented By",
+      "description": "Used to segment entities with uncertain Entity Type",
       "kind": 0
     },
     {
       "name": "entityTypeColor",
       "displayName": "Entity Icon Color",
-      "description": "Color of the entity's icon, for display on the Outline",
+      "description": "Color of the entity's Outline icon",
       "kind": 0
     },
     {
       "name": "entityTypeClass",
       "displayName": "Entity Icon Class",
-      "description": "Category of the entity, used to select an icon for display on the Outline",
+      "description": "Category of the entity used to select an icon for display on the Outline",
       "kind": 0
     }
   ],
