@@ -72,10 +72,6 @@
     "handlebars": "^4.0.5",
     "jquery": "^3.1.1",
     "lodash": "^4.11.2",
-    "moment": "^2.13.0",
-    "react": "^0.14.8",
-    "react-addons-create-fragment": "^0.14.8",
-    "snapsvg": "git+https://github.com/darthtrevino/Snap.svg.git#447-commonjs-support",
-    "velocity-animate": "^1.2.3"
+    "moment": "^2.13.0"
   }
 }

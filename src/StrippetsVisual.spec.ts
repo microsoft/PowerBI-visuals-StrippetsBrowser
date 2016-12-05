@@ -53,7 +53,7 @@ import testDataValues from './test_data/testDataValues';
 import DataViewObjects = powerbi.DataViewObjects;
 import * as _ from 'lodash';
 
-var testHtmlStrings = require('./test_data/testHtmlStrings.js');
+let testHtmlStrings = require('./test_data/testHtmlStrings.js');
 
 // pbi wraps the categories with a "wrapCtor" that has the actual data accessors
 function wrapCtor(category, values) {
@@ -63,10 +63,10 @@ function wrapCtor(category, values) {
     this.values = values || [];
 }
 
-describe("The Strippets Browser Component", function () {
-    var strippets;
-    var dataView;
-    var values;
+describe('The Strippets Browser Component', function () {
+    let strippets;
+    let dataView;
+    let values;
 
     function populateData(data, highlights = null) {
         dataView.categorical.categories = dataView.categorical.categories.map(function (category, index) {
@@ -91,12 +91,12 @@ describe("The Strippets Browser Component", function () {
         dataView = _.cloneDeep(mockDataView);
     });
 
-    it("exists", function () {
+    it('exists', function () {
         expect(StrippetsVisual).to.be.ok;
         expect(strippets).to.be.ok;
     });
 
-    it("converts empty data", function () {
+    it('converts empty data', function () {
         populateData([]);
         const converted = StrippetsVisual.converter(dataView);
         expect(converted.items).to.be.ok;
@@ -104,7 +104,7 @@ describe("The Strippets Browser Component", function () {
         expect(converted.highlights).to.be.null;
     });
 
-    it("converts normal data", function () {
+    it('converts normal data', function () {
         populateData(
             values.explodingPhones
         );
@@ -124,7 +124,7 @@ describe("The Strippets Browser Component", function () {
         expect(converted.items[0].entities[0].bucket.key).to.equal('Level 1');
     });
 
-    it("converts data with highlights", function () {
+    it('converts data with highlights', function () {
         populateData(
             values.explodingPhones,
             values.highlights
@@ -138,7 +138,7 @@ describe("The Strippets Browser Component", function () {
         expect(converted.highlights.itemIds.length).to.equal(1);
     });
 
-    it("converts compressed entities data", function () {
+    it('converts compressed entities data', function () {
         populateData(
             values.pokemon
         );
@@ -149,24 +149,24 @@ describe("The Strippets Browser Component", function () {
         expect(converted.highlights).to.be.null;
     });
 
-    it("sanitizes HTML", function () {
+    it('sanitizes HTML', function () {
         const sanitized = StrippetsVisual.sanitizeHTML(testHtmlStrings.pokemon, StrippetsVisual.HTML_WHITELIST_CONTENT);
         expect(sanitized).to.be.ok;
         expect(sanitized.indexOf('<script>')).to.equal(-1);
         expect(sanitized.indexOf('<SCRIPT>')).to.equal(-1);
     });
 
-    it("recognizes URLs", function () {
+    it('recognizes URLs', function () {
         expect(StrippetsVisual.isUrl('http://uncharted.software')).to.be.true;
         expect(StrippetsVisual.isUrl('https://unchartedsoftware.com')).to.be.true;
         expect(StrippetsVisual.isUrl('notAUrl')).to.be.false;
         expect(StrippetsVisual.isUrl('<div><a href="http://uncharted.software">Uncharted Software</a></div>')).to.be.false;
     });
 
-    it("highlights text", function () {
-        var mock = {
+    it('highlights text', function () {
+        let mock = {
             Node: function () {
-                this.nodeValue = "citing documents leaked to Korea's SBS (via ";
+                this.nodeValue = 'citing documents leaked to Korea\'s SBS (via ';
                 this.hasHits = true;
             }
         };
@@ -187,12 +187,12 @@ describe("The Strippets Browser Component", function () {
         sinon.spy(mock, 'Node');
         sinon.spy(mock.Node.prototype.ownerDocument, 'createElementNS');
 
-        var regex = /\bKorea\b/gi;
-        var node = new mock.Node();
-        var newNodeType = 'span';
+        let regex = /\bKorea\b/gi;
+        let node = new mock.Node();
+        let newNodeType = 'span';
 
         StrippetsVisual.textNodeReplace(node, regex, function (match) {
-            expect(match).to.equal("Korea");
+            expect(match).to.equal('Korea');
             return {
                 name: newNodeType,
                 content: match

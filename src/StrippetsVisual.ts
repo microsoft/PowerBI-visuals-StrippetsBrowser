@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-/// <reference path="../node_modules/powerbi-visuals/lib/powerbi-visuals.d.ts"/>
+/// <reference path='../node_modules/powerbi-visuals/lib/powerbi-visuals.d.ts'/>
 // /* tslint:disable:quotemark */
 /* global powerbi, require, window */
 
@@ -82,24 +82,24 @@ const ENTITIES_REPOSITION_DELAY = 500;
  * @type {string[]}
  */
 const HTML_WHITELIST_STANDARD = [
-    "A", "ABBR", "ACRONYM", "ADDRESS", "AREA", "ARTICLE", "ASIDE", "AUDIO",
-    "B", "BDI", "BDO", "BLOCKQUOTE", "BR",
-    "CAPTION", "CITE", "CODE", "COL", "COLGROUP",
-    "DD", "DEL", "DETAILS", "DFN", "DIV", "DL", "DT",
-    "EM",
-    "FIGCAPTION", "FIGURE", "FONT", "FOOTER",
-    "H1", "H2", "H3", "H4", "H5", "H6", "HEADER", "HGROUP", "HR", "HTML",
-    "I", "INS",
-    "LEGEND", "LI", "LINK",
-    "MAIN", "MAP",
+    'A', 'ABBR', 'ACRONYM', 'ADDRESS', 'AREA', 'ARTICLE', 'ASIDE', 'AUDIO',
+    'B', 'BDI', 'BDO', 'BLOCKQUOTE', 'BR',
+    'CAPTION', 'CITE', 'CODE', 'COL', 'COLGROUP',
+    'DD', 'DEL', 'DETAILS', 'DFN', 'DIV', 'DL', 'DT',
+    'EM',
+    'FIGCAPTION', 'FIGURE', 'FONT', 'FOOTER',
+    'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'HEADER', 'HGROUP', 'HR', 'HTML',
+    'I', 'INS',
+    'LEGEND', 'LI', 'LINK',
+    'MAIN', 'MAP',
     // We probably don't want navigation, but it's also probably mostly harmless
-    // "NAV",
-    "OL",
-    "P", "PRE",
-    "SECTION", "SMALL", "SOURCE", "SPAN", "STRONG", "STYLE", "SUB", "SUMMARY", "SUP",
-    "TABLE", "TBODY", "TD", "TEXTAREA", "TFOOT", "TH", "THEAD", "TIME", "TR",
-    "U", "UL",
-    "VAR",
+    // 'NAV',
+    'OL',
+    'P', 'PRE',
+    'SECTION', 'SMALL', 'SOURCE', 'SPAN', 'STRONG', 'STYLE', 'SUB', 'SUMMARY', 'SUP',
+    'TABLE', 'TBODY', 'TD', 'TEXTAREA', 'TFOOT', 'TH', 'THEAD', 'TIME', 'TR',
+    'U', 'UL',
+    'VAR',
 ];
 
 /**
@@ -107,10 +107,10 @@ const HTML_WHITELIST_STANDARD = [
  * @type {string[]}
  */
 const HTML_WHITELIST_MEDIA = [
-    "IMG",
-    "PICTURE",
-    "SVG",
-    "VIDEO"
+    'IMG',
+    'PICTURE',
+    'SVG',
+    'VIDEO'
 ];
 
 /**
@@ -140,78 +140,78 @@ export default class StrippetsVisual implements IVisual {
     /**
      * Root div of the visual, parented to PowerBI's container
      */
-    private element:JQuery;
+    private element: JQuery;
 
     /**
      * Inner container: contains Thumbnails & Outlines, but not the nav tab buttons to switch between them
      */
-    private $container:JQuery;
+    private $container: JQuery;
 
     /**
      * Size of the visual, including Thumbnails, Outlines, and the nav tabs
      */
-    private viewportSize:any;
+    private viewportSize: any;
 
     /**
      * Navigation tabs, for switching between Thumbnails and Outlines
      */
-    private $tabs:JQuery;
+    private $tabs: JQuery;
 
     /**
      * An object holding the Outlines instance and its JQuery-wrapped element
      */
-    private outlines:any;
+    private outlines: any;
 
     /**
      * An object holding the Thumbnails instance and its JQuery-wrapped element
      */
-    private thumbnails:any;
+    private thumbnails: any;
 
     /**
      * Local copy of the converted data
      */
-    private data:any;
+    private data: any;
 
     /**
      * True if the visual is sandboxed in an iframe.
      */
-    private inSandbox:boolean;
+    private inSandbox: boolean;
 
     /**
      * The number of rows in the most recent dataView
      * @type {number}
      */
-    private lastDataViewLength:number = 0;
+    private lastDataViewLength: number = 0;
 
     /**
      * True if the visual is requesting additional data from the host (rather than the initial load)
      */
-    private isLoadingMore:boolean;
+    private isLoadingMore: boolean;
 
     /**
      * True if the host has more data available
      */
-    private hasMoreData:boolean;
+    private hasMoreData: boolean;
 
     /**
      * The visual's interface to PowerBI services.
      */
-    private host:IVisualHostServices;
+    private host: IVisualHostServices;
 
     /**
      * Allows the visual to notify the host of changes in selection state.
      */
-    private selectionManager:SelectionManager;
+    private selectionManager: SelectionManager;
     private settings = $.extend({}, StrippetsVisual.DEFAULT_SETTINGS);
-    private baseRowsLoaded:number = 0;
+    private baseRowsLoaded: number = 0;
     private minOutlineCount = 10;
-    private isThumbnailsWrapLayout:boolean;
-    private $loaderElement:JQuery;
+    private isThumbnailsWrapLayout: boolean;
+    private $loaderElement: JQuery;
     private INFINITE_SCROLL_DELAY = 50;
-    private lastOpenedStoryId:string;
-    private thumbnailViewportHeight:number = 0;
-    private resizeOutlines:Function;
-    private thumbnailsWrapTimeout:any = null;
+    private lastOpenedStoryId: string;
+    private thumbnailViewportHeight: number = 0;
+    private resizeOutlines: Function;
+    private thumbnailsWrapTimeout: any = null;
     private colors: IColorInfo[];
 
     /**
@@ -222,7 +222,7 @@ export default class StrippetsVisual implements IVisual {
      * @param {Number=} lastDataViewLength - If we're appending, the number of rows in the previous dataView
      * @returns {{items: *, iconMap: any, highlights: {entities: any, itemIds: any}}} data in the components' internal format
      */
-    public static converter(dataView:DataView, updateIconMap:boolean = false, appendTo?:any, lastDataViewLength:number = 0, defaultColors = []) {
+    public static converter(dataView: DataView, updateIconMap: boolean = false, appendTo?: any, lastDataViewLength: number = 0, defaultColors = []) {
         const categoricalDV = dataView.categorical;
         const categoriesDV = categoricalDV.categories;
         const valuesDV = categoricalDV.values;
@@ -230,18 +230,18 @@ export default class StrippetsVisual implements IVisual {
         const colors = COLOR_PALETTE.slice().concat(defaultColors.map((color: IColorInfo) => color.value));
 
         categoriesDV.forEach((category, index) => {
-            Object.keys(category.source.roles).forEach(categoryName => categories[categoryName] = index)
+            Object.keys(category.source.roles).forEach(categoryName => categories[categoryName] = index);
         });
 
         const updateIM = updateIconMap && categories['entityType'];
 
-        const strippetsData = (appendTo && appendTo.items) ? appendTo.items.reduce((memo, i)=> {
+        const strippetsData = (appendTo && appendTo.items) ? appendTo.items.reduce((memo, i) => {
             memo[i.id] = i;
             memo[i.id].order = Object.keys(memo).length + 1;
             return memo;
         }, {}) : <any>{};
 
-        const iconMap = (appendTo && appendTo.iconMap) ? appendTo.iconMap.reduce((memo, im)=> {
+        const iconMap = (appendTo && appendTo.iconMap) ? appendTo.iconMap.reduce((memo, im) => {
             const entityTypeId = im.type + '_' + im.name;
             memo[entityTypeId] = {
                 class: im.class,
@@ -253,29 +253,29 @@ export default class StrippetsVisual implements IVisual {
             return memo;
         }, {}) : <any>{};
 
-        const highlightedEntities = (appendTo && appendTo.highlights && appendTo.highlights.entities) ? appendTo.highlights.entities.reduce((memo, im)=> {
+        const highlightedEntities = (appendTo && appendTo.highlights && appendTo.highlights.entities) ? appendTo.highlights.entities.reduce((memo, im) => {
             const entityTypeId = im.type + '_' + im.name;
             memo[entityTypeId] = im;
             return memo;
         }, {}) : <any>{};
 
-        const getCategoryValue = (fieldName:string, itemIndex:number) => {
+        const getCategoryValue = (fieldName: string, itemIndex: number) => {
             return categories[fieldName] !== undefined ? categoriesDV[categories[fieldName]].values[itemIndex] : null;
         };
         const isHighlightingOn = valuesDV && valuesDV[0].highlights && valuesDV[0].highlights.length > 0;
 
-        const getHighlightValue = (itemIndex:number) => {
+        const getHighlightValue = (itemIndex: number) => {
             return isHighlightingOn ? valuesDV[0].highlights[itemIndex] : false;
         };
-        const asUtf8 = (value:string) => {
+        const asUtf8 = (value: string) => {
             return $('<div />').html(value).text();
         };
 
         const bucketMap = {};
-        const getBucket = (bucketValue:any) => {
+        const getBucket = (bucketValue: any) => {
             if (bucketValue) {
                 if (!bucketMap[bucketValue]) {
-                    let bucket : Bucket = {
+                    let bucket: Bucket = {
                         key: bucketValue,
                         value: 0,
                     };
@@ -306,7 +306,7 @@ export default class StrippetsVisual implements IVisual {
             }
         };
 
-        categoriesDV[categories['id']] && categoriesDV[categories['id']].values.slice(lastDataViewLength).forEach((id :any, adjustedIndex) => {
+        categoriesDV[categories['id']] && categoriesDV[categories['id']].values.slice(lastDataViewLength).forEach((id: any, adjustedIndex) => {
             // highlight table is not compensated. Since we slice the values, we need to compensate for the slice. Slicing at the highlights level
             // will result in slower performance.
             const index = adjustedIndex + lastDataViewLength;
@@ -315,7 +315,7 @@ export default class StrippetsVisual implements IVisual {
             if (!strippetsData[id]) {
                 strippetsData[id] = {
                     id: id,
-                    title: asUtf8(title ? String(title) : ""),
+                    title: asUtf8(title ? String(title) : ''),
                     summary: getCategoryValue('summary', index),
                     content: getCategoryValue('content', index),
                     imageUrl: getCategoryValue('imageUrl', index),
@@ -377,7 +377,7 @@ export default class StrippetsVisual implements IVisual {
                                 type: entity.type,
                                 name: entity.name,
                                 isDefault: false
-                            }
+                            };
                         }
                     }
 
@@ -427,7 +427,7 @@ export default class StrippetsVisual implements IVisual {
                                     type: entity.type,
                                     name: entity.name,
                                     isDefault: false
-                                }
+                                };
                             }
 
                         }
@@ -445,11 +445,11 @@ export default class StrippetsVisual implements IVisual {
         const items = Object.keys(strippetsData).reduce((memo, key) => {
             memo.push(strippetsData[key]);
             return memo;
-        }, []).sort((a, b)=> {
+        }, []).sort((a, b) => {
             return a.order - b.order;
         });
 
-        const bucketList = _.sortBy(bucketMap, (bucket : Bucket) => bucket.key);
+        const bucketList = _.sortBy(bucketMap, (bucket: Bucket) => bucket.key);
         const numBuckets: number = Math.max(1, bucketList.length);
         bucketList.map(function(bucket, index) {
             bucket.value = index / numBuckets;
@@ -465,7 +465,7 @@ export default class StrippetsVisual implements IVisual {
                     memo.push(highlightedEntities[key]);
                     return memo;
                 }, []),
-                itemIds: items.reduce((memo, item)=> {
+                itemIds: items.reduce((memo, item) => {
                     if (item.isHighlighted) {
                         memo.push(item.id);
                     }
@@ -516,9 +516,9 @@ export default class StrippetsVisual implements IVisual {
      * Instantiates and configures the Outlines component
      * @returns {*|exports|module.exports}
      */
-    private initializeOutlines():any {
+    private initializeOutlines(): any {
         const t = this;
-        const Outlines = require("@uncharted/strippets");
+        const Outlines = require('@uncharted/strippets');
         const $outlines = t.outlines.$elem;
 
         const outlinesInstance = new Outlines($outlines[0], {
@@ -526,10 +526,10 @@ export default class StrippetsVisual implements IVisual {
                 reader: {
                     enabled: true,
                     onLoadUrl: $.proxy(t.onLoadArticle, t),
-                    onReaderOpened: (id)=> {
+                    onReaderOpened: (id) => {
                         t.lastOpenedStoryId = id;
                     },
-                    onReaderClosed: ()=> {
+                    onReaderClosed: () => {
                         t.lastOpenedStoryId = null;
                     },
                 },
@@ -539,11 +539,11 @@ export default class StrippetsVisual implements IVisual {
             supportKeyboardNavigation: false,
             entityIcons: [],
         });
-        //set up infinite scroll
-        let infiniteScrollTimeoutId:any;
-        outlinesInstance.$viewport.on('scroll', (e)=> {
+        // set up infinite scroll
+        let infiniteScrollTimeoutId: any;
+        outlinesInstance.$viewport.on('scroll', (e) => {
             if ($(e.target).width() + e.target.scrollLeft >= e.target.scrollWidth) {
-                infiniteScrollTimeoutId = setTimeout(()=> {
+                infiniteScrollTimeoutId = setTimeout(() => {
                     clearTimeout(infiniteScrollTimeoutId);
                     if (!t.isLoadingMore && t.hasMoreData) {
                         t.isLoadingMore = true;
@@ -566,8 +566,8 @@ export default class StrippetsVisual implements IVisual {
      * @param {Array} whiteList - Array of HTML tag names to accept
      * @returns {String} HTML content, devoid of any tags not in the whitelist
      */
-    public static sanitizeHTML(html:string, whiteList:string[]):string {
-        var cleanHTML = "";
+    public static sanitizeHTML(html: string, whiteList: string[]): string {
+        let cleanHTML = '';
         if (html && whiteList && whiteList.length) {
             // Stack Overflow is all like NEVER PARSE HTML WITH REGEX
             // http://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags/1732454#1732454
@@ -579,7 +579,7 @@ export default class StrippetsVisual implements IVisual {
             let doomedNodeList = [];
 
             if (!document.createTreeWalker) {
-                return ""; // in case someone's hax0ring us?
+                return ''; // in case someone's hax0ring us?
             }
 
             let div = $('<div/>');
@@ -629,13 +629,13 @@ export default class StrippetsVisual implements IVisual {
      * The artile is cleaned and highlighted before being returned in a Promise, as part of a reader config object.
      * @param {String} articleId - primary key value for the datum containing the article to load.
      */
-    private onLoadArticle(articleId:string):any {
+    private onLoadArticle(articleId: string): any {
         const t = this;
-        const data = <any>t.data.items.find(d=>d.id === articleId);
+        const data = <any>t.data.items.find(d => d.id === articleId);
         if (data) {
             if (StrippetsVisual.isUrl(data.content)) {
                 if (t.settings.content.readerContentType === 'readability') {
-                    return new Promise((resolve:any, reject:any)=> {
+                    return new Promise((resolve: any, reject: any) => {
                         $.ajax({
                             dataType: 'jsonp',
                             method: 'GET',
@@ -652,7 +652,7 @@ export default class StrippetsVisual implements IVisual {
                                 figureCaption: '',
                                 lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                             });
-                        }).fail((err)=> {
+                        }).fail((err) => {
                             reject(err);
                         });
                     });
@@ -668,7 +668,7 @@ export default class StrippetsVisual implements IVisual {
                         figureCaption: '',
                         lastupdatedon: '',
                     };
-                    return new Promise((resolve:any) => resolve(readerData));
+                    return new Promise((resolve: any) => resolve(readerData));
                 }
                 else {
                     const readerData = {
@@ -681,7 +681,7 @@ export default class StrippetsVisual implements IVisual {
                         figureCaption: '',
                         lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                     };
-                    return new Promise((resolve:any) => resolve(readerData));
+                    return new Promise((resolve: any) => resolve(readerData));
                 }
             } else {
                 const readerData = {
@@ -694,11 +694,11 @@ export default class StrippetsVisual implements IVisual {
                     figureCaption: '',
                     lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                 };
-                return new Promise((resolve:any) => resolve(readerData));
+                return new Promise((resolve: any) => resolve(readerData));
             }
         } else {
             // throwing an error here will cause the component to be unresponsive.
-            //throw new Error('Unable to load Document');
+            // throw new Error('Unable to load Document');
         }
     }
 
@@ -714,7 +714,7 @@ export default class StrippetsVisual implements IVisual {
      * @returns {boolean} true if the candidate looks like a URL
      */
     public static isUrl(candidate) {
-        //weak pattern, revisit later on.
+        // weak pattern, revisit later on.
         return StrippetsVisual.URL_PATTERN.test(candidate);
     }
 
@@ -728,11 +728,11 @@ export default class StrippetsVisual implements IVisual {
      * accepting one argument: an array of hits as returned by regex.exec()
      */
     public static textNodeReplace(node, regex, handler) {
-        var mom = node.parentNode, nxt = node.nextSibling,
-            doc=node.ownerDocument, hits;
+        let mom = node.parentNode, nxt = node.nextSibling,
+            doc = node.ownerDocument, hits;
         if (node.hasHits) {
             if (regex.global) {
-                while (node && (hits = regex.exec(node.nodeValue))){
+                while (node && (hits = regex.exec(node.nodeValue))) {
                     regex.lastIndex = 0;
                     node = handleResult( node, hits, handler.apply(this, hits) );
                 }
@@ -742,23 +742,23 @@ export default class StrippetsVisual implements IVisual {
         }
 
         function handleResult(node, hits, results) {
-            var orig = node.nodeValue;
+            let orig = node.nodeValue;
             node.nodeValue = orig.slice(0, hits.index);
             [].concat(create(mom, results)).forEach((n) => {
-                mom.insertBefore(n,nxt);
+                mom.insertBefore(n, nxt);
             });
-            var rest = orig.slice(hits.index + hits[0].length);
+            let rest = orig.slice(hits.index + hits[0].length);
             return rest && mom.insertBefore(doc.createTextNode(rest), nxt);
         }
 
-        function create(el,o) {
-            if (o.map) return o.map((v) => { return create(el,v) });
-            else if (typeof o==='object') {
-                var e = doc.createElementNS(o.namespaceURI || el.namespaceURI,o.name);
-                if (o.attrs) for (var a in o.attrs) e.setAttribute(a,o.attrs[a]);
-                if (o.content) [].concat(create(e,o.content)).forEach(e.appendChild,e);
+        function create(el, o) {
+            if (o.map) return o.map((v) => { return create(el, v); });
+            else if (typeof o === 'object') {
+                let e = doc.createElementNS(o.namespaceURI || el.namespaceURI, o.name);
+                if (o.attrs) for (let a in o.attrs) e.setAttribute(a, o.attrs[a]);
+                if (o.content) [].concat(create(e, o.content)).forEach(e.appendChild, e);
                 return e;
-            } else return doc.createTextNode(o+"");
+            } else return doc.createTextNode(o + '');
         }
     }
 
@@ -811,7 +811,7 @@ export default class StrippetsVisual implements IVisual {
             // search for entities.
             let filterRegex = null;
             let filter: NodeFilter = {
-                acceptNode: (node : HitNode) => {
+                acceptNode: (node: HitNode) => {
                     if ($(node.parentNode).hasClass(highlightClass)) {
                         return NodeFilter.FILTER_REJECT;
                     }
@@ -863,8 +863,8 @@ export default class StrippetsVisual implements IVisual {
                                 attrs: {
                                     id: entity.key + '_' + i,
                                     class: highlightClass,
-                                    "data-type": entity.type,
-                                    "data-name": entity.name,
+                                    'data-type': entity.type,
+                                    'data-name': entity.name,
                                     style: entity.color
                                 },
                                 content: match
@@ -884,10 +884,10 @@ export default class StrippetsVisual implements IVisual {
      * Instantiates and configures the Thumbnails component
      * @returns {Thumbnails|exports|module.exports}
      */
-    private initializeThumbnails():any {
+    private initializeThumbnails(): any {
         const t = this;
-        const Thumbnails = require("@uncharted/thumbnails/src/thumbnails");
-        const thumbnailsDefaults = require("@uncharted/thumbnails/src/thumbnails.defaults");
+        const Thumbnails = require('@uncharted/thumbnails/src/thumbnails');
+        const thumbnailsDefaults = require('@uncharted/thumbnails/src/thumbnails.defaults');
         const $thumbnails = t.thumbnails.$elem;
         const thumbnailsInstance = new Thumbnails({
             container: $thumbnails,
@@ -896,10 +896,10 @@ export default class StrippetsVisual implements IVisual {
                 readerview: {
                     enabled: true,
                     onLoadUrl: $.proxy(t.onLoadArticle, t),
-                    onReaderOpened: (id)=> {
+                    onReaderOpened: (id) => {
                         t.lastOpenedStoryId = id;
                     },
-                    onReaderClosed: ()=> {
+                    onReaderClosed: () => {
                         t.lastOpenedStoryId = null;
                     },
                 },
@@ -909,12 +909,12 @@ export default class StrippetsVisual implements IVisual {
             }
         });
 
-        //set up infinite scroll
-        let infiniteScrollTimeoutId:any;
-        thumbnailsInstance._$element.on('scroll', (e)=> {
+        // set up infinite scroll
+        let infiniteScrollTimeoutId: any;
+        thumbnailsInstance._$element.on('scroll', (e) => {
             if ($(e.target).hasClass(thumbnailsDefaults.classes.thumbnails.inlineThumbnails.slice(1))) {
                 if ($(e.target).width() + e.target.scrollLeft >= e.target.scrollWidth) {
-                    infiniteScrollTimeoutId = setTimeout(()=> {
+                    infiniteScrollTimeoutId = setTimeout(() => {
                         clearTimeout(infiniteScrollTimeoutId);
                         if (!t.isLoadingMore && t.hasMoreData) {
                             t.isLoadingMore = true;
@@ -925,7 +925,7 @@ export default class StrippetsVisual implements IVisual {
                 }
             } else {
                 if ($(e.target).height() + e.target.scrollTop >= e.target.scrollHeight) {
-                    infiniteScrollTimeoutId = setTimeout(()=> {
+                    infiniteScrollTimeoutId = setTimeout(() => {
                         clearTimeout(infiniteScrollTimeoutId);
                         if (!t.isLoadingMore && t.hasMoreData) {
                             t.isLoadingMore = true;
@@ -947,26 +947,26 @@ export default class StrippetsVisual implements IVisual {
      * Binds click event handlers to the Thumbnails and Outlines tab controls.
      * @param {JQuery} $container - jquery-wrapped parent Element of the tabs
      */
-    private initializeTabs($container:JQuery):void {
+    private initializeTabs($container: JQuery): void {
         const t = this;
         const $thumbnailsTab = $container.find('#thumbnailsNav');
         const $outlinesTab = $container.find('#outlinesNav');
 
-        $thumbnailsTab.on('click', (e)=> {
+        $thumbnailsTab.on('click', (e) => {
             e.stopPropagation();
             t.showThumbnails(t.data, false);
             if (t.lastOpenedStoryId) {
                 t.openReader(t.lastOpenedStoryId);
             }
         });
-        $outlinesTab.on('click', (e)=> {
+        $outlinesTab.on('click', (e) => {
             e.stopPropagation();
             t.showOutlines(t.data, false);
             if (t.lastOpenedStoryId) {
                 t.openReader(t.lastOpenedStoryId);
             }
         });
-        $container.on('click', ()=> {
+        $container.on('click', () => {
             t.closeReader();
         });
     }
@@ -975,21 +975,21 @@ export default class StrippetsVisual implements IVisual {
      * Notifies the IVisual of an update (data, viewmode, size change).
      * @param {VisualUpdateOptions} options - data and config from PowerBI
      */
-    public update(options:VisualUpdateOptions):void {
+    public update(options: VisualUpdateOptions): void {
         this.element.css({width: options.viewport.width, height: options.viewport.height});
         if (options.dataViews && options.dataViews.length > 0) {
 
             let shouldLoadMore = false;
             const dataView = options.dataViews && options.dataViews.length && options.dataViews[0];
             const newObjects = dataView && dataView.metadata && dataView.metadata.objects;
-            $.extend(true, this.settings, newObjects);
+            this.settings = $.extend(true, {}, this.settings, StrippetsVisual.DEFAULT_SETTINGS, newObjects);
 
             if (options.type & powerbi.VisualUpdateType.Resize || this.$tabs.is(':visible') !== this.settings.presentation.viewControls || !this.data) {
                 // set the strippets container width dynamically.
                 this.viewportSize = {
                     width: this.$container.parent().width(),
                     height: this.$container.parent().height()
-                }; //options.viewport;
+                }; // options.viewport;
                 this.$container.width(this.viewportSize.width - (this.settings.presentation.viewControls ? this.$tabs.width() : 0));
                 this.minOutlineCount = this.viewportSize.width / OUTLINE_WIDTH + 10;
                 this.settings.presentation.viewControls ? this.$tabs.show() : this.$tabs.hide();
@@ -1001,7 +1001,7 @@ export default class StrippetsVisual implements IVisual {
 
             // if first load, make sure outlines are filled (for situations where there are alot of entities)
             if (options.type & powerbi.VisualUpdateType.Data && dataView.categorical && dataView.categorical.categories) {
-                //Sandbox mode vs non-sandbox mode handles merge data differently.
+                // Sandbox mode vs non-sandbox mode handles merge data differently.
                 const currentDataViewSize = dataView.categorical.categories[0].values.length;
                 let currentRowCount = dataView.categorical.categories[0].values.length;
                 let loadedPreviously = false;
@@ -1051,9 +1051,9 @@ export default class StrippetsVisual implements IVisual {
                 }
 
                 // Load more only if there is room to place more data. If not Highlighting, check items. If highlighting, check only highlighted items.
-                const getShouldLoadMore = ()=> {
+                const getShouldLoadMore = () => {
                     return (!isHighlighting && this.hasMoreData && this.data.items.length < this.minOutlineCount)
-                        || (isHighlighting && this.hasMoreData && this.data.items.reduce((count, item)=> {
+                        || (isHighlighting && this.hasMoreData && this.data.items.reduce((count, item) => {
                             return item.isHighlighted ? count + 1 : count;
                         }, 0) < this.minOutlineCount);
                 };
@@ -1068,8 +1068,8 @@ export default class StrippetsVisual implements IVisual {
                 // if there is no more data to be loaded, perform check to see if highlighting should be disabled.
                 // Highlighting should be disabled if all elements for all documents have been highlighted.
                 if (isHighlighting) {
-                    const partiallyHighlighted = this.data.items.some((item)=> {
-                        return item.isHighlighted && item.entities.some((entity)=> {
+                    const partiallyHighlighted = this.data.items.some((item) => {
+                        return item.isHighlighted && item.entities.some((entity) => {
                                 return !entity.isHighlighted;
                             });
                     });
@@ -1082,7 +1082,7 @@ export default class StrippetsVisual implements IVisual {
 
             if (shouldLoadMore) {
                 this.showLoader();
-                console.log("WidgetStrippets.update loadMoreData");
+                console.log('WidgetStrippets.update loadMoreData');
                 this.host.loadMoreData();
             }
 
@@ -1121,10 +1121,10 @@ export default class StrippetsVisual implements IVisual {
                     if (this.isThumbnailsWrapLayout !== oldIsWrap) {
                         this.host.persistProperties({
                             merge: [{
-                                objectName: "presentation",
+                                objectName: 'presentation',
                                 selector: undefined,
                                 properties: {wrap: this.isThumbnailsWrapLayout},
-                            },],
+                            }, ],
                         });
                     }
 
@@ -1138,7 +1138,7 @@ export default class StrippetsVisual implements IVisual {
      * Adds or removes the highlight CSS style from the container Element.
      * @param {Boolean} state - true if we are highlighting
      */
-    private setHighlighting(state:boolean) {
+    private setHighlighting(state: boolean) {
         const highlightClass = 'no-highlight';
         if (state) {
             this.$container.removeClass(highlightClass);
@@ -1152,7 +1152,7 @@ export default class StrippetsVisual implements IVisual {
      * @param {Object} data - converted PowerBI data to render as outlines
      * @param {Boolean} append - true if the data contains new values only, and existing thumbnails should be preserved (deprecated use case)
      */
-    private showOutlines(data:any, append:boolean = false) {
+    private showOutlines(data: any, append: boolean = false) {
         // highlight outline tab
         this.$tabs.find('.navItem').removeClass('selected');
         this.$tabs.find('#outlinesNav').addClass('selected');
@@ -1160,7 +1160,7 @@ export default class StrippetsVisual implements IVisual {
 
 
         if (this.thumbnails.instance && this.thumbnails.instance._readerview && $.contains(this.$container[0], this.thumbnails.$elem[0])) {
-            //ensure that the reader view is closed before detaching.
+            // ensure that the reader view is closed before detaching.
             this.thumbnails.instance.closeReader();
             this.thumbnails.$elem.detach();
         }
@@ -1173,7 +1173,7 @@ export default class StrippetsVisual implements IVisual {
             this.$container.append(this.outlines.$elem[0]);
         }
 
-        //enable animations
+        // enable animations
         (<any>$).Velocity.mock = false;
 
         this.hideLoader();
@@ -1186,7 +1186,7 @@ export default class StrippetsVisual implements IVisual {
      * @param {Object} data - converted PowerBI data to render as thumbnails
      * @param {Boolean} append - true if the data contains new values only, and existing thumbnails should be preserved (deprecated use case)
      */
-    private showThumbnails(data:any, append:boolean = false) {
+    private showThumbnails(data: any, append: boolean = false) {
         // highlight thumbnail tab
         this.$tabs.find('.navItem').removeClass('selected');
         this.$tabs.find('#thumbnailsNav').addClass('selected');
@@ -1195,7 +1195,7 @@ export default class StrippetsVisual implements IVisual {
         if (this.outlines && $.contains(this.$container[0], this.outlines.$elem[0])) {
             this.outlines.$elem.detach();
         }
-        //Initialize Thumbnails if it hasn't been created yet.
+        // Initialize Thumbnails if it hasn't been created yet.
         if (!this.thumbnails.instance) {
             this.thumbnails.instance = this.initializeThumbnails.call(this);
         }
@@ -1203,7 +1203,7 @@ export default class StrippetsVisual implements IVisual {
             this.$container.append(this.thumbnails.$elem[0]);
         }
 
-        //enable animations
+        // enable animations
         (<any>$).Velocity.mock = true;
 
         this.hideLoader();
@@ -1215,11 +1215,11 @@ export default class StrippetsVisual implements IVisual {
      * @param {Object} data - converted PowerBI data to render as outlines
      * @param {Boolean} append - true if the data contains new values only, and existing outlines should be preserved (deprecated use case)
      */
-    private updateOutlines(data:any, append:boolean):any {
+    private updateOutlines(data: any, append: boolean): any {
         if (!data.highlights) {
-            //Initialize Outlines if it hasn't been created yet.
+            // Initialize Outlines if it hasn't been created yet.
             this.outlines.instance._iconMaps = data.iconMap;
-            //unhighlight
+            // unhighlight
             this.outlines.instance.filter(null);
             this.outlines.instance.highlight(null);
             this.outlines.instance.loadData(data.items, append);
@@ -1232,9 +1232,9 @@ export default class StrippetsVisual implements IVisual {
                 });
             }
 
-            var newOutlineItems = data.items.filter((item) => {
-                return !this.outlines.instance._items.some((outline)=> {
-                    return outline.data.id === item.id
+            let newOutlineItems = data.items.filter((item) => {
+                return !this.outlines.instance._items.some((outline) => {
+                    return outline.data.id === item.id;
                 });
             });
             if (newOutlineItems && newOutlineItems.length > 0) {
@@ -1252,10 +1252,10 @@ export default class StrippetsVisual implements IVisual {
      * @param {Boolean} append - true if the data contains new values only, and existing thumbnails should be preserved (deprecated use case)
      * @param {Boolean} wrapped - true if thumbnails should be rendered in multiple rows; false to keep them all in one row
      */
-    private updateThumbnails(data:any, append:boolean, wrapped:boolean):any {
+    private updateThumbnails(data: any, append: boolean, wrapped: boolean): any {
         if (!data.highlights) {
             this.thumbnails.instance.iconMap = data.iconMap;
-            //unhighlight
+            // unhighlight
             this.thumbnails.instance.filter(null);
             this.thumbnails.instance.highlight(null);
 
@@ -1266,7 +1266,7 @@ export default class StrippetsVisual implements IVisual {
                     item.summary = item.content;
                     if (this.settings.content.readerContentType === 'readability' && StrippetsVisual.isUrl(item.summary) &&
                         this.settings.content.summaryUrl) {
-                        const promise = new Promise((resolve:any, reject:any)=> {
+                        const promise = new Promise((resolve: any, reject: any) => {
                             $.ajax({
                                 dataType: 'jsonp',
                                 method: 'GET',
@@ -1274,7 +1274,7 @@ export default class StrippetsVisual implements IVisual {
                             }).done((responseBody) => {
                                 item.summary = StrippetsVisual.sanitizeHTML(responseBody.content || responseBody, StrippetsVisual.HTML_WHITELIST_SUMMARY);
                                 resolve(true);
-                            }).fail((err)=> {
+                            }).fail((err) => {
                                 reject(err);
                             });
                         });
@@ -1291,11 +1291,11 @@ export default class StrippetsVisual implements IVisual {
                 this.wrapThumbnails(wrapped);
             });
         } else {
-            var newThumbnailItems;
+            let newThumbnailItems;
             if (append) {
                 newThumbnailItems = data.items.filter((item) => {
-                    return !this.thumbnails.instance._thumbnailItems.some((thumbnail)=> {
-                        return thumbnail.data.id === item.id
+                    return !this.thumbnails.instance._thumbnailItems.some((thumbnail) => {
+                        return thumbnail.data.id === item.id;
                     });
                 });
             }
@@ -1315,16 +1315,16 @@ export default class StrippetsVisual implements IVisual {
      * Set the wrapping state of the thumbnails component.
      * @param {Boolean} wrapped - true if thumbnails should be rendered in multiple rows; false to keep them all in one row
      */
-    private wrapThumbnails(wrapped:boolean) {
+    private wrapThumbnails(wrapped: boolean) {
         this.thumbnails.instance.toggleInlineDisplayMode(!wrapped);
     }
 
     /**
      * Close any open reader,
      */
-    public closeReader():void {
+    public closeReader(): void {
         if (this.settings.presentation.strippetType === 'outlines') {
-            const openOutline = this.outlines.instance._items.find((outline)=> {
+            const openOutline = this.outlines.instance._items.find((outline) => {
                 return outline.getCurrentState() === 'readingmode';
             });
             if (openOutline) {
@@ -1340,9 +1340,9 @@ export default class StrippetsVisual implements IVisual {
      * Open the appropriate reader, given the current view mode, for the datum of the given id.
      * @param {any} id - primary key value of the story to display in the reader
      */
-    public openReader(id:any):void {
+    public openReader(id: any): void {
         if (this.settings.presentation.strippetType === 'outlines') {
-            const outline = this.outlines.instance._items.find((o)=> {
+            const outline = this.outlines.instance._items.find((o) => {
                 return o.data.id === id;
             });
             if (outline) {
@@ -1350,7 +1350,7 @@ export default class StrippetsVisual implements IVisual {
             }
         }
         else {
-            const thumbnail = this.thumbnails.instance._thumbnailItems.find((tn)=> {
+            const thumbnail = this.thumbnails.instance._thumbnailItems.find((tn) => {
                 return tn.data.id === id;
             });
             if (thumbnail) {
@@ -1362,7 +1362,7 @@ export default class StrippetsVisual implements IVisual {
     /**
      * Show the animated loading icon.
      */
-    private showLoader():void {
+    private showLoader(): void {
         if (this.settings.presentation.strippetType === 'outlines') {
             this.outlines.instance.$chartContainer.append(this.$loaderElement);
         }
@@ -1374,7 +1374,7 @@ export default class StrippetsVisual implements IVisual {
     /**
      * Hide the animated loading icon.
      */
-    private hideLoader():void {
+    private hideLoader(): void {
         if (this.settings.presentation.strippetType === 'outlines') {
             this.$loaderElement.detach();
         }
@@ -1386,23 +1386,49 @@ export default class StrippetsVisual implements IVisual {
     ///**
     // * Gets the inline css used for this element
     // */
-    //protected getCss():string[] {
+    // protected getCss():string[] {
     //
     //    return [
-    //        require("!css!./../css/font-awesome/font-awesome.css"),
-    //        require("!css!./../css/strippets/strippets.css"),
-    //        require("!css!./../css/thumbnails/thumbnails.css"),
-    //        require("!css!./../css/strippets.css")
+    //        require('!css!./../css/font-awesome/font-awesome.css'),
+    //        require('!css!./../css/strippets/strippets.css'),
+    //        require('!css!./../css/thumbnails/thumbnails.css'),
+    //        require('!css!./../css/strippets.css')
     //    ];
-    //}
+    // }
 
-    public enumerateObjectInstances(options:EnumerateVisualObjectInstancesOptions):VisualObjectInstance[] {
-        let instances:VisualObjectInstance[] = [{
+    /**
+     * Enumerates the instances for the objects that appear in the PowerBI panel.
+     *
+     * @method enumerateObjectInstances
+     * @param {EnumerateVisualObjectInstancesOptions} options - Options object containing the objects to enumerate, as provided by PowerBI.
+     * @returns {VisualObjectInstance[]}
+     */
+    public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] {
+        let instances: VisualObjectInstance[] = [{
             selector: null,
             objectName: options.objectName,
             properties: {}
         }];
         $.extend(true, instances[0].properties, this.settings[options.objectName]);
         return instances;
+    }
+
+    /**
+     * StrippetBrowser's visualization destroy method. Called by PowerBI.
+     *
+     * @method destroy
+     */
+    public destroy(): void {
+        if (this.thumbnails.instance) {
+            this.thumbnails.instance._unregisterEvents();
+            this.thumbnails.instance._resetThumbnailsContainer();
+        }
+
+        this.thumbnails = null;
+        this.outlines = null;
+
+        this.data = null;
+        this.selectionManager = null;
+        this.host = null;
     }
 }

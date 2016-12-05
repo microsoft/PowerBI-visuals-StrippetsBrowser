@@ -20,10 +20,6 @@ module.exports = {
                 loader: 'ts-loader',
             },
             { test: /\.handlebars$/, loader: "handlebars-loader" },
-            {
-                test: require.resolve('snapsvg'),
-                loader: 'imports-loader?this=>window,fix=>module.exports=0'
-            },
         ]
     },
     externals: [

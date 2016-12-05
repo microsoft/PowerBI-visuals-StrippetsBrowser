@@ -20,754 +20,753 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 export default {
-    "metadata": {
-        "columns": [
+    'metadata': {
+        'columns': [
             {
-                "roles": {
-                    "id": true
+                'roles': {
+                    'id': true
                 },
-                "type": {
-                    "underlyingType": 260,
-                    "category": null
+                'type': {
+                    'underlyingType': 260,
+                    'category': null
                 },
-                "format": "0",
-                "displayName": "article_id",
-                "queryName": "documents.article_id",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
+                'format': '0',
+                'displayName': 'article_id',
+                'queryName': 'documents.article_id',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'documents'
                     },
-                    "ref": "article_id"
+                    'ref': 'article_id'
                 }
             },
             {
-                "roles": {
-                    "bucket": true
+                'roles': {
+                    'bucket': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "bucket",
-                "queryName": "documentConcepts.bucket",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documentConcepts"
+                'displayName': 'bucket',
+                'queryName': 'documentConcepts.bucket',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'documentConcepts'
                     },
-                    "ref": "bucket"
+                    'ref': 'bucket'
                 }
             },
             {
-                "roles": {
-                    "entityId": true
+                'roles': {
+                    'entityId': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "concept_id",
-                "queryName": "concepts.concept_id",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "concepts"
+                'displayName': 'concept_id',
+                'queryName': 'concepts.concept_id',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'concepts'
                     },
-                    "ref": "concept_id"
+                    'ref': 'concept_id'
                 }
             },
             {
-                "roles": {
-                    "title": true
+                'roles': {
+                    'title': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "title",
-                "queryName": "documents.title",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
+                'displayName': 'title',
+                'queryName': 'documents.title',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'documents'
                     },
-                    "ref": "title"
+                    'ref': 'title'
                 }
             },
             {
-                "roles": {
-                    "entityType": true
+                'roles': {
+                    'entityType': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "facet",
-                "queryName": "concepts.facet",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "concepts"
+                'displayName': 'facet',
+                'queryName': 'concepts.facet',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'concepts'
                     },
-                    "ref": "facet"
+                    'ref': 'facet'
                 }
             },
             {
-                "roles": {
-                    "summary": true
+                'roles': {
+                    'summary': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "summary",
-                "queryName": "documents.summary",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
+                'displayName': 'summary',
+                'queryName': 'documents.summary',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'documents'
                     },
-                    "ref": "summary"
+                    'ref': 'summary'
                 }
             },
             {
-                "roles": {
-                    "content": true
+                'roles': {
+                    'content': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "content",
-                "queryName": "documents.content",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
+                'displayName': 'content',
+                'queryName': 'documents.content',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'documents'
                     },
-                    "ref": "content"
+                    'ref': 'content'
                 }
             },
             {
-                "roles": {
-                    "imageUrl": true
+                'roles': {
+                    'imageUrl': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "main_image",
-                "queryName": "documents.main_image",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
+                'displayName': 'main_image',
+                'queryName': 'documents.main_image',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'documents'
                     },
-                    "ref": "main_image"
+                    'ref': 'main_image'
                 }
             },
             {
-                "roles": {
-                    "author": true
+                'roles': {
+                    'author': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "author",
-                "queryName": "documents.author",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
+                'displayName': 'author',
+                'queryName': 'documents.author',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'documents'
                     },
-                    "ref": "author"
+                    'ref': 'author'
                 }
             },
             {
-                "roles": {
-                    "source": true
+                'roles': {
+                    'source': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "source_domain",
-                "queryName": "documents.source_domain",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
+                'displayName': 'source_domain',
+                'queryName': 'documents.source_domain',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'documents'
                     },
-                    "ref": "source_domain"
+                    'ref': 'source_domain'
                 }
             },
             {
-                "roles": {
-                    "sourceUrl": true
+                'roles': {
+                    'sourceUrl': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "source_url",
-                "queryName": "documents.source_url",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
+                'displayName': 'source_url',
+                'queryName': 'documents.source_url',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'documents'
                     },
-                    "ref": "source_url"
+                    'ref': 'source_url'
                 }
             },
             {
-                "roles": {
-                    "sourceImage": true
+                'roles': {
+                    'sourceImage': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "source_image",
-                "queryName": "documents.source_image",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
+                'displayName': 'source_image',
+                'queryName': 'documents.source_image',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'documents'
                     },
-                    "ref": "source_image"
+                    'ref': 'source_image'
                 }
             },
             {
-                "roles": {
-                    "articleDate": true
+                'roles': {
+                    'articleDate': true
                 },
-                "type": {
-                    "underlyingType": 519,
-                    "category": null,
-                    "temporalType": {
-                        "underlyingType": 519
+                'type': {
+                    'underlyingType': 519,
+                    'category': null,
+                    'temporalType': {
+                        'underlyingType': 519
                     }
                 },
-                "format": "dddd\\, MMMM %d\\, yyyy",
-                "displayName": "source_date",
-                "queryName": "documents.source_date",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documents"
+                'format': 'dddd\\, MMMM %d\\, yyyy',
+                'displayName': 'source_date',
+                'queryName': 'documents.source_date',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'documents'
                     },
-                    "ref": "source_date"
+                    'ref': 'source_date'
                 }
             },
             {
-                "roles": {
-                    "entityName": true
+                'roles': {
+                    'entityName': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "facet_instance",
-                "queryName": "concepts.facet_instance",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "concepts"
+                'displayName': 'facet_instance',
+                'queryName': 'concepts.facet_instance',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'concepts'
                     },
-                    "ref": "facet_instance"
+                    'ref': 'facet_instance'
                 }
             },
             {
-                "roles": {
-                    "entityPosition": true
+                'roles': {
+                    'entityPosition': true
                 },
-                "type": {
-                    "underlyingType": 259,
-                    "category": null
+                'type': {
+                    'underlyingType': 259,
+                    'category': null
                 },
-                "displayName": "first_position",
-                "queryName": "documentConcepts.first_position",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "documentConcepts"
+                'displayName': 'first_position',
+                'queryName': 'documentConcepts.first_position',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'documentConcepts'
                     },
-                    "ref": "first_position"
+                    'ref': 'first_position'
                 }
             },
             {
-                "roles": {
-                    "entityTypeColor": true
+                'roles': {
+                    'entityTypeColor': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "color",
-                "queryName": "conceptsColors.color",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "conceptsColors"
+                'displayName': 'color',
+                'queryName': 'conceptsColors.color',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'conceptsColors'
                     },
-                    "ref": "color"
+                    'ref': 'color'
                 }
             },
             {
-                "roles": {
-                    "entityTypeClass": true
+                'roles': {
+                    'entityTypeClass': true
                 },
-                "type": {
-                    "underlyingType": 1,
-                    "category": null
+                'type': {
+                    'underlyingType': 1,
+                    'category': null
                 },
-                "displayName": "class",
-                "queryName": "conceptsColors.class",
-                "expr": {
-                    "_kind": 2,
-                    "source": {
-                        "_kind": 0,
-                        "entity": "conceptsColors"
+                'displayName': 'class',
+                'queryName': 'conceptsColors.class',
+                'expr': {
+                    '_kind': 2,
+                    'source': {
+                        '_kind': 0,
+                        'entity': 'conceptsColors'
                     },
-                    "ref": "class"
+                    'ref': 'class'
                 }
             },
             {
-                "roles": {
-                    "articleValue": true
+                'roles': {
+                    'articleValue': true
                 },
-                "type": {
-                    "underlyingType": 260,
-                    "category": null
+                'type': {
+                    'underlyingType': 260,
+                    'category': null
                 },
-                "displayName": "Count of article_id",
-                "queryName": "CountNonNull(documents.article_id)",
-                "expr": {
-                    "_kind": 4,
-                    "arg": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documents"
+                'displayName': 'Count of article_id',
+                'queryName': 'CountNonNull(documents.article_id)',
+                'expr': {
+                    '_kind': 4,
+                    'arg': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documents'
                         },
-                        "ref": "article_id"
+                        'ref': 'article_id'
                     },
-                    "func": 5
+                    'func': 5
                 }
             }
         ]
     },
-    "categorical": {
-        "categories": [
+    'categorical': {
+        'categories': [
             {
-                "source": {
-                    "roles": {
-                        "id": true
+                'source': {
+                    'roles': {
+                        'id': true
                     },
-                    "type": {
-                        "underlyingType": 260,
-                        "category": null
+                    'type': {
+                        'underlyingType': 260,
+                        'category': null
                     },
-                    "format": "0",
-                    "displayName": "article_id",
-                    "queryName": "documents.article_id",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documents"
+                    'format': '0',
+                    'displayName': 'article_id',
+                    'queryName': 'documents.article_id',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documents'
                         },
-                        "ref": "article_id"
+                        'ref': 'article_id'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "title": true
+                'source': {
+                    'roles': {
+                        'title': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "title",
-                    "queryName": "documents.title",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documents"
+                    'displayName': 'title',
+                    'queryName': 'documents.title',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documents'
                         },
-                        "ref": "title"
+                        'ref': 'title'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "summary": true
+                'source': {
+                    'roles': {
+                        'summary': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "summary",
-                    "queryName": "documents.summary",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documents"
+                    'displayName': 'summary',
+                    'queryName': 'documents.summary',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documents'
                         },
-                        "ref": "summary"
+                        'ref': 'summary'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "content": true
+                'source': {
+                    'roles': {
+                        'content': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "content",
-                    "queryName": "documents.content",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documents"
+                    'displayName': 'content',
+                    'queryName': 'documents.content',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documents'
                         },
-                        "ref": "content"
+                        'ref': 'content'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "imageUrl": true
+                'source': {
+                    'roles': {
+                        'imageUrl': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "main_image",
-                    "queryName": "documents.main_image",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documents"
+                    'displayName': 'main_image',
+                    'queryName': 'documents.main_image',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documents'
                         },
-                        "ref": "main_image"
+                        'ref': 'main_image'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "author": true
+                'source': {
+                    'roles': {
+                        'author': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "author",
-                    "queryName": "documents.author",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documents"
+                    'displayName': 'author',
+                    'queryName': 'documents.author',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documents'
                         },
-                        "ref": "author"
+                        'ref': 'author'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "source": true
+                'source': {
+                    'roles': {
+                        'source': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "source_domain",
-                    "queryName": "documents.source_domain",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documents"
+                    'displayName': 'source_domain',
+                    'queryName': 'documents.source_domain',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documents'
                         },
-                        "ref": "source_domain"
+                        'ref': 'source_domain'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "sourceUrl": true
+                'source': {
+                    'roles': {
+                        'sourceUrl': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "source_url",
-                    "queryName": "documents.source_url",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documents"
+                    'displayName': 'source_url',
+                    'queryName': 'documents.source_url',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documents'
                         },
-                        "ref": "source_url"
+                        'ref': 'source_url'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "sourceImage": true
+                'source': {
+                    'roles': {
+                        'sourceImage': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "source_image",
-                    "queryName": "documents.source_image",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documents"
+                    'displayName': 'source_image',
+                    'queryName': 'documents.source_image',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documents'
                         },
-                        "ref": "source_image"
+                        'ref': 'source_image'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "articleDate": true
+                'source': {
+                    'roles': {
+                        'articleDate': true
                     },
-                    "type": {
-                        "underlyingType": 519,
-                        "category": null,
-                        "temporalType": {
-                            "underlyingType": 519
+                    'type': {
+                        'underlyingType': 519,
+                        'category': null,
+                        'temporalType': {
+                            'underlyingType': 519
                         }
                     },
-                    "format": "dddd\\, MMMM %d\\, yyyy",
-                    "displayName": "source_date",
-                    "queryName": "documents.source_date",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documents"
+                    'format': 'dddd\\, MMMM %d\\, yyyy',
+                    'displayName': 'source_date',
+                    'queryName': 'documents.source_date',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documents'
                         },
-                        "ref": "source_date"
+                        'ref': 'source_date'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "entityType": true
+                'source': {
+                    'roles': {
+                        'entityType': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "facet",
-                    "queryName": "concepts.facet",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "concepts"
+                    'displayName': 'facet',
+                    'queryName': 'concepts.facet',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'concepts'
                         },
-                        "ref": "facet"
+                        'ref': 'facet'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "entityId": true
+                'source': {
+                    'roles': {
+                        'entityId': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "concept_id",
-                    "queryName": "concepts.concept_id",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "concepts"
+                    'displayName': 'concept_id',
+                    'queryName': 'concepts.concept_id',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'concepts'
                         },
-                        "ref": "concept_id"
+                        'ref': 'concept_id'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "entityName": true
+                'source': {
+                    'roles': {
+                        'entityName': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "facet_instance",
-                    "queryName": "concepts.facet_instance",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "concepts"
+                    'displayName': 'facet_instance',
+                    'queryName': 'concepts.facet_instance',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'concepts'
                         },
-                        "ref": "facet_instance"
+                        'ref': 'facet_instance'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "entityPosition": true
+                'source': {
+                    'roles': {
+                        'entityPosition': true
                     },
-                    "type": {
-                        "underlyingType": 259,
-                        "category": null
+                    'type': {
+                        'underlyingType': 259,
+                        'category': null
                     },
-                    "displayName": "first_position",
-                    "queryName": "documentConcepts.first_position",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documentConcepts"
+                    'displayName': 'first_position',
+                    'queryName': 'documentConcepts.first_position',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documentConcepts'
                         },
-                        "ref": "first_position"
+                        'ref': 'first_position'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "entityTypeColor": true
+                'source': {
+                    'roles': {
+                        'entityTypeColor': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "color",
-                    "queryName": "conceptsColors.color",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "conceptsColors"
+                    'displayName': 'color',
+                    'queryName': 'conceptsColors.color',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'conceptsColors'
                         },
-                        "ref": "color"
+                        'ref': 'color'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "entityTypeClass": true
+                'source': {
+                    'roles': {
+                        'entityTypeClass': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "class",
-                    "queryName": "conceptsColors.class",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "conceptsColors"
+                    'displayName': 'class',
+                    'queryName': 'conceptsColors.class',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'conceptsColors'
                         },
-                        "ref": "class"
+                        'ref': 'class'
                     }
                 }
             },
             {
-                "source": {
-                    "roles": {
-                        "bucket": true
+                'source': {
+                    'roles': {
+                        'bucket': true
                     },
-                    "type": {
-                        "underlyingType": 1,
-                        "category": null
+                    'type': {
+                        'underlyingType': 1,
+                        'category': null
                     },
-                    "displayName": "bucket",
-                    "queryName": "documentConcepts.bucket",
-                    "expr": {
-                        "_kind": 2,
-                        "source": {
-                            "_kind": 0,
-                            "entity": "documentConcepts"
+                    'displayName': 'bucket',
+                    'queryName': 'documentConcepts.bucket',
+                    'expr': {
+                        '_kind': 2,
+                        'source': {
+                            '_kind': 0,
+                            'entity': 'documentConcepts'
                         },
-                        "ref": "bucket"
+                        'ref': 'bucket'
                     }
                 }
             }
         ],
-        "values": [
+        'values': [
             {
-                "source": {
-                    "roles": {
-                        "articleValue": true
+                'source': {
+                    'roles': {
+                        'articleValue': true
                     },
-                    "type": {
-                        "underlyingType": 260,
-                        "category": null
+                    'type': {
+                        'underlyingType': 260,
+                        'category': null
                     },
-                    "displayName": "Count of article_id",
-                    "queryName": "CountNonNull(documents.article_id)",
-                    "expr": {
-                        "_kind": 4,
-                        "arg": {
-                            "_kind": 2,
-                            "source": {
-                                "_kind": 0,
-                                "entity": "documents"
+                    'displayName': 'Count of article_id',
+                    'queryName': 'CountNonNull(documents.article_id)',
+                    'expr': {
+                        '_kind': 4,
+                        'arg': {
+                            '_kind': 2,
+                            'source': {
+                                '_kind': 0,
+                                'entity': 'documents'
                             },
-                            "ref": "article_id"
+                            'ref': 'article_id'
                         },
-                        "func": 5
+                        'func': 5
                     }
                 }
             }
         ]
     }
-}
+};
