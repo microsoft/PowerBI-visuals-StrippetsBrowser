@@ -973,6 +973,13 @@ export default class StrippetsVisual implements IVisual {
         });
     }
 
+    private hasRequiredFields(dataView: DataView): boolean {
+        const columns = dataView.metadata.columns;
+        const idColumnExists = _.some(columns || [], (col: any) => col && col.roles.id);
+        // return true if the id column is populated.
+        return idColumnExists;
+    }
+
     /**
      * Notifies the IVisual of an update (data, viewmode, size change).
      * @param {VisualUpdateOptions} options - data and config from PowerBI
@@ -1023,7 +1030,7 @@ export default class StrippetsVisual implements IVisual {
                 if (isHighlighting && this.lastOpenedStoryId) {
                     this.closeReader();
                 }
-                this.hasMoreData = !!dataView.metadata.segment;
+                this.hasMoreData = !!dataView.metadata.segment && this.hasRequiredFields(dataView);
 
                 const data = StrippetsVisual.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, loadedPreviously ? this.lastDataViewLength : 0, this.colors);
                 this.lastDataViewLength = currentDataViewSize;
