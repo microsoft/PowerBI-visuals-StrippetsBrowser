@@ -52,6 +52,8 @@ import * as _ from 'lodash';
 
 require('velocity-animate');
 const moment = require('moment');
+const mediator = require('@uncharted/strippets.common').mediator;
+const thumbnailsDefaults = require('@uncharted/thumbnails/src/thumbnails.defaults');
 
 /**
  * Default entity colors for when no colors are specified by the data
@@ -626,8 +628,8 @@ export default class StrippetsVisual implements IVisual {
 
     /**
      * Handler for the readers to call when an article is ready to load.
-     * If the article content is a readabilitiy URL, the actual article text will first be fetched.
-     * The artile is cleaned and highlighted before being returned in a Promise, as part of a reader config object.
+     * If the article content is a readability URL, the actual article text will first be fetched.
+     * The article is cleaned and highlighted before being returned in a Promise, as part of a reader config object.
      * @param {String} articleId - primary key value for the datum containing the article to load.
      */
     private onLoadArticle(articleId: string): any {
@@ -720,7 +722,7 @@ export default class StrippetsVisual implements IVisual {
     }
 
     /**
-     * Within the given HTMl Text node, replace text matching the given regex using the given handler.
+     * Within the given HTML Text node, replace text matching the given regex using the given handler.
      * Adapted from:
      * http://stackoverflow.com/questions/22129405/replace-text-in-the-middle-of-a-textnode-with-an-element
      * @param {Object} node - An HTML Text node (a text run from between tags)
@@ -888,7 +890,6 @@ export default class StrippetsVisual implements IVisual {
     private initializeThumbnails(): any {
         const t = this;
         const Thumbnails = require('@uncharted/thumbnails/src/thumbnails');
-        const thumbnailsDefaults = require('@uncharted/thumbnails/src/thumbnails.defaults');
         const $thumbnails = t.thumbnails.$elem;
         const thumbnailsInstance = new Thumbnails({
             container: $thumbnails,
@@ -955,10 +956,11 @@ export default class StrippetsVisual implements IVisual {
 
         $thumbnailsTab.on('click', (e) => {
             e.stopPropagation();
-            t.showThumbnails(t.data, false);
-            if (t.lastOpenedStoryId) {
-                t.openReader(t.lastOpenedStoryId);
-            }
+            return t.showThumbnails(t.data, false).then(() => {
+                if (t.lastOpenedStoryId) {
+                    t.openReader(t.lastOpenedStoryId);
+                }
+            });
         });
         $outlinesTab.on('click', (e) => {
             e.stopPropagation();
@@ -970,6 +972,13 @@ export default class StrippetsVisual implements IVisual {
         $container.on('click', () => {
             t.closeReader();
         });
+    }
+
+    private hasRequiredFields(dataView: DataView): boolean {
+        const columns = dataView.metadata.columns;
+        const idColumnExists = _.some(columns || [], (col: any) => col && col.roles.id);
+        // return true if the id column is populated.
+        return idColumnExists;
     }
 
     /**
@@ -1022,7 +1031,7 @@ export default class StrippetsVisual implements IVisual {
                 if (isHighlighting && this.lastOpenedStoryId) {
                     this.closeReader();
                 }
-                this.hasMoreData = !!dataView.metadata.segment;
+                this.hasMoreData = !!dataView.metadata.segment && this.hasRequiredFields(dataView);
 
                 const data = StrippetsVisual.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, loadedPreviously ? this.lastDataViewLength : 0, this.colors);
                 this.lastDataViewLength = currentDataViewSize;
@@ -1208,7 +1217,7 @@ export default class StrippetsVisual implements IVisual {
         (<any>$).Velocity.mock = true;
 
         this.hideLoader();
-        this.updateThumbnails.call(this, data, append, this.settings.presentation.wrap);
+        return this.updateThumbnails.call(this, data, append, this.settings.presentation.wrap);
     }
 
     /**
@@ -1286,7 +1295,7 @@ export default class StrippetsVisual implements IVisual {
                 }
             });
 
-            Promise.all(promises).then(() => {
+            return Promise.all(promises).then(() => {
                 this.thumbnails.instance.loadData(data.items, append);
                 this.isLoadingMore = false;
                 this.wrapThumbnails(wrapped);
@@ -1310,6 +1319,8 @@ export default class StrippetsVisual implements IVisual {
             this.thumbnails.instance.filter(data.highlights.itemIds);
             this.thumbnails.instance.highlight(data.highlights.entities);
         }
+
+        return Promise.resolve();
     }
 
     /**
@@ -1355,7 +1366,7 @@ export default class StrippetsVisual implements IVisual {
                 return tn.data.id === id;
             });
             if (thumbnail) {
-                thumbnail._$element.trigger('click');
+                mediator.publish(thumbnailsDefaults.events.thumbnailClicked, thumbnail.data);
             }
         }
     }
