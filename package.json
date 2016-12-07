@@ -24,8 +24,8 @@
   "license": "MIT",
   "privateSubmodules": {
     "@uncharted/strippets.common": "0.2.1",
-    "@uncharted/strippets": "0.4.18",
-    "@uncharted/thumbnails": "0.4.12"
+    "@uncharted/strippets": "0.4.20",
+    "@uncharted/thumbnails": "0.4.14"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.35",
