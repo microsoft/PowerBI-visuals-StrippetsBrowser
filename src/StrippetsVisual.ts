@@ -945,6 +945,16 @@ export default class StrippetsVisual implements IVisual {
         return thumbnailsInstance;
     }
 
+    private saveThumbnailType(): void {
+        this.host.persistProperties({
+            merge: [{
+                objectName: 'presentation',
+                selector: undefined,
+                properties: { strippetType: this.settings.presentation.strippetType },
+            }, ],
+        });
+    }
+
     /**
      * Binds click event handlers to the Thumbnails and Outlines tab controls.
      * @param {JQuery} $container - jquery-wrapped parent Element of the tabs
@@ -957,6 +967,7 @@ export default class StrippetsVisual implements IVisual {
         $thumbnailsTab.on('click', (e) => {
             e.stopPropagation();
             return t.showThumbnails(t.data, false).then(() => {
+                t.saveThumbnailType();
                 if (t.lastOpenedStoryId) {
                     t.openReader(t.lastOpenedStoryId);
                 }
@@ -965,6 +976,7 @@ export default class StrippetsVisual implements IVisual {
         $outlinesTab.on('click', (e) => {
             e.stopPropagation();
             t.showOutlines(t.data, false);
+            t.saveThumbnailType();
             if (t.lastOpenedStoryId) {
                 t.openReader(t.lastOpenedStoryId);
             }
@@ -992,7 +1004,7 @@ export default class StrippetsVisual implements IVisual {
             let shouldLoadMore = false;
             const dataView = options.dataViews && options.dataViews.length && options.dataViews[0];
             const newObjects = dataView && dataView.metadata && dataView.metadata.objects;
-            this.settings = $.extend(true, {}, StrippetsVisual.DEFAULT_SETTINGS, this.settings, newObjects);
+            this.settings = $.extend(true, {}, StrippetsVisual.DEFAULT_SETTINGS, newObjects);
 
             if (options.type & powerbi.VisualUpdateType.Resize || this.$tabs.is(':visible') !== this.settings.presentation.viewControls || !this.data) {
                 // set the strippets container width dynamically.
