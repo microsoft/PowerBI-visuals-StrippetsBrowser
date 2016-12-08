@@ -965,20 +965,24 @@ export default class StrippetsVisual implements IVisual {
         const $outlinesTab = $container.find('#outlinesNav');
 
         $thumbnailsTab.on('click', (e) => {
-            e.stopPropagation();
-            return t.showThumbnails(t.data, false).then(() => {
+            if (this.settings.presentation.strippetType !== 'thumbnails') {
+                e.stopPropagation();
+                return t.showThumbnails(t.data, false).then(() => {
+                    t.saveThumbnailType();
+                    if (t.lastOpenedStoryId) {
+                        t.openReader(t.lastOpenedStoryId);
+                    }
+                });
+            }
+        });
+        $outlinesTab.on('click', (e) => {
+            if (this.settings.presentation.strippetType !== 'outlines') {
+                e.stopPropagation();
+                t.showOutlines(t.data, false);
                 t.saveThumbnailType();
                 if (t.lastOpenedStoryId) {
                     t.openReader(t.lastOpenedStoryId);
                 }
-            });
-        });
-        $outlinesTab.on('click', (e) => {
-            e.stopPropagation();
-            t.showOutlines(t.data, false);
-            t.saveThumbnailType();
-            if (t.lastOpenedStoryId) {
-                t.openReader(t.lastOpenedStoryId);
             }
         });
         $container.on('click', () => {
