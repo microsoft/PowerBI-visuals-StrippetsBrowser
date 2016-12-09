@@ -488,6 +488,7 @@ export default class StrippetsVisual implements IVisual {
         this.element = $('<div/>');
         this.element.append(template());
         $(options.element).append(this.element);
+
         this.$container = this.element.find('#strippets-container');
         this.$tabs = this.element.find('.nav');
         this.host = options.host.createSelectionManager()['hostServices'];
@@ -944,6 +945,16 @@ export default class StrippetsVisual implements IVisual {
         return thumbnailsInstance;
     }
 
+    private saveThumbnailType(): void {
+        this.host.persistProperties({
+            merge: [{
+                objectName: 'presentation',
+                selector: undefined,
+                properties: { strippetType: this.settings.presentation.strippetType },
+            }, ],
+        });
+    }
+
     /**
      * Binds click event handlers to the Thumbnails and Outlines tab controls.
      * @param {JQuery} $container - jquery-wrapped parent Element of the tabs
@@ -954,18 +965,24 @@ export default class StrippetsVisual implements IVisual {
         const $outlinesTab = $container.find('#outlinesNav');
 
         $thumbnailsTab.on('click', (e) => {
-            e.stopPropagation();
-            return t.showThumbnails(t.data, false).then(() => {
+            if (this.settings.presentation.strippetType !== 'thumbnails') {
+                e.stopPropagation();
+                return t.showThumbnails(t.data, false).then(() => {
+                    t.saveThumbnailType();
+                    if (t.lastOpenedStoryId) {
+                        t.openReader(t.lastOpenedStoryId);
+                    }
+                });
+            }
+        });
+        $outlinesTab.on('click', (e) => {
+            if (this.settings.presentation.strippetType !== 'outlines') {
+                e.stopPropagation();
+                t.showOutlines(t.data, false);
+                t.saveThumbnailType();
                 if (t.lastOpenedStoryId) {
                     t.openReader(t.lastOpenedStoryId);
                 }
-            });
-        });
-        $outlinesTab.on('click', (e) => {
-            e.stopPropagation();
-            t.showOutlines(t.data, false);
-            if (t.lastOpenedStoryId) {
-                t.openReader(t.lastOpenedStoryId);
             }
         });
         $container.on('click', () => {
@@ -991,7 +1008,7 @@ export default class StrippetsVisual implements IVisual {
             let shouldLoadMore = false;
             const dataView = options.dataViews && options.dataViews.length && options.dataViews[0];
             const newObjects = dataView && dataView.metadata && dataView.metadata.objects;
-            this.settings = $.extend(true, {}, this.settings, StrippetsVisual.DEFAULT_SETTINGS, newObjects);
+            this.settings = $.extend(true, {}, StrippetsVisual.DEFAULT_SETTINGS, newObjects);
 
             if (options.type & powerbi.VisualUpdateType.Resize || this.$tabs.is(':visible') !== this.settings.presentation.viewControls || !this.data) {
                 // set the strippets container width dynamically.
