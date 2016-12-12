@@ -588,15 +588,15 @@ export default class StrippetsVisual implements IVisual {
             let div = $('<div/>');
             div.html(html);
 
-            let filter: NodeFilter = {
-                acceptNode: (node) => {
-                    if (whiteList.indexOf(node.nodeName.toUpperCase()) === -1) {
-                        return NodeFilter.FILTER_ACCEPT;
-                    }
-
-                    return NodeFilter.FILTER_SKIP;
+            let filter: any = function (node) {
+                if (whiteList.indexOf(node.nodeName.toUpperCase()) === -1) {
+                    return NodeFilter.FILTER_ACCEPT;
                 }
+
+                return NodeFilter.FILTER_SKIP;
             };
+
+            filter.acceptNode = filter;
 
             // Create a tree walker (hierarchical iterator) that only exposes non-whitelisted nodes, which we'll delete.
             let treeWalker = document.createTreeWalker(
@@ -634,7 +634,7 @@ export default class StrippetsVisual implements IVisual {
      */
     private onLoadArticle(articleId: string): any {
         const t = this;
-        const data = <any>t.data.items.find(d => d.id === articleId);
+        const data = _.find(<any>t.data.items, (d: any) => d.id === articleId);
         if (data) {
             if (StrippetsVisual.isUrl(data.content)) {
                 if (t.settings.content.readerContentType === 'readability') {
@@ -797,7 +797,7 @@ export default class StrippetsVisual implements IVisual {
                 const trim = name.replace(/(^\W)|(\W$)/g, '');
                 if (trim && !entityMap[trim]) {
                     const type = entity.type;
-                    const iconMap = t.data.iconMap.find((im) => {
+                    const iconMap = _.find(t.data.iconMap, (im: any) => {
                         return im.type === type && im.name === name;
                     });
                     entityMap[trim] = {
@@ -813,28 +813,28 @@ export default class StrippetsVisual implements IVisual {
             // Create a tree walker (hierarchical iterator) that only exposes non-highlighted text nodes, which we'll
             // search for entities.
             let filterRegex = null;
-            let filter: NodeFilter = {
-                acceptNode: (node: HitNode) => {
-                    if ($(node.parentNode).hasClass(highlightClass)) {
+            let filter: any = function (node: HitNode) {
+                if ($(node.parentNode).hasClass(highlightClass)) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+
+                if (filterRegex) {
+                    // Using test() here, and only calling exec() (or match) when replacing,
+                    // is empirically somewhat faster than calling exec() here and storing the matches for replacing;
+                    // presumably because we test (and reject) significantly more nodes than we perform replacements on.
+                    node.hasHits = filterRegex.test(node.nodeValue);
+                    if (!node.hasHits) {
                         return NodeFilter.FILTER_REJECT;
                     }
-
-                    if (filterRegex) {
-                        // Using test() here, and only calling exec() (or match) when replacing,
-                        // is empirically somewhat faster than calling exec() here and storing the matches for replacing;
-                        // presumably because we test (and reject) significantly more nodes than we perform replacements on.
-                        node.hasHits = filterRegex.test(node.nodeValue);
-                        if (!node.hasHits) {
-                            return NodeFilter.FILTER_REJECT;
-                        }
-                    }
-                    else {
-                        node.hasHits = true; // assume it has hits
-                    }
-
-                    return NodeFilter.FILTER_ACCEPT;
                 }
+                else {
+                    node.hasHits = true; // assume it has hits
+                }
+
+                return NodeFilter.FILTER_ACCEPT;
             };
+
+            filter.acceptNode = filter;
 
             // Create a DOM tree walker that only iterates over text runs
             let treeWalker = document.createTreeWalker(div.get()[0], NodeFilter.SHOW_TEXT, filter, false);
@@ -1352,7 +1352,7 @@ export default class StrippetsVisual implements IVisual {
      */
     public closeReader(): void {
         if (this.settings.presentation.strippetType === 'outlines') {
-            const openOutline = this.outlines.instance._items.find((outline) => {
+            const openOutline = _.find(this.outlines.instance._items, (outline: any) => {
                 return outline.getCurrentState() === 'readingmode';
             });
             if (openOutline) {
@@ -1370,7 +1370,7 @@ export default class StrippetsVisual implements IVisual {
      */
     public openReader(id: any): void {
         if (this.settings.presentation.strippetType === 'outlines') {
-            const outline = this.outlines.instance._items.find((o) => {
+            const outline = _.find(this.outlines.instance._items, (o: any) => {
                 return o.data.id === id;
             });
             if (outline) {
@@ -1378,7 +1378,7 @@ export default class StrippetsVisual implements IVisual {
             }
         }
         else {
-            const thumbnail = this.thumbnails.instance._thumbnailItems.find((tn) => {
+            const thumbnail = _.find(this.thumbnails.instance._thumbnailItems, (tn: any) => {
                 return tn.data.id === id;
             });
             if (thumbnail) {
