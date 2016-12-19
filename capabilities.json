@@ -8,8 +8,8 @@
     },
     {
       "name": "articleValue",
-      "displayName": "Score",
-      "description": "Used for highlighting",
+      "displayName": "Enable Highlights",
+      "description": "Bind anything to this field to enable entity highlights",
       "kind": 1
     },
     {
