@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/Microsoft/PowerBI-visuals-StrippetsBrowser/tree/master.svg?style=svg)](https://circleci.com/gh/Microsoft/PowerBI-visuals-StrippetsBrowser/tree/master)
+
 # Outlines API
 
 
