@@ -1,3 +1,7 @@
+machine:
+  node:
+    version: 6
+
 compile:
   override:
     - npm run package
