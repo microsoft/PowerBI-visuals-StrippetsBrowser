@@ -40,6 +40,9 @@ module.exports = function(config) {
             // suppress webpack errors
             stats: 'none'
         },
+        mime: {
+            'text/x-typescript': ['ts']
+        },
         reporters: ['progress'],
         port: 9876,
         colors: true,
