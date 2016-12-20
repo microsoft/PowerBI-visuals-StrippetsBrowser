@@ -5,3 +5,7 @@ machine:
 compile:
   override:
     - npm run package
+
+general:
+  artifacts:
+    - "dist/"

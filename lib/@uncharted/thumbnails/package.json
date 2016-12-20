@@ -1,6 +1,6 @@
 {
   "name": "@uncharted/thumbnails",
-  "version": "0.4.15",
+  "version": "0.4.17",
   "description": "Uncharted Software Inc. Thumbnails visual component",
   "main": "dist/uncharted.thumbnails.js",
   "scripts": {
@@ -51,12 +51,12 @@
   },
   "dependencies": {
     "bluebird": "^3.4.6",
-    "jquery": "^3.1.1",
+    "jquery": "^2.1.4",
     "underscore": "^1.8.3",
     "velocity-animate": "^1.2.3",
     "font-awesome": "^4.4.0",
     "@uncharted/strippets.common": "0.2.2",
-    "@uncharted/strippets": "0.4.21",
+    "@uncharted/strippets": "0.4.23",
     "handlebars": "^4.0.5"
   },
   "jspm": {

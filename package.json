@@ -13,7 +13,7 @@
     "tdd": "npm-run-all --parallel dev test:tdd",
     "dev": "node bin/startDev",
     "package": "node bin/packageVisual",
-    "test": "karma start --color | node bin/filterErrors",
+    "test": "karma start --color | node bin/filterErrors ; test ${PIPESTATUS[0]} -eq 0",
     "test:tdd": "karma start --color --tdd | node bin/filterErrors",
     "lint": "tslint src/**/*.ts",
     "clean": "rm -rf node_modules .tmp"
@@ -23,9 +23,9 @@
   "author": "Uncharted Software Inc.",
   "license": "MIT",
   "privateSubmodules": {
-    "@uncharted/strippets.common": "0.2.2",
-    "@uncharted/strippets": "0.4.21",
-    "@uncharted/thumbnails": "0.4.15"
+    "@uncharted/strippets.common": "0.2.4",
+    "@uncharted/strippets": "0.4.24",
+    "@uncharted/thumbnails": "0.4.17"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.35",
