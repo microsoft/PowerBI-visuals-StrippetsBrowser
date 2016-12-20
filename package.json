@@ -23,8 +23,8 @@
   "author": "Uncharted Software Inc.",
   "license": "MIT",
   "privateSubmodules": {
-    "@uncharted/strippets.common": "0.2.4",
-    "@uncharted/strippets": "0.4.24",
+    "@uncharted/strippets.common": "0.2.2",
+    "@uncharted/strippets": "0.4.23",
     "@uncharted/thumbnails": "0.4.17"
   },
   "devDependencies": {
