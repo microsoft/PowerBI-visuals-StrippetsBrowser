@@ -200,6 +200,5 @@ describe('The Strippets Browser Component', function () {
         });
         expect(mock.Node.prototype.parentNode.insertBefore).to.be.calledTwice;
         expect(mock.Node.prototype.ownerDocument.createElementNS).to.be.calledWith(undefined, newNodeType);
-        throw(Error);
     });
 });
