@@ -9,7 +9,7 @@
     "gitHubUrl": "https://github.com/Microsoft/PowerBI-visuals-StrippetsBrowser/"
   },
   "author": {
-    "name": "Microsoft Research",
+    "name": "Microsoft (experimental)",
     "email": "msrvizsupport@microsoft.com"
   },
   "apiVersion": "1.1.0",
