@@ -1,6 +1,7 @@
 [![CircleCI](https://circleci.com/gh/Microsoft/PowerBI-visuals-StrippetsBrowser/tree/master.svg?style=svg)](https://circleci.com/gh/Microsoft/PowerBI-visuals-StrippetsBrowser/tree/master)
 
 # Strippet Browser Custom Visual
+![Alt text](assets/screenshot.png?raw=true "Strippets Browser")
 
 ## Debugging
 
