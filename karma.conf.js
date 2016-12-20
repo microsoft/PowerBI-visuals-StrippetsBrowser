@@ -36,6 +36,10 @@ module.exports = function(config) {
               })
             ]
         },
+        webpackMiddleware: {
+            // suppress webpack errors
+            stats: 'none'
+        },
         reporters: ['progress'],
         port: 9876,
         colors: true,
