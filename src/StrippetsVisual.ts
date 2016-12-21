@@ -315,6 +315,37 @@ export default class StrippetsVisual implements IVisual {
             }
         };
 
+        const highlightEntityAndMapIcon= function (entity, entityClass, entityColor, isHighlighted) {
+            var highlighted = false;
+
+            if (entity.type && entity.name) {
+                const entityTypeId = entity.type + '_' + entity.name;
+                if (isHighlighted && !highlightedEntities[entityTypeId]) {
+                    highlightedEntities[entityTypeId] = {
+                        id: entity.id,
+                        type: entity.type,
+                        name: entity.name,
+                        bucket: entity.bucket
+                    };
+                    adjustIconColor(highlightedEntities[entityTypeId], entity.bucket, entityColor, true);
+                    highlighted = true;
+                }
+                if (updateIM && !iconMap[entityTypeId]) {
+                    iconMap[entityTypeId] = {
+                        class: entityClass || 'fa fa-circle',
+                        color: entityColor === null ? colors.shift() : entityColor,
+                        type: entity.type,
+                        name: entity.name,
+                        isDefault: false
+                    };
+
+                    adjustIconColor(iconMap[entityTypeId], entity.bucket, entityColor, false);
+                }
+            }
+
+            return highlighted;
+        };
+
         categoriesDV[categories['id']] && categoriesDV[categories['id']].values.slice(lastDataViewLength).forEach((id: any, adjustedIndex) => {
             // highlight table is not compensated. Since we slice the values, we need to compensate for the slice. Slicing at the highlights level
             // will result in slower performance.
@@ -369,28 +400,8 @@ export default class StrippetsVisual implements IVisual {
 
                     populateUncertaintyFieldsCompressed(entity, parsedEntity);
 
-                    if (entity.type && entity.name) {
-                        const entityTypeId = entity.type + '_' + entity.name;
-                        if (isHighlighted && !highlightedEntities[entityTypeId]) {
-                            highlightedEntities[entityTypeId] = {
-                                type: entity.type,
-                                name: entity.name,
-                                bucket: entity.bucket
-                            };
-                            populateUncertaintyFieldsCompressed(entity, parsedEntity);
-                            adjustIconColor(highlightedEntities[entityTypeId], entity.bucket, parsedEntity.cssColor, true);
-                        }
-                        if (updateIM && !iconMap[entityTypeId]) {
-                            iconMap[entityTypeId] = {
-                                class: parsedEntity.cssClass || 'fa fa-circle',
-                                color: parsedEntity.cssColor || colors.shift(),
-                                type: entity.type,
-                                name: entity.name,
-                                isDefault: false
-                            };
-
-                            adjustIconColor(iconMap[entityTypeId], entity.bucket, parsedEntity.cssColor, false);
-                        }
+                    if (highlightEntityAndMapIcon(entity, parsedEntity.cssClass, parsedEntity.cssColor, isHighlighted)) {
+                        populateUncertaintyFieldsCompressed(entity, parsedEntity);
                     }
 
                     strippetsData[id].entities.push(entity);
@@ -421,31 +432,7 @@ export default class StrippetsVisual implements IVisual {
                         };
 
                         populateUncertaintyFields(entity, entityIds, buckets, i);
-
-                        if (entity.type && entity.name) {
-                            const entityTypeId = entity.type + '_' + entity.name;
-                            if (isHighlighted && !highlightedEntities[entityTypeId]) {
-                                highlightedEntities[entityTypeId] = {
-                                    id: entity.id,
-                                    type: entity.type,
-                                    name: entity.name,
-                                    bucket: entity.bucket,
-                                };
-                                adjustIconColor(highlightedEntities[entityTypeId], entity.bucket, entityColor, true);
-                            }
-                            if (updateIM && !iconMap[entityTypeId]) {
-                                iconMap[entityTypeId] = {
-                                    class: entityClass || 'fa fa-circle',
-                                    color: entityColor === null ? colors.shift() : entityColor,
-                                    type: entity.type,
-                                    name: entity.name,
-                                    isDefault: false
-                                };
-
-                                adjustIconColor(iconMap[entityTypeId], entity.bucket, entityColor, false);
-                            }
-                        }
-
+                        highlightEntityAndMapIcon(entity, entityClass, entityColor, isHighlighted);
                         strippetsData[id].entities.push(entity);
                     }
                 }
