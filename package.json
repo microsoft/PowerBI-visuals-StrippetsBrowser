@@ -7,14 +7,14 @@
     "preinstall:prereq": "npm install tar.gz mv --save-dev",
     "preinstall:submodules": "node bin/downloadPrivateSubmodules",
     "preinstall:dependencies": "node bin/installSubmoduleDeps",
-    "preinstall": "npm run clean && npm run preinstall:prereq && npm run preinstall:submodules && npm run preinstall:dependencies",
+    "preinstall": "npm run preinstall:prereq && npm run preinstall:submodules && npm run preinstall:dependencies",
     "install-certificate": "node bin/openCert",
     "start": "npm run dev",
     "tdd": "npm-run-all --parallel dev test:tdd",
     "dev": "node bin/startDev",
     "package": "node bin/packageVisual",
-    "test": "karma start --color | node bin/filterErrors",
-    "test:tdd": "karma start --color --tdd | node bin/filterErrors",
+    "test": "karma start",
+    "test:tdd": "karma start --color --tdd",
     "lint": "tslint src/**/*.ts",
     "clean": "rm -rf node_modules .tmp"
   },
@@ -23,9 +23,9 @@
   "author": "Uncharted Software Inc.",
   "license": "MIT",
   "privateSubmodules": {
-    "@uncharted/strippets.common": "0.2.2",
-    "@uncharted/strippets": "0.4.21",
-    "@uncharted/thumbnails": "0.4.15"
+    "@uncharted/strippets.common": "0.2.4",
+    "@uncharted/strippets": "0.4.24",
+    "@uncharted/thumbnails": "0.4.18"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.35",

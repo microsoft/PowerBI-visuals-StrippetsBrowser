@@ -45,6 +45,7 @@ import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
 import IColorInfo = powerbi.IColorInfo;
 import {Bucket, HitNode} from './interfaces.ts';
+import { COLOR_PALETTE, getSegmentColor } from './utils';
 
 import * as Promise from 'bluebird';
 import * as $ from 'jquery';
@@ -54,18 +55,6 @@ require('velocity-animate');
 const moment = require('moment');
 const mediator = require('@uncharted/strippets.common').mediator;
 const thumbnailsDefaults = require('@uncharted/thumbnails/src/thumbnails.defaults');
-
-/**
- * Default entity colors for when no colors are specified by the data
- * @type {string[]}
- */
-const COLOR_PALETTE = ['#FF001F', '#FF8000', '#AC8000', '#95AF00', '#1BBB6A', '#00C6E1', '#B44AE7', '#DB00B0'];
-
-/**
- * Number of documents expected per load.
- * @type {number}
- */
-const DOCUMENT_REQUEST_COUNT = 200;
 
 /**
  * Width of one outline, in pixels.
@@ -114,6 +103,12 @@ const HTML_WHITELIST_MEDIA = [
     'SVG',
     'VIDEO'
 ];
+
+/**
+ * Grey color to use as the default when entities have buckets.
+ * @type {string}
+ */
+const BUCKET_DEFAULT_GREY = '#DDDDDD';
 
 /**
  * Strippet Browser visual definition.
@@ -215,6 +210,7 @@ export default class StrippetsVisual implements IVisual {
     private resizeOutlines: Function;
     private thumbnailsWrapTimeout: any = null;
     private colors: IColorInfo[];
+    private suppressNextUpdate: boolean;
 
     /**
      * Convert PowerBI data into a format compatible with the Thumbnails and Outlines components.
@@ -222,6 +218,7 @@ export default class StrippetsVisual implements IVisual {
      * @param {Boolean=} updateIconMap - true if the entity icon data structure needs to be updated
      * @param {Object=} appendTo - if provided, the previous data, to which the contents of dataView should be appended (deprecated use case)
      * @param {Number=} lastDataViewLength - If we're appending, the number of rows in the previous dataView
+     * @param {Array=} defaultColors - Array of colors to use when none are supplied by the data and the color palette has been exhausted.
      * @returns {{items: *, iconMap: any, highlights: {entities: any, itemIds: any}}} data in the components' internal format
      */
     public static converter(dataView: DataView, updateIconMap: boolean = false, appendTo?: any, lastDataViewLength: number = 0, defaultColors = []) {
@@ -308,6 +305,48 @@ export default class StrippetsVisual implements IVisual {
             }
         };
 
+        const adjustIconColor = function (iconMapEntity, bucket, dataColor, isHighlight) {
+            if (bucket) {
+                if (dataColor) {
+                    iconMapEntity.color = getSegmentColor(dataColor, 100, 0, 1, isHighlight);
+                }
+                else {
+                    iconMapEntity.color = BUCKET_DEFAULT_GREY;
+                }
+            }
+        };
+
+        const highlightEntityAndMapIcon= function (entity, entityClass, entityColor, isHighlighted) {
+            var highlighted = false;
+
+            if (entity.type && entity.name) {
+                const entityTypeId = entity.type + '_' + entity.name;
+                if (isHighlighted && !highlightedEntities[entityTypeId]) {
+                    highlightedEntities[entityTypeId] = {
+                        id: entity.id,
+                        type: entity.type,
+                        name: entity.name,
+                        bucket: entity.bucket
+                    };
+                    adjustIconColor(highlightedEntities[entityTypeId], entity.bucket, entityColor, true);
+                    highlighted = true;
+                }
+                if (updateIM && !iconMap[entityTypeId]) {
+                    iconMap[entityTypeId] = {
+                        class: entityClass || 'fa fa-circle',
+                        color: entityColor === null ? colors.shift() : entityColor,
+                        type: entity.type,
+                        name: entity.name,
+                        isDefault: false
+                    };
+
+                    adjustIconColor(iconMap[entityTypeId], entity.bucket, entityColor, false);
+                }
+            }
+
+            return highlighted;
+        };
+
         categoriesDV[categories['id']] && categoriesDV[categories['id']].values.slice(lastDataViewLength).forEach((id: any, adjustedIndex) => {
             // highlight table is not compensated. Since we slice the values, we need to compensate for the slice. Slicing at the highlights level
             // will result in slower performance.
@@ -362,25 +401,8 @@ export default class StrippetsVisual implements IVisual {
 
                     populateUncertaintyFieldsCompressed(entity, parsedEntity);
 
-                    if (entity.type && entity.name) {
-                        const entityTypeId = entity.type + '_' + entity.name;
-                        if (isHighlighted && !highlightedEntities[entityTypeId]) {
-                            highlightedEntities[entityTypeId] = {
-                                type: entity.type,
-                                name: entity.name,
-                                bucket: entity.bucket
-                            };
-                            populateUncertaintyFieldsCompressed(entity, parsedEntity);
-                        }
-                        if (updateIM && !iconMap[entityTypeId]) {
-                            iconMap[entityTypeId] = {
-                                class: parsedEntity.cssClass || 'fa fa-circle',
-                                color: parsedEntity.cssColor || colors.shift(),
-                                type: entity.type,
-                                name: entity.name,
-                                isDefault: false
-                            };
-                        }
+                    if (highlightEntityAndMapIcon(entity, parsedEntity.cssClass, parsedEntity.cssColor, isHighlighted)) {
+                        populateUncertaintyFieldsCompressed(entity, parsedEntity);
                     }
 
                     strippetsData[id].entities.push(entity);
@@ -411,29 +433,7 @@ export default class StrippetsVisual implements IVisual {
                         };
 
                         populateUncertaintyFields(entity, entityIds, buckets, i);
-
-                        if (entity.type && entity.name) {
-                            const entityTypeId = entity.type + '_' + entity.name;
-                            if (isHighlighted && !highlightedEntities[entityTypeId]) {
-                                highlightedEntities[entityTypeId] = {
-                                    id: entity.id,
-                                    type: entity.type,
-                                    name: entity.name,
-                                    bucket: entity.bucket,
-                                };
-                            }
-                            if (updateIM && !iconMap[entityTypeId]) {
-                                iconMap[entityTypeId] = {
-                                    class: entityClass || 'fa fa-circle',
-                                    color: entityColor === null ? colors.shift() : entityColor,
-                                    type: entity.type,
-                                    name: entity.name,
-                                    isDefault: false
-                                };
-                            }
-
-                        }
-
+                        highlightEntityAndMapIcon(entity, entityClass, entityColor, isHighlighted);
                         strippetsData[id].entities.push(entity);
                     }
                 }
@@ -946,6 +946,7 @@ export default class StrippetsVisual implements IVisual {
     }
 
     private saveThumbnailType(): void {
+        this.suppressNextUpdate = true;
         this.host.persistProperties({
             merge: [{
                 objectName: 'presentation',
@@ -968,10 +969,10 @@ export default class StrippetsVisual implements IVisual {
             if (this.settings.presentation.strippetType !== 'thumbnails') {
                 e.stopPropagation();
                 return t.showThumbnails(t.data, false).then(() => {
-                    t.saveThumbnailType();
                     if (t.lastOpenedStoryId) {
                         t.openReader(t.lastOpenedStoryId);
                     }
+                    t.saveThumbnailType();
                 });
             }
         });
@@ -979,10 +980,10 @@ export default class StrippetsVisual implements IVisual {
             if (this.settings.presentation.strippetType !== 'outlines') {
                 e.stopPropagation();
                 t.showOutlines(t.data, false);
-                t.saveThumbnailType();
                 if (t.lastOpenedStoryId) {
                     t.openReader(t.lastOpenedStoryId);
                 }
+                t.saveThumbnailType();
             }
         });
         $container.on('click', () => {
@@ -990,11 +991,10 @@ export default class StrippetsVisual implements IVisual {
         });
     }
 
-    private hasRequiredFields(dataView: DataView): boolean {
+    private static hasRequiredFields(dataView: DataView): boolean {
         const columns = dataView.metadata.columns;
-        const idColumnExists = _.some(columns || [], (col: any) => col && col.roles.id);
         // return true if the id column is populated.
-        return idColumnExists;
+        return _.some(columns || [], (col: any) => col && col.roles.id);
     }
 
     /**
@@ -1002,6 +1002,11 @@ export default class StrippetsVisual implements IVisual {
      * @param {VisualUpdateOptions} options - data and config from PowerBI
      */
     public update(options: VisualUpdateOptions): void {
+        if (this.suppressNextUpdate) {
+            this.suppressNextUpdate = false;
+            return;
+        }
+
         this.element.css({width: options.viewport.width, height: options.viewport.height});
         if (options.dataViews && options.dataViews.length > 0) {
 
@@ -1039,15 +1044,17 @@ export default class StrippetsVisual implements IVisual {
 
                 const previousLastItemIndex = loadedPreviously ? this.data.items.length - 1 : 0;
 
-                const isHighlighting = dataView.categorical.values
+                const isHighlighting = (dataView.categorical
+                    && dataView.categorical.values
+                    && dataView.categorical.values.length
                     && dataView.categorical.values[0].highlights
-                    && dataView.categorical.values[0].highlights.length > 0;
+                    && dataView.categorical.values[0].highlights.length > 0);
 
                 // if highlighting and the reader is opened, close it.
                 if (isHighlighting && this.lastOpenedStoryId) {
                     this.closeReader();
                 }
-                this.hasMoreData = !!dataView.metadata.segment && this.hasRequiredFields(dataView);
+                this.hasMoreData = !!dataView.metadata.segment && StrippetsVisual.hasRequiredFields(dataView);
 
                 const data = StrippetsVisual.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, loadedPreviously ? this.lastDataViewLength : 0, this.colors);
                 this.lastDataViewLength = currentDataViewSize;
