@@ -210,6 +210,7 @@ export default class StrippetsVisual implements IVisual {
     private resizeOutlines: Function;
     private thumbnailsWrapTimeout: any = null;
     private colors: IColorInfo[];
+    private suppressNextUpdate: boolean;
 
     /**
      * Convert PowerBI data into a format compatible with the Thumbnails and Outlines components.
@@ -945,6 +946,7 @@ export default class StrippetsVisual implements IVisual {
     }
 
     private saveThumbnailType(): void {
+        this.suppressNextUpdate = true;
         this.host.persistProperties({
             merge: [{
                 objectName: 'presentation',
@@ -967,10 +969,10 @@ export default class StrippetsVisual implements IVisual {
             if (this.settings.presentation.strippetType !== 'thumbnails') {
                 e.stopPropagation();
                 return t.showThumbnails(t.data, false).then(() => {
-                    t.saveThumbnailType();
                     if (t.lastOpenedStoryId) {
                         t.openReader(t.lastOpenedStoryId);
                     }
+                    t.saveThumbnailType();
                 });
             }
         });
@@ -978,10 +980,10 @@ export default class StrippetsVisual implements IVisual {
             if (this.settings.presentation.strippetType !== 'outlines') {
                 e.stopPropagation();
                 t.showOutlines(t.data, false);
-                t.saveThumbnailType();
                 if (t.lastOpenedStoryId) {
                     t.openReader(t.lastOpenedStoryId);
                 }
+                t.saveThumbnailType();
             }
         });
         $container.on('click', () => {
@@ -1000,6 +1002,11 @@ export default class StrippetsVisual implements IVisual {
      * @param {VisualUpdateOptions} options - data and config from PowerBI
      */
     public update(options: VisualUpdateOptions): void {
+        if (this.suppressNextUpdate) {
+            this.suppressNextUpdate = false;
+            return;
+        }
+
         this.element.css({width: options.viewport.width, height: options.viewport.height});
         if (options.dataViews && options.dataViews.length > 0) {
 
