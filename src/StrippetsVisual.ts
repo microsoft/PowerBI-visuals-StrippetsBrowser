@@ -44,7 +44,7 @@ import SelectionId = powerbi.visuals.SelectionId;
 import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
 import IColorInfo = powerbi.IColorInfo;
-import {Bucket, HitNode} from './interfaces.ts';
+import {Bucket, HitNode} from './interfaces';
 import { COLOR_PALETTE, getSegmentColor } from './utils';
 
 import * as Promise from 'bluebird';
@@ -316,8 +316,8 @@ export default class StrippetsVisual implements IVisual {
             }
         };
 
-        const highlightEntityAndMapIcon= function (entity, entityClass, entityColor, isHighlighted) {
-            var highlighted = false;
+        const highlightEntityAndMapIcon = function (entity, entityClass, entityColor, isHighlighted) {
+            let highlighted = false;
 
             if (entity.type && entity.name) {
                 const entityTypeId = entity.type + '_' + entity.name;
