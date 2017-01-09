@@ -106,51 +106,48 @@ describe('The Strippets Browser Component', function () {
 
     it('converts normal data', function () {
         populateData(
-            values.explodingPhones
+            values.lipsum
         );
         const converted = StrippetsVisual.converter(dataView, true);
         expect(converted.items).to.be.ok;
         expect(converted.items[0].isHighlighted).to.be.false;
-        expect(converted.items[0].entities.length).to.equal(159);
+        expect(converted.items[0].entities.length).to.equal(4);
 
         expect(converted.iconMap).to.be.ok;
-        expect(converted.iconMap.length).to.equal(117);
-        expect(converted.iconMap[114].name).to.equal('Jeff Dahn');
-        expect(converted.iconMap[115].class).to.equal('fa fa-circle');
-        expect(converted.iconMap[116].type).to.equal('person');
+        expect(converted.iconMap.length).to.equal(0);
 
         expect(converted.highlights).to.be.null;
-        expect(converted.items[0].entities[0].bucket).to.be.ok;
-        expect(converted.items[0].entities[0].bucket.key).to.equal('Level 1');
+        // expect(converted.items[0].entities[0].bucket).to.be.ok;
+        // expect(converted.items[0].entities[0].bucket.key).to.equal('Level 1');
     });
 
     it('converts data with highlights', function () {
         populateData(
-            values.explodingPhones,
+            values.lipsum,
             values.highlights
         );
         const converted = StrippetsVisual.converter(dataView);
         expect(converted.items).to.be.ok;
-        expect(converted.items[0].entities.length).to.equal(159);
+        expect(converted.items[0].entities.length).to.equal(4);
         expect(converted.items[0].isHighlighted).to.be.ok;
         expect(converted.iconMap).to.be.ok;
         expect(converted.highlights).to.be.ok;
-        expect(converted.highlights.itemIds.length).to.equal(1);
+        expect(converted.highlights.itemIds.length).to.equal(3);
     });
 
-    it('converts compressed entities data', function () {
-        populateData(
-            values.pokemon
-        );
-        const converted = StrippetsVisual.converter(dataView);
-        expect(converted.items).to.be.ok;
-        expect(converted.items[10].entities.length).to.equal(52);
-        expect(converted.iconMap).to.be.ok;
-        expect(converted.highlights).to.be.null;
-    });
+    // it('converts compressed entities data', function () {
+    //     populateData(
+    //         values.compressed
+    //     );
+    //     const converted = StrippetsVisual.converter(dataView);
+    //     expect(converted.items).to.be.ok;
+    //     expect(converted.items[10].entities.length).to.equal(52);
+    //     expect(converted.iconMap).to.be.ok;
+    //     expect(converted.highlights).to.be.null;
+    // });
 
     it('sanitizes HTML', function () {
-        const sanitized = StrippetsVisual.sanitizeHTML(testHtmlStrings.pokemon, StrippetsVisual.HTML_WHITELIST_CONTENT);
+        const sanitized = StrippetsVisual.sanitizeHTML(testHtmlStrings.testArticle, StrippetsVisual.HTML_WHITELIST_CONTENT);
         expect(sanitized).to.be.ok;
         expect(sanitized.indexOf('<script>')).to.equal(-1);
         expect(sanitized.indexOf('<SCRIPT>')).to.equal(-1);
@@ -166,7 +163,7 @@ describe('The Strippets Browser Component', function () {
     it('highlights text', function () {
         let mock = {
             Node: function () {
-                this.nodeValue = 'citing documents leaked to Korea\'s SBS (via ';
+                this.nodeValue = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
                 this.hasHits = true;
             }
         };
@@ -187,12 +184,12 @@ describe('The Strippets Browser Component', function () {
         sinon.spy(mock, 'Node');
         sinon.spy(mock.Node.prototype.ownerDocument, 'createElementNS');
 
-        let regex = /\bKorea\b/gi;
+        let regex = /\bconsectetur\b/gi;
         let node = new mock.Node();
         let newNodeType = 'span';
 
         StrippetsVisual.textNodeReplace(node, regex, function (match) {
-            expect(match).to.equal('Korea');
+            expect(match).to.equal('consectetur');
             return {
                 name: newNodeType,
                 content: match
