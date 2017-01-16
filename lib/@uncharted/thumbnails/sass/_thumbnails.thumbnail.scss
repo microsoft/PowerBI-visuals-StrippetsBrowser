@@ -1,0 +1,160 @@
+/**
+ * Copyright (c) 2016 Uncharted Software Inc.
+ * http://www.uncharted.software/
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+$card-width: 200px;
+$card-shadow: -1px 0 0 #e5e5e5, 0 0 2px rgba(0, 0, 0, 0.12), 2px 0 4px rgba(0, 0, 0, 0.24);
+$card-transition: opacity 0.3s ease-out, width 0.3s ease-out, transform 0.3s ease-out;
+
+.dummyThumbnail {
+  width: $card-width + 10px;
+  min-width: $card-width + 10px;
+  height: 0;
+}
+
+.thumbnail {
+  $thumbnail-min-height: 200px !default;
+  $thumbnail-max-height: 300px !default;
+  $vertical-margin: 10px;
+  max-height: $thumbnail-max-height;
+  min-height: $thumbnail-min-height;
+  width: ($card-width + $vertical-margin);
+  transition: $card-transition;
+
+  .card {
+    background: white;
+    margin: $vertical-margin 5px;
+    height: calc(100% - #{$vertical-margin} * 2);
+    height: -webkit-calc(100% - #{$vertical-margin} * 2);
+    width: $card-width;
+    box-shadow: $card-shadow;
+    position: relative;
+    font-size: 0.9286em;
+    vertical-align: top;
+    overflow: hidden;
+    transition: $card-transition;
+    opacity: 1.0;
+    -webkit-transform: scaleX(1);
+    transform: scaleX(1);
+    -webkit-transform-origin: left 50%;
+    transform-origin: left 50%;
+  }
+
+  .card:after {
+    content: "";
+    position: absolute;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, #fff 85%);
+    width: 100%;
+    height: 50px;
+    bottom: 0;
+  }
+
+  // Card image
+  .card-image {
+    max-width: 100%;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    min-height: 100px;
+    cursor: pointer;
+  }
+
+  .card-image div {
+    max-width: $card-width;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    float: left;
+  }
+
+  .card-image-blur {
+    overflow: hidden;
+    filter: none;
+  }
+
+  // Card header
+  .card-header {
+    height: 28px;
+  }
+
+  .card-image + .card-body {
+    padding-top: 8px;
+  }
+
+  // Card body
+  .card-body {
+    padding: 16px 16px 8px 16px;
+    h1 {
+      font-size: 13px;
+      margin: 0 0 2px 0;
+      cursor: pointer;
+      &.titleonly {
+        margin-right:13px;
+      }
+    }
+    .meta-line {
+      font-size: 11px;
+      color: #777;
+      margin-bottom: 0;
+    }
+    .meta-line + p {
+      margin-top: 2px;
+      font-size: 12px;
+      font-family: 'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif;
+    }
+  }
+
+  // Card icon
+  .card-icon {
+    height: 28px;
+    width: 28px;
+    padding: 6px;
+    background: #f6f6f6 no-repeat 50% 50% / 16px 16px;
+    border-radius: 14px;
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    filter: none;
+  }
+
+  .inline-reader-container {
+    display: none;
+    background: white;
+    margin: $vertical-margin 0;
+    height: calc(100% - #{$vertical-margin} * 2);
+    height: -webkit-calc(100% - #{$vertical-margin} * 2);
+    box-shadow: $card-shadow;
+    position: absolute;
+    font-size: 0.9286em;
+    vertical-align: top;
+    left: 0;
+    top: 0;
+    transition: $card-transition;
+    z-index: 1;
+    max-height: 410px !important;
+  }
+}
+
+.inline-reader {
+  margin: 0 5px;
+  position: relative;
+}
+

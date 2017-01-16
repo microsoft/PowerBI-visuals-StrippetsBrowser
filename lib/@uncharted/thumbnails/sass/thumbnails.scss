@@ -1,0 +1,108 @@
+/**
+ * Copyright (c) 2016 Uncharted Software Inc.
+ * http://www.uncharted.software/
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+#thumbnails-panel {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  height: 100%;
+  line-height: 1.42857;
+  color: #333333;
+  background-color: #fff;
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+  @import 'thumbnails.base';
+
+  // Thumbnails style
+  .thumbnails-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+  }
+
+  // horizontally align thumbnails with horizontal-align class on the viewport
+  .thumbnails {
+    &.viewport {
+      height: 100%;
+      background: #f2f2f2;
+      overflow-y: auto;
+      -ms-overflow-style: -ms-autohiding-scrollbar;
+      &.inline-thumbnails {
+        display: flex;
+        .thumbnails-container {
+          flex-wrap: initial;
+          justify-content: initial;
+          height: 100%;
+        }
+        .dummyThumbnail {
+          display: none;
+        }
+        .infinite-scroll {
+          display: none;
+        }
+        .thumbnail {
+          min-height: 150px !important;
+          height: 100% !important;
+          max-height: 410px !important;
+          min-width: 210px !important;
+        }
+        .moreDataLoader {
+          margin: auto 20px auto 30px;
+        }
+        .reader-holder {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .moreDataLoader {
+    margin: 0 100%;
+  }
+
+  @-webkit-keyframes sk-bouncedelay {
+    0%, 80%, 100% {
+      -webkit-transform: scale(0)
+    }
+    40% {
+      -webkit-transform: scale(1.0)
+    }
+  }
+
+  @keyframes sk-bouncedelay {
+    0%, 80%, 100% {
+      -webkit-transform: scale(0);
+      transform: scale(0);
+    }
+    40% {
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
+  }
+
+  @import 'thumbnails.thumbnail';
+  @import 'thumbnails.readerview';
+}

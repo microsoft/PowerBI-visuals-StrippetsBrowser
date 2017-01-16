@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Strippets Example</title>
+    <link rel="stylesheet" href="font-awesome.css">
+    <link rel="stylesheet" href="strippets.css">
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: verdana, sans-serif;
+            font-size: 10px;
+        }
+
+        h4 {
+            font-family: verdana, sans-serif;
+            font-size: 11px;
+            margin: 0;
+            padding: 0;
+            font-weight: bold;
+
+        }
+    </style>
+    <script type="text/javascript" src="uncharted.strippets.dependencies.js"></script>
+    <script type="text/javascript" src="uncharted.strippets.js"></script>
+    <script type="text/javascript" src="email_sampledata.js"></script>
+</head>
+<body>
+<div id="strippets-panel" style="height:50vh; width: 100%;"></div>
+<div id="toggleSidebar" style="font-weight:bold;float:right;margin:5px;cursor:pointer;"> TOGGLE SIDEBAR</div>
+<div id="applyFilter" style="font-weight:bold;float:right;margin:5px;cursor:pointer;">APPLY TEST FILTER</div>
+<div id="applyNewFilter" style="font-weight:bold;float:right;margin:5px;cursor:pointer;">APPLY NEW TEST FILTER</div>
+
+
+<script type="text/javascript">
+    var staticContent = '<div class="zn-body__read-all"><p class="zn-body__paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam diam massa, consequat non dolor ac, dignissim elementum est. Quisque non nulla odio. Phasellus urna diam, condimentum blandit mi ac, euismod faucibus libero. Maecenas nec purus non mauris volutpat lacinia et id leo. Quisque quis maximus dolor. Morbi placerat sagittis tristique. Duis rhoncus sed urna sed dictum.    </p><p>    Curabitur rhoncus viverra ex, in mollis quam. Vivamus ultrices orci id mi pretium convallis. Nunc venenatis finibus mauris, eget gravida nunc porta ut. Praesent aliquet cursus orci quis auctor. Vivamus aliquet, metus pharetra egestas vulputate, sem libero molestie dui, non lobortis enim mi tincidunt lorem. Aenean nec enim ac libero vestibulum pellentesque vel ut elit. Aenean ac neque vel eros tincidunt sodales. Praesent lacinia ex urna, vel rutrum purus rhoncus et. Nulla finibus elit sit amet mi dictum interdum. Etiam quis neque felis. Etiam malesuada finibus blandit. Suspendisse condimentum, tortor ut egestas varius, sem lectus lacinia augue, at vulputate lacus elit ac elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam gravida eleifend erat, id ultricies lorem auctor in. Ut euismod risus at eros ullamcorper interdum.</p><p>Integer accumsan gravida congue. Etiam elementum ultricies consequat. Maecenas ac ipsum tincidunt, fringilla leo at, molestie ipsum. Mauris a ante eros. Morbi placerat nisi et nulla congue, at finibus nibh finibus. Nunc malesuada, metus eu condimentum sodales, sem ex dapibus arcu, ut consequat leo orci at ex. Donec posuere purus vulputate, vehicula purus sit amet, convallis est. Sed egestas tincidunt laoreet. Cras facilisis ultricies arcu id rhoncus. Fusce luctus leo tortor, eu faucibus elit posuere eget. Nam mattis rhoncus nulla, in mollis velit congue ut.</p><p>Aenean quis lobortis arcu. Suspendisse tincidunt tellus id felis interdum convallis. Sed placerat elit quis urna auctor, vel hendrerit nulla rhoncus. Mauris non gravida ex, ac tempor magna. Proin condimentum elementum risus ut fringilla. In tortor turpis, viverra vel eros a, ullamcorper semper nisl. Etiam pulvinar aliquam dolor viverra facilisis. Nulla facilisi. Proin sed euismod diam. Cras finibus, magna sed porta molestie, mauris libero vestibulum erat, ut aliquam risus purus sit amet mi. Curabitur vel nulla sem. Aenean in aliquet felis. Nulla nec justo ac odio elementum tristique at accumsan felis. Nullam tincidunt suscipit suscipit. Praesent et tempus velit, sit amet condimentum est. Interdum et malesuada fames ac ante ipsum primis in faucibus.</p><p>Mauris euismod pretium hendrerit. Aliquam dapibus vehicula magna, a convallis orci luctus sed. Nullam tristique diam diam, quis sollicitudin dolor porta eget. Morbi lobortis neque vitae metus cursus, id tincidunt nulla semper. Pellentesque luctus fermentum turpis, eu ullamcorper diam ultrices et. Aliquam sollicitudin dui a dolor ultricies viverra. Aliquam leo metus, molestie et ultricies et, consectetur sit amet dui. Nunc pellentesque dictum ipsum, eleifend tempus turpis fringilla a. Nulla id aliquet mauris. Fusce tortor diam, imperdiet sed posuere sit amet, porta ac sapien. Maecenas varius euismod turpis eu vehicula. Proin aliquet mauris vitae ligula auctor aliquet nec et lorem. Mauris dignissim, augue nec fringilla dapibus, dolor magna euismod risus, at placerat mauris magna lobortis nibh. Ut porta tincidunt augue.</p></p><div class="el__leafmedia el__leafmedia--raw-html"><a href="https://twitter.com/CNNpolitics" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @CNNpolitics</a> </div></div>';
+    $(function() {
+        var onLoadUrl = function (url) {
+            var urlParam = '?url=';
+            var sourceUrl = decodeURIComponent(url.substring(url.indexOf(urlParam) + urlParam.length));
+            var extractBody = function (html) {
+                var parser = new DOMParser();
+                var bodyElem = parser.parseFromString(html, 'text/html').body;
+                return $(bodyElem).find('script').remove().end().html();
+            };
+            var createData = function (/*body*/) {
+                var parser = document.createElement('a');
+                parser.href = sourceUrl;
+                return {
+                    title: 'Lorem ipsum',
+                    content: staticContent,
+                    author: 'Aliquam dapibus',
+                    source: parser.hostname,
+                    sourceUrl: sourceUrl,
+                    figureImgUrl: 'http://i2.cdn.turner.com/cnnnext/dam/assets/150928104501-obama-un-general-assembly-address-russia-ukraine-crimea-00003513-large-169.jpg',
+                    figureCaption: 'Suspendisse tincidunt tellus id felis interdum convallis',
+                    lastupdatedon: 'Sep. 28, 2015'
+                };
+            };
+            return Promise.resolve($.ajax(sourceUrl, {
+            // return Promise.resolve($.ajax('http://www.cnn.com/2015/09/25/I-want-404-error', {
+                method: 'GET',
+                htmlType: 'html',
+                async: true,
+            }))
+            .then(extractBody)
+            .then(createData)
+            .catch(function (e) {
+                var error = new Error('Some Error');
+                error.errorCode = e.status;
+                throw error;
+            })
+        };
+        var options  = {
+            outline: {
+                reader: {
+                    onLoadUrl: onLoadUrl,
+                },
+                enableExpandedMode: false,
+            },
+            autoGenerateIconMap: false,
+            entityIcons:iconmap,
+        };
+        const entitiesRepositionDelay = 500;
+
+        Uncharted.Strippets.asJQueryPlugin();
+        var $strippetsPanel = $('#strippets-panel');
+        $strippetsPanel.strippets(options);
+        $strippetsPanel.strippets("loaddata", data);
+
+        var sidebarstate = true;
+        $("#toggleSidebar").on("click", function() {
+            sidebarstate = !sidebarstate;
+            $strippetsPanel.strippets("enablesidebar", sidebarstate);
+        });
+        $("#applyFilter").on("click",function(){
+            $strippetsPanel.strippets("applyfilter", [{"type":"person", "name": "Barack Obama"},{"type":"place", "name": "Washington DC"}]);
+        });
+        $("#applyNewFilter").on("click",function(){
+            $strippetsPanel.strippets("applyfilter", [[{"type":"person", "name": "Trump Enterprises"},{"type":"person", "name": "Ted Cruz"}],[{"type":"place", "name": "Washington DC"}]]);
+        });
+        $(window).resize(_.debounce(function () {
+            $strippetsPanel.strippets("resize");
+        }, entitiesRepositionDelay));
+    });
+</script>
+</body>
+</html>
