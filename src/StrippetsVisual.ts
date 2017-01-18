@@ -297,7 +297,7 @@ export default class StrippetsVisual implements IVisual {
         };
 
         const populateUncertaintyFieldsCompressed = function (entity, parsedEntity) {
-            if (parsedEntity.hasOwnProperty('entityId')) {
+            if (parsedEntity.hasOwnProperty('entityId') && (parsedEntity.entityId || parsedEntity.entityId === 0)) {
                 entity.id = parsedEntity.entityId;
                 if (parsedEntity.hasOwnProperty('bucket')) {
                     entity.bucket = getBucket(parsedEntity);
@@ -392,7 +392,6 @@ export default class StrippetsVisual implements IVisual {
                     const parsedEntity = parsedEntityType[i];
                     const entityFirstPosition = parseFloat(parsedEntity.offsetPercentage);
                     const entity: any = {
-                        id: parsedEntity.entityId || null,
                         name: parsedEntity.entityValue || '',
                         type: parsedEntity.entityType || '',
                         firstPosition: isNaN(entityFirstPosition) ? null : entityFirstPosition,
