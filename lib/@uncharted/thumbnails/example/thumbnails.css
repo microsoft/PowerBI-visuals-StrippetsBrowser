@@ -537,7 +537,7 @@
     #thumbnails-panel .readerview .outlineHeader .sourceIcon span {
       cursor: default; }
   #thumbnails-panel .outlineItemContainer {
-    white-space: initial;
+    white-space: normal;
     margin: 10px 0 10px 0;
     display: inline-block;
     background-color: transparent;

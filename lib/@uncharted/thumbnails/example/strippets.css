@@ -273,7 +273,7 @@
     min-height: 200px;
     white-space: nowrap; }
   .strippets .outlineItemContainer {
-    white-space: initial;
+    white-space: normal;
     margin: 10px 0 10px 0;
     display: inline-block;
     background-color: transparent;
