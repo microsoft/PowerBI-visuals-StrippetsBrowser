@@ -132,7 +132,7 @@ function pbivizPluginTemplate (pbiviz) {
                                         createSelectionManager: function() {
                                             return {
                                                 hostServices: options.host
-                                            }
+                                            };
                                         }
                                     },
                                     element: options.element.get(0),
@@ -140,7 +140,7 @@ function pbivizPluginTemplate (pbiviz) {
                                         colorPalette: {
                                             dataColors: {
                                                 getAllColors: function() {
-                                                    options.host.colors;
+                                                    return options.host.colors;
                                                 }
                                             }
                                         }
