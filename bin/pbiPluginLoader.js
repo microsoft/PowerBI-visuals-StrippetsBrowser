@@ -127,6 +127,7 @@ function pbivizPluginTemplate (pbiviz) {
                         :
                             `var oldInit = instance.init;
                             instance.init = function(options) {
+                                instance.init = oldInit;
                                 var adaptedOptions = {
                                     host: {
                                         createSelectionManager: function() {
@@ -147,7 +148,6 @@ function pbivizPluginTemplate (pbiviz) {
                                     }
                                 };
                                 ${pbiviz.visual.visualClassName}.call(instance, adaptedOptions);
-                                instance.init = oldInit;
                             }`
                         }
                         return instance;
