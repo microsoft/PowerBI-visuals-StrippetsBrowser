@@ -61,7 +61,7 @@ const patchAPI = function (version) {
         api.overloads = function (visual, host) {
 
             if (!isESSEXVisual(visual)) {
-                return overloads(visual, host);
+                return overloads ? overloads(visual, host) : visual;
             }
 
             var proxy = {
@@ -84,7 +84,7 @@ const patchAPI = function (version) {
 
                 options: null
             };
-            var overloadedProxy = overloads(proxy, host);
+            var overloadedProxy = overloads ? overloads(proxy, host) : proxy;
 
             return {
                 update: function(options) {
