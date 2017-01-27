@@ -20,6 +20,7 @@ module.exports = {
                 loader: 'ts-loader',
             },
             { test: /\.handlebars$/, loader: "handlebars-loader" },
+            { test: /\.json$/, loader: 'json-loader' }
         ]
     },
     externals: [

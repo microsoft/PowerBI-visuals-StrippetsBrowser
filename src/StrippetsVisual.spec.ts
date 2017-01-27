@@ -83,7 +83,8 @@ describe('The Strippets Browser Component', function () {
         const dummyHost = {
             createSelectionManager: () => ({ hostServices: 'hostService' } as any),
         };
-        strippets = new StrippetsVisual(<VisualConstructorOptions>{ element: element[0], host: dummyHost });
+        // strippets = new StrippetsVisual(<VisualConstructorOptions>{ element: element[0], host: dummyHost });
+        strippets = new StrippetsVisual().init(<any>{ element: element[0], host: dummyHost });
         values = _.cloneDeep(testDataValues);
     });
 
