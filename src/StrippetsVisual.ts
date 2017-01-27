@@ -300,7 +300,7 @@ export default class StrippetsVisual implements IVisual {
             if (parsedEntity.hasOwnProperty('entityId') && (parsedEntity.entityId || parsedEntity.entityId === 0)) {
                 entity.id = parsedEntity.entityId;
                 if (parsedEntity.hasOwnProperty('bucket')) {
-                    entity.bucket = getBucket(parsedEntity);
+                    entity.bucket = getBucket(parsedEntity.bucket);
                 }
             }
         };
