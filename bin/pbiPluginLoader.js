@@ -33,6 +33,7 @@ const userName = cp.execSync('whoami').toString();
 const userHash = crypto.createHash('md5').update(userName).digest('hex');
 
 const patchAPI = function (version) {
+    if (!version) { return; }
     /* source code must be ES 5 */
     var essexAPIPatcherVersion = '0.0.1';
     var essexAPIPatcherKey = '__essex_patcher__';
@@ -118,7 +119,7 @@ function pbivizPluginTemplate (pbiviz) {
                     class: '${pbiviz.visual.visualClassName}',
                     version: '${packageJson.version}',
                     apiVersion: ${pbiviz.apiVersion ? `'${pbiviz.apiVersion}'` : undefined },
-                    capabilities: {}, // will be overridden by capabilities.json (needed for debug visual for somehow)
+                    capabilities: ${pbiviz.visual.visualClassName}.capabilities || {}, // will be overridden by capabilities.json (needed for debug visual for somehow)
                     create: function (/*options*/) {
                         var instance = Object.create(${pbiviz.visual.visualClassName}.prototype);
                         ${pbiviz.visual.visualClassName}.apply(instance, arguments);

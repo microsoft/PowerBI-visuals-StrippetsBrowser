@@ -25,14 +25,15 @@
 // /* tslint:disable:quotemark */
 /* global powerbi, require, window */
 
-import IVisual = powerbi.extensibility.v110.IVisual;
-import VisualConstructorOptions = powerbi.extensibility.v110.VisualConstructorOptions;
+import IVisual = powerbi.IVisual;
+import VisualInitOptions = powerbi.VisualInitOptions;
+// import IVisual = powerbi.extensibility.v110.IVisual;
+// import VisualConstructorOptions = powerbi.extensibility.v110.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.VisualUpdateOptions;
 import DataView = powerbi.DataView;
 import IEnumType = powerbi.IEnumType;
 import IVisualStyle = powerbi.IVisualStyle;
 import VisualCapabilities = powerbi.VisualCapabilities;
-import VisualInitOptions = powerbi.VisualInitOptions;
 import VisualDataRoleKind = powerbi.VisualDataRoleKind;
 import VisualDataChangeOperationKind = powerbi.VisualDataChangeOperationKind;
 import IDataColorPalette = powerbi.IDataColorPalette;
@@ -116,6 +117,7 @@ const BUCKET_DEFAULT_GREY = '#DDDDDD';
  * which are implemented by the dynamically-loaded thumbnails and strippets components, respectively.
  */
 export default class StrippetsVisual implements IVisual {
+    public static capabilities = require('../capabilities.json');
     public static HTML_WHITELIST_SUMMARY = HTML_WHITELIST_STANDARD;
     public static HTML_WHITELIST_CONTENT = HTML_WHITELIST_STANDARD.concat(HTML_WHITELIST_MEDIA);
 
@@ -195,10 +197,6 @@ export default class StrippetsVisual implements IVisual {
      */
     private host: IVisualHostServices;
 
-    /**
-     * Allows the visual to notify the host of changes in selection state.
-     */
-    private selectionManager: SelectionManager;
     private settings = $.extend({}, StrippetsVisual.DEFAULT_SETTINGS);
     private baseRowsLoaded: number = 0;
     private minOutlineCount = 10;
@@ -481,18 +479,50 @@ export default class StrippetsVisual implements IVisual {
      *
      * @param {VisualConstructorOptions} options Initialization options for the visual.
      */
-    constructor(options: VisualConstructorOptions) {
+    // constructor(options: VisualConstructorOptions) {
+    //     const template = require('./../templates/strippets.handlebars');
+    //     this.$loaderElement = $(require('./../templates/loader.handlebars')());
+    //     this.element = $('<div/>');
+    //     this.element.append(template());
+    //     $(options.element).append(this.element);
+
+    //     this.$container = this.element.find('#strippets-container');
+    //     this.$tabs = this.element.find('.nav');
+    //     this.host = options.host.createSelectionManager()['hostServices'];
+    //     this.selectionManager = new SelectionManager({hostServices: this.host});
+    //     this.colors = options.host.colors;
+
+    //     this.inSandbox = this.element.parents('body.visual-sandbox').length > 0;
+
+    //     this.viewportSize = {width: this.$container.parent().width(), height: this.$container.parent().height()};
+    //     this.$container.width(this.viewportSize.width - this.$tabs.width());
+    //     this.minOutlineCount = this.viewportSize.width / OUTLINE_WIDTH + 10;
+    //     this.outlines = {$elem: this.$container.find('#outlines-panel')};
+    //     this.thumbnails = {$elem: this.$container.find('#thumbnails-panel')};
+
+    //     this.initializeTabs(this.$tabs);
+
+    //     this.resizeOutlines = _.debounce(function () {
+    //         if (this.outlines.instance) {
+    //             this.outlines.instance.resize();
+    //         }
+    //         else if (this.thumbnails.instance) {
+    //             this.thumbnails.instance.resize();
+    //         }
+    //     }, ENTITIES_REPOSITION_DELAY).bind(this);
+    // }
+
+    public init(options: VisualInitOptions) {
         const template = require('./../templates/strippets.handlebars');
         this.$loaderElement = $(require('./../templates/loader.handlebars')());
         this.element = $('<div/>');
         this.element.append(template());
-        $(options.element).append(this.element);
+        options.element.append(this.element);
 
         this.$container = this.element.find('#strippets-container');
         this.$tabs = this.element.find('.nav');
-        this.host = options.host.createSelectionManager()['hostServices'];
-        this.selectionManager = new SelectionManager({hostServices: this.host});
-        this.colors = options.host.colors;
+        this.host = options.host;
+        this.colors = options.style.colorPalette.dataColors.getAllColors();
 
         this.inSandbox = this.element.parents('body.visual-sandbox').length > 0;
 
@@ -1462,7 +1492,6 @@ export default class StrippetsVisual implements IVisual {
         this.outlines = null;
 
         this.data = null;
-        this.selectionManager = null;
         this.host = null;
     }
 }
