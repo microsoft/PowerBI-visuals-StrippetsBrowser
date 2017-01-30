@@ -134,18 +134,10 @@ function pbivizPluginTemplate (pbiviz) {
                                             return {
                                                 hostServices: options.host
                                             };
-                                        }
+                                        },
+                                        colors: options.style.colorPalette.dataColors.getAllColors()
                                     },
                                     element: options.element.get(0),
-                                    style: {
-                                        colorPalette: {
-                                            dataColors: {
-                                                getAllColors: function() {
-                                                    return options.host.colors;
-                                                }
-                                            }
-                                        }
-                                    }
                                 };
                                 ${pbiviz.visual.visualClassName}.call(instance, adaptedOptions);
                             }`
