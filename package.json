@@ -1,6 +1,6 @@
 {
   "name": "strippetbrowser",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Strippets Browser PowerBI custom visual",
   "main": "src/index.js",
   "scripts": {
@@ -24,8 +24,8 @@
   "license": "MIT",
   "privateSubmodules": {
     "@uncharted/strippets.common": "0.2.4",
-    "@uncharted/strippets": "0.4.28",
-    "@uncharted/thumbnails": "0.4.22"
+    "@uncharted/strippets": "0.4.29",
+    "@uncharted/thumbnails": "0.4.23"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.35",
