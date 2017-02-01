@@ -80,7 +80,7 @@ Instantiate and Load data:
     var options < options for the thumbnails module >
 
     var thumbnails = new Thumbnails({
-        container: document.getElementById('thumbnails-panel'),
+        container: document.getElementsByClassName('thumbnails-panel'),
         config: options
     });
     thumbnails.loadData(data);
@@ -92,11 +92,11 @@ Load thumbnails as a jquery Plugin
     var data = < data in the specified format >  
     var options < options for the thumbnails module >
 
-    // register thumbnais as a jquery plugin
+    // register thumbnails as a jquery plugin
     Uncharted.Thumbnails.asJQueryPlugin();
 
     // thumbnail panel element which is the container for thumbnails element
-    var $thumbnailsPanel = $('#thumbnails-panel');
+    var $thumbnailsPanel = $('.thumbnails-panel');
 
     // instantiate thumbnails into its container
     $thumbnailsPanel.thumbnails(options);
