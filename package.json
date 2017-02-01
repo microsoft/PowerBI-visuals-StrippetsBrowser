@@ -25,8 +25,8 @@
   "privacyTerms": "https://privacy.microsoft.com/en-US/privacystatement/",
   "privateSubmodules": {
     "@uncharted/strippets.common": "0.2.4",
-    "@uncharted/strippets": "0.4.28",
-    "@uncharted/thumbnails": "0.4.22"
+    "@uncharted/strippets": "0.4.29",
+    "@uncharted/thumbnails": "0.4.23"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.35",
