@@ -21,7 +21,8 @@
   "config": {},
   "keywords": [],
   "author": "Uncharted Software Inc.",
-  "license": "MIT",
+  "license": "https://raw.githubusercontent.com/Microsoft/PowerBI-visuals-StrippetsBrowser/master/LICENSE",
+  "privacyTerms": "https://privacy.microsoft.com/en-US/privacystatement/",
   "privateSubmodules": {
     "@uncharted/strippets.common": "0.2.4",
     "@uncharted/strippets": "0.4.29",
