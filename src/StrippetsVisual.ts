@@ -488,7 +488,7 @@ export default class StrippetsVisual implements IVisual {
         this.element.append(template());
         $(options.element).append(this.element);
 
-        this.$container = this.element.find('#strippets-container');
+        this.$container = this.element.find('.strippets-container');
         this.$tabs = this.element.find('.nav');
         this.host = options.host.createSelectionManager()['hostServices'];
         this.selectionManager = new SelectionManager({hostServices: this.host});
@@ -499,8 +499,8 @@ export default class StrippetsVisual implements IVisual {
         this.viewportSize = {width: this.$container.parent().width(), height: this.$container.parent().height()};
         this.$container.width(this.viewportSize.width - this.$tabs.width());
         this.minOutlineCount = this.viewportSize.width / OUTLINE_WIDTH + 10;
-        this.outlines = {$elem: this.$container.find('#outlines-panel')};
-        this.thumbnails = {$elem: this.$container.find('#thumbnails-panel')};
+        this.outlines = {$elem: this.$container.find('.outlines-panel')};
+        this.thumbnails = {$elem: this.$container.find('.thumbnails-panel')};
 
         this.initializeTabs(this.$tabs);
 
@@ -961,8 +961,8 @@ export default class StrippetsVisual implements IVisual {
      */
     private initializeTabs($container: JQuery): void {
         const t = this;
-        const $thumbnailsTab = $container.find('#thumbnailsNav');
-        const $outlinesTab = $container.find('#outlinesNav');
+        const $thumbnailsTab = $container.find('.thumbnailsNav');
+        const $outlinesTab = $container.find('.outlinesNav');
 
         $thumbnailsTab.on('click', (e) => {
             if (this.settings.presentation.strippetType !== 'thumbnails') {
@@ -1187,7 +1187,7 @@ export default class StrippetsVisual implements IVisual {
     private showOutlines(data: any, append: boolean = false) {
         // highlight outline tab
         this.$tabs.find('.navItem').removeClass('selected');
-        this.$tabs.find('#outlinesNav').addClass('selected');
+        this.$tabs.find('.outlinesNav').addClass('selected');
         this.settings.presentation.strippetType = 'outlines';
 
 
@@ -1221,7 +1221,7 @@ export default class StrippetsVisual implements IVisual {
     private showThumbnails(data: any, append: boolean = false) {
         // highlight thumbnail tab
         this.$tabs.find('.navItem').removeClass('selected');
-        this.$tabs.find('#thumbnailsNav').addClass('selected');
+        this.$tabs.find('.thumbnailsNav').addClass('selected');
         this.settings.presentation.strippetType = 'thumbnails';
 
         if (this.outlines && $.contains(this.$container[0], this.outlines.$elem[0])) {
