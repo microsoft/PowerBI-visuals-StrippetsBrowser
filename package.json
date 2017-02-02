@@ -1,6 +1,6 @@
 {
   "name": "strippetbrowser",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Strippets Browser PowerBI custom visual",
   "main": "src/index.js",
   "scripts": {
@@ -38,6 +38,7 @@
     "@types/sinon-chai": "^2.7.27",
     "chai": "^3.5.0",
     "chokidar": "^1.6.1",
+    "clean-css": "^4.0.3",
     "connect": "^3.5.0",
     "handlebars-loader": "^1.4.0",
     "imports-loader": "^0.6.5",
