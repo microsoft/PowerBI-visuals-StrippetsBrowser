@@ -1321,6 +1321,7 @@ export default class StrippetsVisual implements IVisual {
                 this.thumbnails.instance.loadData(data.items, append);
                 this.isLoadingMore = false;
                 this.wrapThumbnails(wrapped);
+                return null;
             });
         } else {
             let newThumbnailItems;
