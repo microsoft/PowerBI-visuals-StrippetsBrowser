@@ -1,6 +1,6 @@
 {
   "name": "strippetbrowser",
-  "version": "0.2.3",
+  "version": "0.2.7",
   "description": "Strippets Browser PowerBI custom visual",
   "main": "src/index.js",
   "scripts": {
@@ -21,11 +21,12 @@
   "config": {},
   "keywords": [],
   "author": "Uncharted Software Inc.",
-  "license": "MIT",
+  "license": "https://raw.githubusercontent.com/Microsoft/PowerBI-visuals-StrippetsBrowser/master/LICENSE",
+  "privacyTerms": "https://privacy.microsoft.com/en-US/privacystatement/",
   "privateSubmodules": {
     "@uncharted/strippets.common": "0.2.4",
-    "@uncharted/strippets": "0.4.27",
-    "@uncharted/thumbnails": "0.4.21"
+    "@uncharted/strippets": "0.4.29",
+    "@uncharted/thumbnails": "0.4.24"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.35",
@@ -37,6 +38,7 @@
     "@types/sinon-chai": "^2.7.27",
     "chai": "^3.5.0",
     "chokidar": "^1.6.1",
+    "clean-css": "^4.0.3",
     "connect": "^3.5.0",
     "handlebars-loader": "^1.4.0",
     "imports-loader": "^0.6.5",
