@@ -48,7 +48,7 @@ const packagingWebpackConfig = {
 };
 
 const _buildLegacyPackageJson = () => {
-    return {
+    const pack = {
         version: packageJson.version,
         author: pbivizJson.author,
         licenseTerms: packageJson.license,
@@ -79,7 +79,7 @@ const _buildLegacyPackageJson = () => {
                 "sourceType": 6,
                 "file": `resources/${path.basename(pbivizJson.assets.thumbnail)}`
             },
-            {
+            { 
                 "resourceId": "rId5",
                 "sourceType": 2,
                 "file": `resources/${path.basename(pbivizJson.assets.screenshot)}`
@@ -111,6 +111,10 @@ const _buildLegacyPackageJson = () => {
             ]
         }
     };
+
+    delete pack.visual.visualClassName;
+
+    return pack;
 };
 
 const _buildPackageJson = () => {
