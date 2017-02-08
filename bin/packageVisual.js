@@ -114,6 +114,9 @@ const _buildLegacyPackageJson = () => {
 
     delete pack.visual.visualClassName;
 
+    const date = new Date();
+    pack.build = date.getUTCFullYear().toString().substring(2) + '.' + (date.getUTCMonth() + 1) + '.' + date.getUTCDate() + '.' + ((date.getUTCHours() * 3600) + (date.getUTCMinutes() * 60) + date.getUTCSeconds());
+
     return pack;
 };
 
