@@ -79,13 +79,13 @@ const _buildLegacyPackageJson = () => {
                 "sourceType": 6,
                 "file": `resources/${path.basename(pbivizJson.assets.thumbnail)}`
             },
-            { 
+            {
                 "resourceId": "rId5",
                 "sourceType": 2,
                 "file": `resources/${path.basename(pbivizJson.assets.screenshot)}`
             }
         ],
-        visual: Object.assign(pbivizJson.visual, { version: packageJson.version }),
+        visual: Object.assign({ version: packageJson.version }, pbivizJson.visual),
         "code": {
             "typeScript": {
                 "resourceId": "rId0"
@@ -133,7 +133,7 @@ const _buildPackageJson = () => {
                 file: `resources/${ pbivizJson.visual.guid }.pbiviz.json`,
             }
         ],
-        visual: Object.assign(pbivizJson.visual, { version: packageJson.version }),
+        visual: Object.assign({ version: packageJson.version }, pbivizJson.visual),
         metadata: {
             pbivizjson: {
                 resourceId: 'rId0'
