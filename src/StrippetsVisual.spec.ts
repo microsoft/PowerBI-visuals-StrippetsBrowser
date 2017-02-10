@@ -39,6 +39,7 @@ window['powerbi'] = {
     extensibility: {
         visualApiVersions: [],
     },
+    createEnumType: function(description) { return description; }
 };
 
 import * as $ from 'jquery';
