@@ -107,6 +107,12 @@
       "displayName": "Entity Icon Class",
       "description": "Category of the entity used to select an icon for display on the Outline",
       "kind": 0
+    },
+    {
+      "name": "dummySortingField",
+      "displayName": "Sorting Field",
+      "description": "Field that can be used to sort the visual's data based on an arbitrary column",
+      "kind": 2
     }
   ],
   "dataViewMappings": [
