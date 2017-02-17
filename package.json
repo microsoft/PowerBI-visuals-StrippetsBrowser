@@ -1,6 +1,6 @@
 {
   "name": "strippetbrowser",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "Strippets Browser PowerBI custom visual",
   "main": "src/index.js",
   "scripts": {
@@ -24,9 +24,9 @@
   "license": "https://raw.githubusercontent.com/Microsoft/PowerBI-visuals-StrippetsBrowser/master/LICENSE",
   "privacyTerms": "https://privacy.microsoft.com/en-US/privacystatement/",
   "privateSubmodules": {
-    "@uncharted/strippets.common": "0.2.4",
-    "@uncharted/strippets": "0.4.30",
-    "@uncharted/thumbnails": "0.4.25"
+    "@uncharted/strippets.common": "0.2.5",
+    "@uncharted/strippets": "0.4.31",
+    "@uncharted/thumbnails": "0.4.26"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.35",
