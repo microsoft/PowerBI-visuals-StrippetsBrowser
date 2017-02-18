@@ -1454,7 +1454,7 @@ export default class StrippetsVisual implements IVisual {
      * @method destroy
      */
     public destroy(): void {
-        if (this.thumbnails.instance) {
+        if (this.thumbnails && this.thumbnails.instance) {
             this.thumbnails.instance._unregisterEvents();
             this.thumbnails.instance._resetThumbnailsContainer();
         }
