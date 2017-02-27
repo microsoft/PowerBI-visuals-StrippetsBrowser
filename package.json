@@ -24,9 +24,9 @@
   "license": "https://raw.githubusercontent.com/Microsoft/PowerBI-visuals-StrippetsBrowser/master/LICENSE",
   "privacyTerms": "https://privacy.microsoft.com/en-US/privacystatement/",
   "privateSubmodules": {
-    "@uncharted/strippets.common": "0.2.5",
-    "@uncharted/strippets": "0.4.33",
-    "@uncharted/thumbnails": "0.4.26"
+    "@uncharted/strippets.common": "0.2.6",
+    "@uncharted/strippets": "0.4.34",
+    "@uncharted/thumbnails": "0.4.28"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.35",
