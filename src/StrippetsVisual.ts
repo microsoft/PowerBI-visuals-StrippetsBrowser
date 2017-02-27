@@ -53,7 +53,7 @@ import * as _ from 'lodash';
 
 require('velocity-animate');
 const moment = require('moment');
-const mediator = require('@uncharted/strippets.common').mediator;
+const Mediator = require('@uncharted/strippets.common').mediator;
 const thumbnailsDefaults = require('@uncharted/thumbnails/src/thumbnails.defaults');
 
 /**
@@ -211,6 +211,7 @@ export default class StrippetsVisual implements IVisual {
     private thumbnailsWrapTimeout: any = null;
     private colors: IColorInfo[];
     private suppressNextUpdate: boolean;
+    private mediator: any = new Mediator();
 
     /**
      * Convert PowerBI data into a format compatible with the Thumbnails and Outlines components.
@@ -540,7 +541,7 @@ export default class StrippetsVisual implements IVisual {
             autoGenerateIconMap: false,
             supportKeyboardNavigation: false,
             entityIcons: [],
-        });
+        }, t.mediator);
         // set up infinite scroll
         let infiniteScrollTimeoutId: any;
         outlinesInstance.$viewport.on('scroll', (e) => {
@@ -721,6 +722,16 @@ export default class StrippetsVisual implements IVisual {
     }
 
     /**
+     * A Regex to escape a string to make it Regex-safe. Fight fire with fire.
+     * http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
+     * @param {string} s - string to escape
+     * @returns {string} escaped string
+     */
+    public static escapeRegex(s) {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
+    /**
      * Within the given HTML Text node, replace text matching the given regex using the given handler.
      * Adapted from:
      * http://stackoverflow.com/questions/22129405/replace-text-in-the-middle-of-a-textnode-with-an-element
@@ -845,7 +856,7 @@ export default class StrippetsVisual implements IVisual {
                 let textNodes = [];
 
                 // used by the NodeFilter above
-                filterRegex = new RegExp('\\b' + entity.text + '\\b', 'ig');
+                filterRegex = new RegExp('\\b' + StrippetsVisual.escapeRegex(entity.text) + '\\b', 'ig');
 
                 // walk the DOM tree once per entity, so that newly-added spans are treated as nodes
                 treeWalker.currentNode = treeWalker.root;
@@ -908,7 +919,7 @@ export default class StrippetsVisual implements IVisual {
                     height: '300px'
                 },
             }
-        });
+        }, t.mediator);
 
         // set up infinite scroll
         let infiniteScrollTimeoutId: any;
@@ -1389,7 +1400,7 @@ export default class StrippetsVisual implements IVisual {
                 return tn.data.id === id;
             });
             if (thumbnail) {
-                mediator.publish(thumbnailsDefaults.events.thumbnailClicked, thumbnail.data);
+                this.mediator.publish(thumbnailsDefaults.events.thumbnailClicked, thumbnail.data);
             }
         }
     }
