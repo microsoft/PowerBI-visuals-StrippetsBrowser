@@ -722,6 +722,16 @@ export default class StrippetsVisual implements IVisual {
     }
 
     /**
+     * A Regex to escape a string to make it Regex-safe. Fight fire with fire.
+     * http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
+     * @param {string} s - string to escape
+     * @returns {string} escaped string
+     */
+    public static escapeRegex(s) {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
+    /**
      * Within the given HTML Text node, replace text matching the given regex using the given handler.
      * Adapted from:
      * http://stackoverflow.com/questions/22129405/replace-text-in-the-middle-of-a-textnode-with-an-element
@@ -846,7 +856,7 @@ export default class StrippetsVisual implements IVisual {
                 let textNodes = [];
 
                 // used by the NodeFilter above
-                filterRegex = new RegExp('\\b' + entity.text + '\\b', 'ig');
+                filterRegex = new RegExp('\\b' + StrippetsVisual.escapeRegex(entity.text) + '\\b', 'ig');
 
                 // walk the DOM tree once per entity, so that newly-added spans are treated as nodes
                 treeWalker.currentNode = treeWalker.root;

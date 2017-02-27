@@ -161,6 +161,12 @@ describe('The Strippets Browser Component', function () {
         expect(StrippetsVisual.isUrl('<div><a href="http://uncharted.software">Uncharted Software</a></div>')).to.be.false;
     });
 
+    it('escapes strings for regex', function () {
+        var escaped = StrippetsVisual.escapeRegex('rgba(255,128,0,0.6');
+        expect(escaped).to.equal('rgba\\(255,128,0,0\\.6');
+        expect(new RegExp(escaped,'ig')).to.be.ok;
+    });
+
     it('highlights text', function () {
         let mock = {
             Node: function () {
