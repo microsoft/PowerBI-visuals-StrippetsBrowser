@@ -44,7 +44,7 @@ import SelectionId = powerbi.visuals.SelectionId;
 import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
 import IColorInfo = powerbi.IColorInfo;
-import {Bucket, HitNode} from './interfaces';
+import {Bucket, HitNode, MappedEntity} from './interfaces';
 import { COLOR_PALETTE, getSegmentColor } from './utils';
 
 import * as Promise from 'bluebird';
@@ -810,13 +810,14 @@ export default class StrippetsVisual implements IVisual {
                     const iconMap = _.find(t.data.iconMap, (im: any) => {
                         return im.type === type && im.name === name;
                     });
-                    entityMap[trim] = {
+                    const mappedEntity: MappedEntity = {
                         color: iconMap ? iconMap.color : '',
                         key: trim.replace(/\s+/g, '_'),
                         name: entity.name,
                         text: trim,
                         type: type
                     };
+                    entityMap[trim] = mappedEntity;
                 }
             }
 
@@ -832,6 +833,7 @@ export default class StrippetsVisual implements IVisual {
                     // Using test() here, and only calling exec() (or match) when replacing,
                     // is empirically somewhat faster than calling exec() here and storing the matches for replacing;
                     // presumably because we test (and reject) significantly more nodes than we perform replacements on.
+                    filterRegex.lastIndex = 0;
                     node.hasHits = filterRegex.test(node.nodeValue);
                     if (!node.hasHits) {
                         return NodeFilter.FILTER_REJECT;
@@ -849,10 +851,10 @@ export default class StrippetsVisual implements IVisual {
             // Create a DOM tree walker that only iterates over text runs
             let treeWalker = document.createTreeWalker(div.get()[0], NodeFilter.SHOW_TEXT, filter, false);
 
-            let uniqueEntityCount = 0;
+            entityMap = _.toArray(entityMap).sort(function (a: MappedEntity, b: MappedEntity) {
+                return b.text.length - a.text.length;
+            });
             _.each(entityMap, function (entity) {
-                uniqueEntityCount++;
-
                 let textNodes = [];
 
                 // used by the NodeFilter above
