@@ -506,10 +506,10 @@ export default class StrippetsVisual implements IVisual {
         this.initializeTabs(this.$tabs);
 
         this.resizeOutlines = _.debounce(function () {
-            if (this.outlines.instance) {
+            if (this.outlines && this.outlines.instance) {
                 this.outlines.instance.resize();
             }
-            else if (this.thumbnails.instance) {
+            else if (this.thumbnails && this.thumbnails.instance) {
                 this.thumbnails.instance.resize();
             }
         }, ENTITIES_REPOSITION_DELAY).bind(this);
@@ -1137,11 +1137,7 @@ export default class StrippetsVisual implements IVisual {
                 const viewportHeight = this.thumbnails.$elem.find('.viewport').height();
                 const desiredThumbnailHeight = viewportHeight - viewportPadding;
 
-                if (this.thumbnailsWrapTimeout !== null) {
-                    clearTimeout(this.thumbnailsWrapTimeout);
-                    this.thumbnailsWrapTimeout = null;
-                }
-
+                this.clearWrapTimeout();
                 this.thumbnailsWrapTimeout = setTimeout(() => {
                     let oldIsWrap = this.isThumbnailsWrapLayout;
                     if (this.thumbnailViewportHeight !== this.viewportSize.height) {
@@ -1431,7 +1427,14 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
-    ///**
+    private clearWrapTimeout(): void {
+        if (this.thumbnailsWrapTimeout !== null) {
+            clearTimeout(this.thumbnailsWrapTimeout);
+            this.thumbnailsWrapTimeout = null;
+        }
+    }
+
+///**
     // * Gets the inline css used for this element
     // */
     // protected getCss():string[] {
@@ -1467,6 +1470,7 @@ export default class StrippetsVisual implements IVisual {
      * @method destroy
      */
     public destroy(): void {
+        this.clearWrapTimeout();
         if (this.thumbnails && this.thumbnails.instance) {
             this.thumbnails.instance._unregisterEvents();
             this.thumbnails.instance._resetThumbnailsContainer();
