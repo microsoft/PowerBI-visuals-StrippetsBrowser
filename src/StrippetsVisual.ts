@@ -44,7 +44,7 @@ import SelectionId = powerbi.visuals.SelectionId;
 import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
 import IColorInfo = powerbi.IColorInfo;
-import {Bucket, HitNode} from './interfaces';
+import {Bucket, HitNode, MappedEntity} from './interfaces';
 import { COLOR_PALETTE, getSegmentColor } from './utils';
 
 import * as Promise from 'bluebird';
@@ -506,10 +506,10 @@ export default class StrippetsVisual implements IVisual {
         this.initializeTabs(this.$tabs);
 
         this.resizeOutlines = _.debounce(function () {
-            if (this.outlines.instance) {
+            if (this.outlines && this.outlines.instance) {
                 this.outlines.instance.resize();
             }
-            else if (this.thumbnails.instance) {
+            else if (this.thumbnails && this.thumbnails.instance) {
                 this.thumbnails.instance.resize();
             }
         }, ENTITIES_REPOSITION_DELAY).bind(this);
@@ -810,13 +810,14 @@ export default class StrippetsVisual implements IVisual {
                     const iconMap = _.find(t.data.iconMap, (im: any) => {
                         return im.type === type && im.name === name;
                     });
-                    entityMap[trim] = {
+                    const mappedEntity: MappedEntity = {
                         color: iconMap ? iconMap.color : '',
                         key: trim.replace(/\s+/g, '_'),
                         name: entity.name,
                         text: trim,
                         type: type
                     };
+                    entityMap[trim] = mappedEntity;
                 }
             }
 
@@ -832,6 +833,7 @@ export default class StrippetsVisual implements IVisual {
                     // Using test() here, and only calling exec() (or match) when replacing,
                     // is empirically somewhat faster than calling exec() here and storing the matches for replacing;
                     // presumably because we test (and reject) significantly more nodes than we perform replacements on.
+                    filterRegex.lastIndex = 0;
                     node.hasHits = filterRegex.test(node.nodeValue);
                     if (!node.hasHits) {
                         return NodeFilter.FILTER_REJECT;
@@ -849,10 +851,10 @@ export default class StrippetsVisual implements IVisual {
             // Create a DOM tree walker that only iterates over text runs
             let treeWalker = document.createTreeWalker(div.get()[0], NodeFilter.SHOW_TEXT, filter, false);
 
-            let uniqueEntityCount = 0;
+            entityMap = _.toArray(entityMap).sort(function (a: MappedEntity, b: MappedEntity) {
+                return b.text.length - a.text.length;
+            });
             _.each(entityMap, function (entity) {
-                uniqueEntityCount++;
-
                 let textNodes = [];
 
                 // used by the NodeFilter above
@@ -1135,11 +1137,7 @@ export default class StrippetsVisual implements IVisual {
                 const viewportHeight = this.thumbnails.$elem.find('.viewport').height();
                 const desiredThumbnailHeight = viewportHeight - viewportPadding;
 
-                if (this.thumbnailsWrapTimeout !== null) {
-                    clearTimeout(this.thumbnailsWrapTimeout);
-                    this.thumbnailsWrapTimeout = null;
-                }
-
+                this.clearWrapTimeout();
                 this.thumbnailsWrapTimeout = setTimeout(() => {
                     let oldIsWrap = this.isThumbnailsWrapLayout;
                     if (this.thumbnailViewportHeight !== this.viewportSize.height) {
@@ -1429,7 +1427,14 @@ export default class StrippetsVisual implements IVisual {
         }
     }
 
-    ///**
+    private clearWrapTimeout(): void {
+        if (this.thumbnailsWrapTimeout !== null) {
+            clearTimeout(this.thumbnailsWrapTimeout);
+            this.thumbnailsWrapTimeout = null;
+        }
+    }
+
+///**
     // * Gets the inline css used for this element
     // */
     // protected getCss():string[] {
@@ -1465,6 +1470,7 @@ export default class StrippetsVisual implements IVisual {
      * @method destroy
      */
     public destroy(): void {
+        this.clearWrapTimeout();
         if (this.thumbnails && this.thumbnails.instance) {
             this.thumbnails.instance._unregisterEvents();
             this.thumbnails.instance._resetThumbnailsContainer();

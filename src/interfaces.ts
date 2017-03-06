@@ -93,3 +93,11 @@ export interface Bucket {
 export interface HitNode extends Node {
     hasHits: boolean;
 }
+
+export interface MappedEntity {
+    color: string;
+    key: string;
+    name: string;
+    text: string;
+    type: string;
+}
