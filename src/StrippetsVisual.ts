@@ -115,7 +115,7 @@ const BUCKET_DEFAULT_GREY = '#DDDDDD';
  * The Strippet Browser has two tabs, corresponding to its two view: Thumbnails and Outlines,
  * which are implemented by the dynamically-loaded thumbnails and strippets components, respectively.
  */
-export default class StrippetsVisual implements IVisual {
+export default class StrippetBrowser16424341054522 implements IVisual {
     public static HTML_WHITELIST_SUMMARY = HTML_WHITELIST_STANDARD;
     public static HTML_WHITELIST_CONTENT = HTML_WHITELIST_STANDARD.concat(HTML_WHITELIST_MEDIA);
 
@@ -199,7 +199,7 @@ export default class StrippetsVisual implements IVisual {
      * Allows the visual to notify the host of changes in selection state.
      */
     private selectionManager: SelectionManager;
-    private settings = $.extend({}, StrippetsVisual.DEFAULT_SETTINGS);
+    private settings = $.extend({}, StrippetBrowser16424341054522.DEFAULT_SETTINGS);
     private baseRowsLoaded: number = 0;
     private minOutlineCount = 10;
     private isThumbnailsWrapLayout: boolean;
@@ -636,7 +636,7 @@ export default class StrippetsVisual implements IVisual {
         const t = this;
         const data = _.find(<any>t.data.items, (d: any) => d.id === articleId);
         if (data) {
-            if (StrippetsVisual.isUrl(data.content)) {
+            if (StrippetBrowser16424341054522.isUrl(data.content)) {
                 if (t.settings.content.readerContentType === 'readability') {
                     return new Promise((resolve: any, reject: any) => {
                         $.ajax({
@@ -644,7 +644,7 @@ export default class StrippetsVisual implements IVisual {
                             method: 'GET',
                             url: data.content,
                         }).done((responseBody) => {
-                            const highlightedContent = t.highlight(StrippetsVisual.sanitizeHTML(responseBody.content || responseBody, StrippetsVisual.HTML_WHITELIST_CONTENT), data.entities);
+                            const highlightedContent = t.highlight(StrippetBrowser16424341054522.sanitizeHTML(responseBody.content || responseBody, StrippetBrowser16424341054522.HTML_WHITELIST_CONTENT), data.entities);
                             resolve({
                                 title: data.title || '',
                                 content: highlightedContent || '',
@@ -689,7 +689,7 @@ export default class StrippetsVisual implements IVisual {
             } else {
                 const readerData = {
                     title: data.title || '',
-                    content: t.highlight(StrippetsVisual.sanitizeHTML(data.content, StrippetsVisual.HTML_WHITELIST_CONTENT), data.entities) || '',
+                    content: t.highlight(StrippetBrowser16424341054522.sanitizeHTML(data.content, StrippetBrowser16424341054522.HTML_WHITELIST_CONTENT), data.entities) || '',
                     author: data.author || '',
                     source: data.source || '',
                     sourceUrl: data.sourceUrl || '',
@@ -718,7 +718,7 @@ export default class StrippetsVisual implements IVisual {
      */
     public static isUrl(candidate) {
         // weak pattern, revisit later on.
-        return StrippetsVisual.URL_PATTERN.test(candidate);
+        return StrippetBrowser16424341054522.URL_PATTERN.test(candidate);
     }
 
     /**
@@ -858,7 +858,7 @@ export default class StrippetsVisual implements IVisual {
                 let textNodes = [];
 
                 // used by the NodeFilter above
-                filterRegex = new RegExp('\\b' + StrippetsVisual.escapeRegex(entity.text) + '\\b', 'ig');
+                filterRegex = new RegExp('\\b' + StrippetBrowser16424341054522.escapeRegex(entity.text) + '\\b', 'ig');
 
                 // walk the DOM tree once per entity, so that newly-added spans are treated as nodes
                 treeWalker.currentNode = treeWalker.root;
@@ -872,7 +872,7 @@ export default class StrippetsVisual implements IVisual {
                     for (let i = 0; i < textNodeCount; i++) {
                         let node = textNodes[i];
                         filterRegex.lastIndex = 0;
-                        StrippetsVisual.textNodeReplace(node, filterRegex, function (match) {
+                        StrippetBrowser16424341054522.textNodeReplace(node, filterRegex, function (match) {
                             return {
                                 name: 'span',
                                 attrs: {
@@ -1025,7 +1025,7 @@ export default class StrippetsVisual implements IVisual {
             let shouldLoadMore = false;
             const dataView = options.dataViews && options.dataViews.length && options.dataViews[0];
             const newObjects = dataView && dataView.metadata && dataView.metadata.objects;
-            this.settings = $.extend(true, {}, StrippetsVisual.DEFAULT_SETTINGS, newObjects);
+            this.settings = $.extend(true, {}, StrippetBrowser16424341054522.DEFAULT_SETTINGS, newObjects);
 
             if (options.type & powerbi.VisualUpdateType.Resize || this.$tabs.is(':visible') !== this.settings.presentation.viewControls || !this.data) {
                 // set the strippets container width dynamically.
@@ -1066,9 +1066,9 @@ export default class StrippetsVisual implements IVisual {
                 if (isHighlighting && this.lastOpenedStoryId) {
                     this.closeReader();
                 }
-                this.hasMoreData = !!dataView.metadata.segment && StrippetsVisual.hasRequiredFields(dataView);
+                this.hasMoreData = !!dataView.metadata.segment && StrippetBrowser16424341054522.hasRequiredFields(dataView);
 
-                const data = StrippetsVisual.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, loadedPreviously ? this.lastDataViewLength : 0, this.colors);
+                const data = StrippetBrowser16424341054522.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, loadedPreviously ? this.lastDataViewLength : 0, this.colors);
                 this.lastDataViewLength = currentDataViewSize;
 
                 //  initialize with highlighting disabled
@@ -1305,7 +1305,7 @@ export default class StrippetsVisual implements IVisual {
             data.items.forEach(item => {
                 if (!item.summary && item.content) {
                     item.summary = item.content;
-                    if (this.settings.content.readerContentType === 'readability' && StrippetsVisual.isUrl(item.summary) &&
+                    if (this.settings.content.readerContentType === 'readability' && StrippetBrowser16424341054522.isUrl(item.summary) &&
                         this.settings.content.summaryUrl) {
                         const promise = new Promise((resolve: any, reject: any) => {
                             $.ajax({
@@ -1313,7 +1313,7 @@ export default class StrippetsVisual implements IVisual {
                                 method: 'GET',
                                 url: item.summary,
                             }).done((responseBody) => {
-                                item.summary = StrippetsVisual.sanitizeHTML(responseBody.content || responseBody, StrippetsVisual.HTML_WHITELIST_SUMMARY);
+                                item.summary = StrippetBrowser16424341054522.sanitizeHTML(responseBody.content || responseBody, StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY);
                                 resolve(true);
                             }).fail((err) => {
                                 reject(err);
@@ -1321,7 +1321,7 @@ export default class StrippetsVisual implements IVisual {
                         });
                         promises.push(promise);
                     } else {
-                        item.summary = StrippetsVisual.sanitizeHTML(item.summary, StrippetsVisual.HTML_WHITELIST_SUMMARY);
+                        item.summary = StrippetBrowser16424341054522.sanitizeHTML(item.summary, StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY);
                     }
                 }
             });
