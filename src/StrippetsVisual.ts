@@ -384,6 +384,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             })(entityTypesString);
 
             if (parsedEntityType instanceof Array &&
+                parsedEntityType.length > 0 &&
                 'entityType' in parsedEntityType[0] &&
                 'entityValue' in parsedEntityType[0] &&
                 'offsetPercentage' in parsedEntityType[0]) {
