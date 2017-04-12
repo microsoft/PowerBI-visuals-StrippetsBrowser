@@ -23,7 +23,7 @@
 
 $card-width: 200px;
 $card-shadow: -1px 0 0 #e5e5e5, 0 0 2px rgba(0, 0, 0, 0.12), 2px 0 4px rgba(0, 0, 0, 0.24);
-$card-transition: opacity 0.3s ease-out, width 0.3s ease-out, transform 0.3s ease-out;
+$card-transition: width 0.3s ease-out, transform 0.3s ease-out;
 
 .dummyThumbnail {
   width: $card-width + 10px;
@@ -52,7 +52,6 @@ $card-transition: opacity 0.3s ease-out, width 0.3s ease-out, transform 0.3s eas
     vertical-align: top;
     overflow: hidden;
     transition: $card-transition;
-    opacity: 1.0;
     -webkit-transform: scaleX(1);
     transform: scaleX(1);
     -webkit-transform-origin: left 50%;
@@ -147,7 +146,6 @@ $card-transition: opacity 0.3s ease-out, width 0.3s ease-out, transform 0.3s eas
     vertical-align: top;
     left: 0;
     top: 0;
-    transition: $card-transition;
     z-index: 1;
     max-height: 410px !important;
   }
