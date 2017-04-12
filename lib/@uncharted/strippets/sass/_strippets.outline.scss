@@ -100,16 +100,15 @@
       z-index: 1;
 
       .readingSlider {
-        opacity: 0;
-        background-color: #aaaaaa;
+        visibility: hidden;
+        background-color: rgba(67, 67, 67, 0.0);
         border-radius: 5px;
         width: 100%;
         position: absolute;
-        transition: opacity 0.5s ease-out;
       }
       &:hover {
         .readingSlider {
-          opacity: 0.15;
+          background-color: rgba(67, 67, 67, 0.15);
         }
       }
 
