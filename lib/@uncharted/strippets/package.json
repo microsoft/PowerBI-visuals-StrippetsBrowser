@@ -1,6 +1,6 @@
 {
   "name": "@uncharted/strippets",
-  "version": "0.4.36",
+  "version": "0.4.40",
   "description": "Uncharted Software Inc. Outlines visual component",
   "main": "src/index.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "karma-coverage": "^0.5.3",
     "karma-mocha": "^0.2.0",
     "karma-mocha-reporter": "^1.1.1",
-    "karma-phantomjs-launcher": "^1.0.0",
+    "karma-phantomjs-launcher": "^1.0.4",
     "karma-sinon-chai": "^1.1.0",
     "karma-tamtam-bamboo-reporter": "^1.0.1",
     "mocha": "^2.3.3",
@@ -52,13 +52,13 @@
     ]
   },
   "dependencies": {
-    "bluebird": "^3.4.6",
+    "bluebird": "^3.5.0",
     "@uncharted/strippets.common": "0.2.6",
     "font-awesome": "^4.4.0",
     "jquery": "^3.1.1",
     "mediator-js": "^0.9.9",
     "underscore": "^1.8.3",
-    "velocity-animate": "^1.2.3"
+    "velocity-animate": "^1.5.0"
   },
   "jspm": {
     "main": "src/index.js"

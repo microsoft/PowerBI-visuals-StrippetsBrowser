@@ -62,14 +62,14 @@
     z-index: 100;
 
     &.left {
-      transition: opacity 0.5s ease-out, left 0.25s ease-out;
+      transition: left 0.25s ease-out;
       left: -$button-width * 1.1;
       position: absolute;
       margin-left: -$button-edge-padding;
       padding-left: $button-edge-padding;
-      opacity: 0;
+      visibility: hidden;
       &:hover {
-        opacity: 1;
+        visibility: visible;
         left: $button-edge-padding;
       }
       .button {
@@ -91,14 +91,14 @@
       }
     }
     &.right {
-      transition: opacity 0.5s ease-out, right 0.25s ease-out;
+      transition: right 0.25s ease-out;
       right: -$button-width * 1.1;
       position: absolute;
       margin-right: -$button-edge-padding;
       padding-right: $button-edge-padding;
-      opacity: 0;
+      visibility: hidden;
       &:hover {
-        opacity: 1;
+        visibility: visible;
         right: $button-edge-padding;
       }
       .button {
