@@ -146,10 +146,8 @@ const buildPackageJson = pbivizJson.apiVersion ? _buildPackageJson() : _buildLeg
 
 const compileSass = () => {
     const sassOutput = sass.renderSync({ file: pbivizJson.style }).css.toString();
-    const options = { level: { 2: { all: true, } } };
+    const options = { level: { 2: { all: true } } };
     const cssContent = new CleanCSS(options).minify(sassOutput).styles;
-    const cssContentFile = path.join(path.dirname(pbivizJson.output), pbivizJson.visual.name + '_' + packageJson.version + '.css');
-    fs.writeFile(cssContentFile, cssContent);
     return cssContent;
 };
 
