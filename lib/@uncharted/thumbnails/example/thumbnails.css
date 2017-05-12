@@ -384,6 +384,7 @@
     .thumbnails-panel .thumbnail .card-image + .card-body {
       padding-top: 8px; }
     .thumbnails-panel .thumbnail .card-body {
+      overflow-y: hidden;
       padding: 16px 16px 8px 16px; }
       .thumbnails-panel .thumbnail .card-body h1 {
         font-size: 13px;
@@ -825,7 +826,8 @@
       color: #0081ff; }
     .thumbnails-panel .reader .readerContent {
       overflow-y: auto;
-      overflow-x: hidden; }
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch; }
     .thumbnails-panel .reader .readerContentBody {
       padding: 8px 16px 8px 16px;
       color: #333; }
@@ -940,9 +942,9 @@
         color: #aaa;
         cursor: pointer; }
     .thumbnails-panel .reader ._window-close {
-      margin-right: 6px;
+      padding: 8px;
       position: absolute;
-      top: 36px;
+      top: 32px;
       z-index: 200;
       color: rgba(0, 0, 0, 0.6); }
       .thumbnails-panel .reader ._window-close:hover {

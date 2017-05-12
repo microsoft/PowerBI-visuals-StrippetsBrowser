@@ -514,6 +514,16 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 this.thumbnails.instance.resize();
             }
         }, ENTITIES_REPOSITION_DELAY).bind(this);
+
+        // Kill touch events to prevent PBI mobile app refreshing while scrolling strippets
+        const killEvent = (event) => {
+            event.originalEvent.stopPropagation();
+            event.originalEvent.stopImmediatePropagation();
+            return true;
+        };
+        this.$container.on('touchstart', killEvent);
+        this.$container.on('touchmove', killEvent);
+        this.$container.on('touchend', killEvent);
     }
 
     /**
