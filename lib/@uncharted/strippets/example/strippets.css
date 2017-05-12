@@ -565,7 +565,8 @@
       color: #0081ff; }
     .strippets .reader .readerContent {
       overflow-y: auto;
-      overflow-x: hidden; }
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch; }
     .strippets .reader .readerContentBody {
       padding: 8px 16px 8px 16px;
       color: #333; }
@@ -680,9 +681,9 @@
         color: #aaa;
         cursor: pointer; }
     .strippets .reader ._window-close {
-      margin-right: 6px;
+      padding: 8px;
       position: absolute;
-      top: 36px;
+      top: 32px;
       z-index: 200;
       color: rgba(0, 0, 0, 0.6); }
       .strippets .reader ._window-close:hover {

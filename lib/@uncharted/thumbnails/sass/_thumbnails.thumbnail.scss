@@ -100,6 +100,7 @@ $card-transition: width 0.3s ease-out, transform 0.3s ease-out;
 
   // Card body
   .card-body {
+    overflow-y: hidden;
     padding: 16px 16px 8px 16px;
     h1 {
       font-size: 13px;
