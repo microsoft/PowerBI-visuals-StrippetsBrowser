@@ -532,15 +532,24 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             const $selectButton = $(event.target);
             const { docid } = $selectButton.data();
             const buttonText = $selectButton.text();
+            const selected = _.find(<any>this.data.items, (d: any) => d.isSelected);
+            let docData;
+            this.data.items.forEach((data) =>{
+                data.isSelected = false;
+                data.id === docid && (docData = data);
+            });
+            const data = _.find(<any>this.data.items, (d: any) => d.id === docid);
             this.suppressNextUpdate = true;
             if (buttonText === 'select') {
                 $selectButton.addClass('selected');
                 $selectButton.text('selected');
                 this.applyPBISelection(docid);
+                docData && (docData.isSelected = true);
             } else {
                 $selectButton.removeClass('selected');
                 $selectButton.text('select');
                 this.applyPBISelection(undefined);
+                docData && (docData.isSelected = false);
             }
         });
     }
@@ -683,7 +692,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
     private onLoadArticle(articleId: string): any {
         const t = this;
         const data = _.find(<any>t.data.items, (d: any) => d.id === articleId);
-        const titleButton = ` <span class="select-doc-button" data-docid=${data.id}>select</span>`;
+        const titleButton = ` <span class="select-doc-button ${data.isSelected ? 'selected' : ''}" data-docid=${data.id}>${data.isSelected ? 'selected' : 'select'}</span>`;
         if (data) {
             if (StrippetBrowser16424341054522.isUrl(data.content)) {
                 if (t.settings.content.readerContentType === 'readability') {
@@ -695,8 +704,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                         }).done((responseBody) => {
                             const highlightedContent = t.highlight(StrippetBrowser16424341054522.sanitizeHTML(responseBody.content || responseBody, StrippetBrowser16424341054522.HTML_WHITELIST_CONTENT), data.entities);
                             resolve({
-                                // title: data.title || '',
-                                title: data.title ? data.title + titleButton : data.title,
+                                title: data.title ? data.title + titleButton : titleButton,
                                 content: highlightedContent || '',
                                 author: data.author || '',
                                 source: data.source || '',
@@ -725,7 +733,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 }
                 else {
                     const readerData = {
-                        title: data.title ? data.title + titleButton : data.title,
+                        title: data.title ? data.title + titleButton : titleButton,
                         content: '<a href="#" onclick="javascript:window.open(\'' + data.content + '\')">' + data.content + '</a>',
                         author: data.author || '',
                         source: data.source || '',
@@ -738,7 +746,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 }
             } else {
                 const readerData = {
-                    title: data.title ? data.title + titleButton : data.title,
+                    title: data.title ? data.title + titleButton : titleButton,
                     content: t.highlight(StrippetBrowser16424341054522.sanitizeHTML(data.content, StrippetBrowser16424341054522.HTML_WHITELIST_CONTENT), data.entities) || '',
                     author: data.author || '',
                     source: data.source || '',
