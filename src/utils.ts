@@ -110,3 +110,42 @@ export function getSegmentColor(baseColor: string, opacity: number = 100, segmen
     const lightness = minLightness + (lightnessFactor * segmentIndex);
     return `hsla(${hue}, ${saturation}%, ${lightness}%, ${opacity / 100})`;
 }
+
+
+/**
+ * Finds and returns the dataview column(s) that matches the given data role name.
+ *
+ * @param  {DataView} dataView     A Powerbi dataView object.
+ * @param  {string}   dataRoleName A name of the role for the columen.
+ * @param  {boolean}  multi        A boolean flag indicating whether to find multiple matching columns or not           .
+ * @return {any}                   A dataview table column or an array of the columns.
+ */
+export function findColumn(dataView: DataView, dataRoleName: string, multi?: boolean): any {
+    const columns = dataView.metadata.columns;
+    const result = (columns || []).filter((col: any) => col && col.roles[dataRoleName]);
+    return multi
+        ? (result[0] && result)
+        : result[0];
+}
+
+/**
+ * Check if provided dataView has all the columns with given data role names.
+ *
+ * @export
+ * @param   {DataView} dataView      A Powerbi dataView object.
+ * @param   {string[]} dataRoleNames An array of the data role names for corresponding columns.
+ * @returns {boolean}                A Boolean value indicating whether the dataView has all matching columns.
+ */
+export function hasColumns(dataView: DataView, dataRoleNames: string[]): boolean {
+    return dataRoleNames.reduce((prev, dataRoleName) => prev && findColumn(dataView, dataRoleName) !== undefined, true);
+}
+
+export function shadeColor(color, percent) {
+    const f = parseInt(color.slice(1), 16),
+        t = percent < 0 ? 0 : 255,
+        p = percent < 0 ? percent * -1 : percent,
+        R = f >> 16,
+        G = f >> 8 & 0x00FF,
+        B = f & 0x0000FF;
+    return '#' + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
+}

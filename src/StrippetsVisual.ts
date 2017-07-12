@@ -28,6 +28,7 @@
 import IVisual = powerbi.extensibility.v110.IVisual;
 import VisualConstructorOptions = powerbi.extensibility.v110.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.VisualUpdateOptions;
+import DataViewScopeIdentity = powerbi.DataViewScopeIdentity;
 import DataView = powerbi.DataView;
 import IEnumType = powerbi.IEnumType;
 import IVisualStyle = powerbi.IVisualStyle;
@@ -40,12 +41,13 @@ import VisualObjectInstance = powerbi.VisualObjectInstance;
 import IVisualHostServices = powerbi.IVisualHostServices;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 import SelectionManager = powerbi.visuals.utility.SelectionManager;
+import SQExprBuilder = powerbi.data.SQExprBuilder;
 import SelectionId = powerbi.visuals.SelectionId;
 import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
 import IColorInfo = powerbi.IColorInfo;
 import {Bucket, HitNode, MappedEntity} from './interfaces';
-import { COLOR_PALETTE, getSegmentColor } from './utils';
+import { COLOR_PALETTE, getSegmentColor, findColumn } from './utils';
 
 import * as Promise from 'bluebird';
 import * as $ from 'jquery';
@@ -200,6 +202,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      */
     private selectionManager: SelectionManager;
     private settings = $.extend({}, StrippetBrowser16424341054522.DEFAULT_SETTINGS);
+    private dataView;
     private baseRowsLoaded: number = 0;
     private minOutlineCount = 10;
     private isThumbnailsWrapLayout: boolean;
@@ -524,6 +527,40 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         this.$container.on('touchstart', killEvent);
         this.$container.on('touchmove', killEvent);
         this.$container.on('touchend', killEvent);
+
+        this.$container.on('click', '.select-doc-button', (event) => {
+            const $selectButton = $(event.target);
+            const { docid } = $selectButton.data();
+            const buttonText = $selectButton.text();
+            this.suppressNextUpdate = true;
+            if (buttonText === 'select') {
+                $selectButton.addClass('selected');
+                $selectButton.text('selected');
+                this.applyPBISelection(docid);
+            } else {
+                $selectButton.removeClass('selected');
+                $selectButton.text('select');
+                this.applyPBISelection(undefined);
+            }
+        });
+    }
+
+    private applyPBISelection(docId) {
+        let sqExpr = undefined;
+        if (docId !== undefined) {
+            const docIdColumn = findColumn(this.dataView, 'id');
+            const docIdExpr = SQExprBuilder.equal(docIdColumn.expr, SQExprBuilder.typedConstant(docId, docIdColumn.type));
+            sqExpr = docIdExpr;
+        }
+        this.sendSelectionToHost(sqExpr ? [powerbi.data.createDataViewScopeIdentity(sqExpr)] : []);
+    }
+
+    private sendSelectionToHost(identities: DataViewScopeIdentity[]) {
+        const selectArgs = {
+            data: identities.map((identity: DataViewScopeIdentity) => ({ data: [identity] })),
+            visualObjects: [],
+        };
+        this.host.onSelect(selectArgs);
     }
 
     /**
@@ -646,6 +683,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
     private onLoadArticle(articleId: string): any {
         const t = this;
         const data = _.find(<any>t.data.items, (d: any) => d.id === articleId);
+        const titleButton = ` <span class="select-doc-button" data-docid=${data.id}>select</span>`;
         if (data) {
             if (StrippetBrowser16424341054522.isUrl(data.content)) {
                 if (t.settings.content.readerContentType === 'readability') {
@@ -657,7 +695,8 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                         }).done((responseBody) => {
                             const highlightedContent = t.highlight(StrippetBrowser16424341054522.sanitizeHTML(responseBody.content || responseBody, StrippetBrowser16424341054522.HTML_WHITELIST_CONTENT), data.entities);
                             resolve({
-                                title: data.title || '',
+                                // title: data.title || '',
+                                title: data.title ? data.title + titleButton : data.title,
                                 content: highlightedContent || '',
                                 author: data.author || '',
                                 source: data.source || '',
@@ -673,7 +712,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 }
                 else if (t.settings.content.readerContentType === 'web') {
                     const readerData = {
-                        title: '',
+                        title: titleButton,
                         content: '<iframe src="' + data.content + '" style="width:100%;height:100%;border:none;"></iframe>',
                         author: '',
                         source: '',
@@ -686,7 +725,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 }
                 else {
                     const readerData = {
-                        title: data.title || '',
+                        title: data.title ? data.title + titleButton : data.title,
                         content: '<a href="#" onclick="javascript:window.open(\'' + data.content + '\')">' + data.content + '</a>',
                         author: data.author || '',
                         source: data.source || '',
@@ -699,7 +738,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 }
             } else {
                 const readerData = {
-                    title: data.title || '',
+                    title: data.title ? data.title + titleButton : data.title,
                     content: t.highlight(StrippetBrowser16424341054522.sanitizeHTML(data.content, StrippetBrowser16424341054522.HTML_WHITELIST_CONTENT), data.entities) || '',
                     author: data.author || '',
                     source: data.source || '',
@@ -1036,6 +1075,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             let shouldLoadMore = false;
             const dataView = options.dataViews && options.dataViews.length && options.dataViews[0];
             const newObjects = dataView && dataView.metadata && dataView.metadata.objects;
+            this.dataView = dataView;
             this.settings = $.extend(true, {}, StrippetBrowser16424341054522.DEFAULT_SETTINGS, newObjects);
 
             if (options.type & powerbi.VisualUpdateType.Resize || this.$tabs.is(':visible') !== this.settings.presentation.viewControls || !this.data) {

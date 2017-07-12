@@ -118,6 +118,21 @@
         color: #000;
     }
     .reader {
+        .select-doc-button {
+            padding: 1px 9px 2px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            color: #ffffff;
+            background-color: #999999;
+            -webkit-border-radius: 9px;
+            -moz-border-radius: 9px;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+        .select-doc-button.selected {
+            background:#3a87ad;
+        }
         .readerContent {
             cursor: default;
         }
