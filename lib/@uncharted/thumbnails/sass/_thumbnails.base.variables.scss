@@ -1,0 +1,17 @@
+
+// vertical readerview
+$reader-animation-duration: 0.3s !default;
+
+// thumbnail
+$thumbnail-width: 200px !default;
+$thumbnail-height: 300px !default;
+$thumbnail-card-margin: 5px !default;
+$thumbnail-card-shadow: -1px 0 0 #e5e5e5, 0 0 2px rgba(0, 0, 0, 0.12), 2px 0 4px rgba(0, 0, 0, 0.24) !default;
+$thumbnail-expanding-animation: 0.3s ease-out !default;
+
+$inline-thumbnail-max-height: 400px !default;
+$inline-thumbnail-min-height: 150px !default;
+$inline-thumbnail-height: 100% !default;
+
+// outline-reader
+$outline-reader-disable-entity-bar: false !default;
