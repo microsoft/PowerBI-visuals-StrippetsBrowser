@@ -21,41 +21,37 @@
  * SOFTWARE.
  */
 
-$card-width: 200px;
-$card-shadow: -1px 0 0 #e5e5e5, 0 0 2px rgba(0, 0, 0, 0.12), 2px 0 4px rgba(0, 0, 0, 0.24);
-$card-transition: width 0.3s ease-out, transform 0.3s ease-out;
-
 .dummyThumbnail {
-  width: $card-width + 10px;
-  min-width: $card-width + 10px;
+  width: $thumbnail-width;
+  min-width: $thumbnail-width;
   height: 0;
 }
 
 .thumbnail {
-  $thumbnail-min-height: 200px !default;
-  $thumbnail-max-height: 300px !default;
-  $vertical-margin: 10px;
-  max-height: $thumbnail-max-height;
-  min-height: $thumbnail-min-height;
-  width: ($card-width + $vertical-margin);
-  transition: $card-transition;
+  height: $thumbnail-height;
+  width: $thumbnail-width;
+  padding: $thumbnail-card-margin;
+  position: relative;
+
+  &.hidden {
+    display: none;
+  }
 
   .card {
-    background: white;
-    margin: $vertical-margin 5px;
-    height: calc(100% - #{$vertical-margin} * 2);
-    height: -webkit-calc(100% - #{$vertical-margin} * 2);
-    width: $card-width;
-    box-shadow: $card-shadow;
     position: relative;
+    background: white;
+    height: 100%;
+    width: 100%;
+    box-shadow: $thumbnail-card-shadow;
     font-size: 0.9286em;
     vertical-align: top;
     overflow: hidden;
-    transition: $card-transition;
-    -webkit-transform: scaleX(1);
-    transform: scaleX(1);
-    -webkit-transform-origin: left 50%;
-    transform-origin: left 50%;
+    display: flex;
+    flex-direction: column;
+
+    &.inline-reader-container {
+      display: none;
+    }
   }
 
   .card:after {
@@ -69,7 +65,6 @@ $card-transition: width 0.3s ease-out, transform 0.3s ease-out;
 
   // Card image
   .card-image {
-    max-width: 100%;
     position: relative;
     overflow: hidden;
     text-align: center;
@@ -78,7 +73,6 @@ $card-transition: width 0.3s ease-out, transform 0.3s ease-out;
   }
 
   .card-image div {
-    max-width: $card-width;
     background-position: 50% 50%;
     background-repeat: no-repeat;
     float: left;
@@ -86,7 +80,11 @@ $card-transition: width 0.3s ease-out, transform 0.3s ease-out;
 
   .card-image-blur {
     overflow: hidden;
-    filter: none;
+    filter: url(#effect-blur-1);
+    filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='effect-blur-1'><feGaussianBlur stdDeviation='10' /></filter></svg>#effect-blur-1");
+    -webkit-filter: blur(10px);
+    filter: blur(10px);
+    filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius='10');
   }
 
   // Card header
@@ -100,7 +98,9 @@ $card-transition: width 0.3s ease-out, transform 0.3s ease-out;
 
   // Card body
   .card-body {
-    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     padding: 16px 16px 8px 16px;
     h1 {
       font-size: 13px;
@@ -114,11 +114,15 @@ $card-transition: width 0.3s ease-out, transform 0.3s ease-out;
       font-size: 11px;
       color: #777;
       margin-bottom: 0;
+      flex-shrink: 0;
     }
-    .meta-line + p {
+    .meta-line + .summary {
       margin-top: 2px;
       font-size: 12px;
       font-family: 'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif;
+    }
+    .summary {
+      overflow: hidden;
     }
   }
 
@@ -132,28 +136,58 @@ $card-transition: width 0.3s ease-out, transform 0.3s ease-out;
     position: absolute;
     top: 3px;
     right: 3px;
-    filter: none;
-  }
-
-  .inline-reader-container {
-    display: none;
-    background: white;
-    margin: $vertical-margin 0;
-    height: calc(100% - #{$vertical-margin} * 2);
-    height: -webkit-calc(100% - #{$vertical-margin} * 2);
-    box-shadow: $card-shadow;
-    position: absolute;
-    font-size: 0.9286em;
-    vertical-align: top;
-    left: 0;
-    top: 0;
-    z-index: 1;
-    max-height: 410px !important;
   }
 }
 
-.inline-reader {
-  margin: 0 5px;
-  position: relative;
+.inline-thumbnails {
+  .thumbnail {
+    max-height: $inline-thumbnail-max-height;
+    min-height: $inline-thumbnail-min-height;
+    height: $inline-thumbnail-height;
+    transition: width $thumbnail-expanding-animation;
+    flex-shrink: 0;
+
+    .card {
+      transition: opacity $thumbnail-expanding-animation;
+      opacity: 1;
+      position: absolute;
+      width: calc(100% - (#{$thumbnail-card-margin} * 2));
+      width: -webkit-calc(100% - (#{$thumbnail-card-margin} * 2));
+      height: calc(100% - (#{$thumbnail-card-margin} * 2));
+      height: -webkit-calc(100% - (#{$thumbnail-card-margin} * 2));
+    }
+    .card-image, .card-body {
+      width: calc(#{$thumbnail-width} - #{$thumbnail-card-margin * 2});
+      width: -webkit-calc(#{$thumbnail-width} - #{$thumbnail-card-margin * 2});
+    }
+    .inline-reader-container.card {
+      display: block;
+      opacity: 0;
+      overflow: visible;
+    }
+
+    &.inline-reader {
+      margin: 0 5px;
+      position: relative;
+    }
+
+    &.expanded {
+      .card {
+        opacity: 0;
+        &:after {
+          display: none;
+        }
+      }
+      .inline-reader-container.card {
+        opacity: 1;
+      }
+      .card-icon {
+        right: -1px;
+      }
+    }
+  }
+  .dummyThumbnail {
+    display: none;
+  }
 }
 

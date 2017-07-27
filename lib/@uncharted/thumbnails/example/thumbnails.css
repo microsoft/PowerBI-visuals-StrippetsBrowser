@@ -101,7 +101,6 @@
  * SOFTWARE.
  */
   /*==================== Story Style ====================*/
-  /*==================== Story Style ====================*/
   /**
  * Copyright (c) 2016 Uncharted Software Inc.
  * http://www.uncharted.software/
@@ -282,17 +281,17 @@
     content: "•"; }
   .thumbnails-panel .meta-line li:first-child:before {
     content: ""; }
-  .thumbnails-panel .thumbnails-container {
-    display: flex;
-    -ms-flex-flow: row wrap;
-    flex-flow: row wrap;
-    -ms-justify-content: center;
-    justify-content: center; }
   .thumbnails-panel .thumbnails.viewport {
     height: 100%;
     background: #f2f2f2;
     overflow-y: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar; }
+    .thumbnails-panel .thumbnails.viewport .thumbnails-container {
+      display: flex;
+      -ms-flex-flow: row wrap;
+      flex-flow: row wrap;
+      -ms-justify-content: center;
+      justify-content: center; }
     .thumbnails-panel .thumbnails.viewport.inline-thumbnails {
       overflow-y: hidden; }
       .thumbnails-panel .thumbnails.viewport.inline-thumbnails .thumbnails-container {
@@ -303,21 +302,8 @@
         -ms-justify-content: flex-start;
         justify-content: flex-start;
         height: 100%; }
-      .thumbnails-panel .thumbnails.viewport.inline-thumbnails .dummyThumbnail {
-        display: none; }
-      .thumbnails-panel .thumbnails.viewport.inline-thumbnails .infinite-scroll {
-        display: none; }
-      .thumbnails-panel .thumbnails.viewport.inline-thumbnails .thumbnail {
-        min-height: 150px !important;
-        height: 100% !important;
-        max-height: 410px !important;
-        min-width: 210px !important; }
-      .thumbnails-panel .thumbnails.viewport.inline-thumbnails .moreDataLoader {
-        margin: auto 20px auto 30px; }
       .thumbnails-panel .thumbnails.viewport.inline-thumbnails .reader-holder {
         display: none; }
-  .thumbnails-panel .moreDataLoader {
-    margin: 0 100%; }
 
 @-webkit-keyframes sk-bouncedelay {
   0%, 80%, 100% {
@@ -333,30 +319,29 @@
     -webkit-transform: scale(1);
     transform: scale(1); } }
   .thumbnails-panel .dummyThumbnail {
-    width: 210px;
-    min-width: 210px;
+    width: 200px;
+    min-width: 200px;
     height: 0; }
   .thumbnails-panel .thumbnail {
-    max-height: 300px;
-    min-height: 200px;
-    width: 210px;
-    transition: width 0.3s ease-out, transform 0.3s ease-out; }
+    height: 300px;
+    width: 200px;
+    padding: 5px;
+    position: relative; }
+    .thumbnails-panel .thumbnail.hidden {
+      display: none; }
     .thumbnails-panel .thumbnail .card {
-      background: white;
-      margin: 10px 5px;
-      height: calc(100% - 10px * 2);
-      height: -webkit-calc(100% - 10px * 2);
-      width: 200px;
-      box-shadow: -1px 0 0 #e5e5e5, 0 0 2px rgba(0, 0, 0, 0.12), 2px 0 4px rgba(0, 0, 0, 0.24);
       position: relative;
+      background: white;
+      height: 100%;
+      width: 100%;
+      box-shadow: -1px 0 0 #e5e5e5, 0 0 2px rgba(0, 0, 0, 0.12), 2px 0 4px rgba(0, 0, 0, 0.24);
       font-size: 0.9286em;
       vertical-align: top;
       overflow: hidden;
-      transition: width 0.3s ease-out, transform 0.3s ease-out;
-      -webkit-transform: scaleX(1);
-      transform: scaleX(1);
-      -webkit-transform-origin: left 50%;
-      transform-origin: left 50%; }
+      display: flex;
+      flex-direction: column; }
+      .thumbnails-panel .thumbnail .card.inline-reader-container {
+        display: none; }
     .thumbnails-panel .thumbnail .card:after {
       content: "";
       position: absolute;
@@ -365,26 +350,30 @@
       height: 50px;
       bottom: 0; }
     .thumbnails-panel .thumbnail .card-image {
-      max-width: 100%;
       position: relative;
       overflow: hidden;
       text-align: center;
       min-height: 100px;
       cursor: pointer; }
     .thumbnails-panel .thumbnail .card-image div {
-      max-width: 200px;
       background-position: 50% 50%;
       background-repeat: no-repeat;
       float: left; }
     .thumbnails-panel .thumbnail .card-image-blur {
       overflow: hidden;
-      filter: none; }
+      filter: url(#effect-blur-1);
+      filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='effect-blur-1'><feGaussianBlur stdDeviation='10' /></filter></svg>#effect-blur-1");
+      -webkit-filter: blur(10px);
+      filter: blur(10px);
+      filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius='10'); }
     .thumbnails-panel .thumbnail .card-header {
       height: 28px; }
     .thumbnails-panel .thumbnail .card-image + .card-body {
       padding-top: 8px; }
     .thumbnails-panel .thumbnail .card-body {
-      overflow-y: hidden;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
       padding: 16px 16px 8px 16px; }
       .thumbnails-panel .thumbnail .card-body h1 {
         font-size: 13px;
@@ -395,11 +384,14 @@
       .thumbnails-panel .thumbnail .card-body .meta-line {
         font-size: 11px;
         color: #777;
-        margin-bottom: 0; }
-      .thumbnails-panel .thumbnail .card-body .meta-line + p {
+        margin-bottom: 0;
+        flex-shrink: 0; }
+      .thumbnails-panel .thumbnail .card-body .meta-line + .summary {
         margin-top: 2px;
         font-size: 12px;
         font-family: 'Segoe UI', wf_segoe-ui_normal, helvetica, arial, sans-serif; }
+      .thumbnails-panel .thumbnail .card-body .summary {
+        overflow: hidden; }
     .thumbnails-panel .thumbnail .card-icon {
       height: 28px;
       width: 28px;
@@ -408,25 +400,41 @@
       border-radius: 14px;
       position: absolute;
       top: 3px;
-      right: 3px;
-      filter: none; }
-    .thumbnails-panel .thumbnail .inline-reader-container {
-      display: none;
-      background: white;
-      margin: 10px 0;
-      height: calc(100% - 10px * 2);
-      height: -webkit-calc(100% - 10px * 2);
-      box-shadow: -1px 0 0 #e5e5e5, 0 0 2px rgba(0, 0, 0, 0.12), 2px 0 4px rgba(0, 0, 0, 0.24);
+      right: 3px; }
+  .thumbnails-panel .inline-thumbnails .thumbnail {
+    max-height: 400px;
+    min-height: 150px;
+    height: 100%;
+    transition: width 0.3s ease-out;
+    flex-shrink: 0; }
+    .thumbnails-panel .inline-thumbnails .thumbnail .card {
+      transition: opacity 0.3s ease-out;
+      opacity: 1;
       position: absolute;
-      font-size: 0.9286em;
-      vertical-align: top;
-      left: 0;
-      top: 0;
-      z-index: 1;
-      max-height: 410px !important; }
-  .thumbnails-panel .inline-reader {
-    margin: 0 5px;
-    position: relative; }
+      width: calc(100% - (5px * 2));
+      width: -webkit-calc(100% - (5px * 2));
+      height: calc(100% - (5px * 2));
+      height: -webkit-calc(100% - (5px * 2)); }
+    .thumbnails-panel .inline-thumbnails .thumbnail .card-image, .thumbnails-panel .inline-thumbnails .thumbnail .card-body {
+      width: calc(200px - 10px);
+      width: -webkit-calc(200px - 10px); }
+    .thumbnails-panel .inline-thumbnails .thumbnail .inline-reader-container.card {
+      display: block;
+      opacity: 0;
+      overflow: visible; }
+    .thumbnails-panel .inline-thumbnails .thumbnail.inline-reader {
+      margin: 0 5px;
+      position: relative; }
+    .thumbnails-panel .inline-thumbnails .thumbnail.expanded .card {
+      opacity: 0; }
+      .thumbnails-panel .inline-thumbnails .thumbnail.expanded .card:after {
+        display: none; }
+    .thumbnails-panel .inline-thumbnails .thumbnail.expanded .inline-reader-container.card {
+      opacity: 1; }
+    .thumbnails-panel .inline-thumbnails .thumbnail.expanded .card-icon {
+      right: -1px; }
+  .thumbnails-panel .inline-thumbnails .dummyThumbnail {
+    display: none; }
   .thumbnails-panel .reader-holder {
     height: 0;
     width: 0;
@@ -526,7 +534,7 @@
       box-shadow: initial;
       border: none; }
     .thumbnails-panel .readerview .outlineItemContainer.read .outlineItem {
-      margin: 0 !important; }
+      margin: 0; }
     .thumbnails-panel .readerview .entityContainer {
       visibility: hidden; }
     .thumbnails-panel .readerview .outlineItemContainer.outline-loaded .entityContainer {
@@ -949,15 +957,28 @@
       color: rgba(0, 0, 0, 0.6); }
       .thumbnails-panel .reader ._window-close:hover {
         color: black; }
+  .thumbnails-panel .reader-content {
+    height: 100%; }
   .thumbnails-panel .outlineItemContainer {
     margin: 0;
+    width: 100%;
     height: 100%; }
-  .thumbnails-panel .outlineItemContainer .outlineItem {
-    box-shadow: initial;
-    border: none; }
-  .thumbnails-panel .outlineItemContainer.read .outlineItem {
-    margin: 0 !important; }
-  .thumbnails-panel .entityContainer {
-    visibility: hidden; }
-  .thumbnails-panel .outlineItemContainer.outline-loaded .entityContainer {
-    visibility: visible; }
+    .thumbnails-panel .outlineItemContainer .outlineHeader .sourceIcon {
+      filter: none; }
+    .thumbnails-panel .outlineItemContainer .outlineItem {
+      width: 100%;
+      box-shadow: initial;
+      border: none; }
+    .thumbnails-panel .outlineItemContainer.read .outlineItem {
+      margin: 0; }
+    .thumbnails-panel .outlineItemContainer .reader {
+      width: calc(100% - 24px) !important;
+      width: -webkit-calc(100% - 24px) !important; }
+      .thumbnails-panel .outlineItemContainer .reader .readerContent {
+        margin-left: -34px;
+        padding-left: 34px; }
+      .thumbnails-panel .outlineItemContainer .reader ._window-close {
+        right: 40px !important; }
+  .thumbnails-panel .readerview .outlineItemContainer .reader .readerContent {
+    margin-left: -24px;
+    padding-left: 24px; }
