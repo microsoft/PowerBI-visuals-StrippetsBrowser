@@ -32,12 +32,12 @@
     <button id="unhighlight" style="font-weight:bold;">UNHIGHLIGHT</button>
     <button id="loadmore" style="font-weight:bold;">LOAD MORE</button>
     <button id="toggleDisplayMode" style="font-weight:bold;">TOGGLE DISPLAY MODE</button>
+    <button id="toggleBlur" style="font-weight:bold;">TOGGLE IMAGE BLUR</button>
 </div>
 
 <script type="text/javascript">
-    Uncharted.Thumbnails.asJQueryPlugin();
-    $(".thumbnails-panel").thumbnails({
-        readerview: {
+    var thumbnailsConfig = {
+        outlineReader: {
             onLoadUrl: function(/* readerUrl */) {
                 return new Promise(function (resolve) {
                     setTimeout(function () {
@@ -54,59 +54,78 @@
                     }, 500);
                 });
             },
-            onReaderOpened:function(id){
-              console.log('Reader Opened Id: ' + id);
-            },
-            onReaderClosed:function(id){
-                console.log('Reader Closed Id: ' + id);
-            },
         },
-        thumbnail: {
-            height: '400px',
-            onClicked: function(data){
-                console.log('thumbnail clicked id: '+ data.rank);
-            }
-        },
-    });
+    };
     var id = 1;
-    const entitiesRepositionDelay = 500;
-    $(".thumbnails-panel").thumbnails("loaddata", JSON.parse(JSON.stringify(thumbnailsSampleData)).map(function (data) { data.id = id++; return data; }));
+    var entitiesRepositionDelay = 500;
+    var inlineDisplayMode = false;
+    var isBlur = false;
+    var thumbnails = new Uncharted.Thumbnails({
+        container: $('.thumbnails-panel'),
+        config: thumbnailsConfig
+    });
+
+    thumbnails.on('thumbnail:click', function (thumbnailData) {
+        console.log('thumbnail clicked id: '+ thumbnailData.id);
+    });
+    thumbnails.on('thumbnail:expand readerview:open', function (thumbnailData) {
+        console.log('Reader Opened Id: ' + thumbnailData.id);
+    });
+    thumbnails.on('thumbnail:shrink readerview:close', function (thumbnailData) {
+        console.log('Reader Closed Id: ' + thumbnailData.id);
+    });
+    thumbnails.on('outlineReader:contentLoad', function (readerContentUrl) {
+        console.log(readerContentUrl);
+    });
+
+    var centerExpandedThumbnail = function () {
+        thumbnails.centerInlineThumbnail(_.find(thumbnails._thumbnailItems, function (thumbnail) { return thumbnail.isExpanded; }));
+    };
+    thumbnails.loadData(JSON.parse(JSON.stringify(thumbnailsSampleData)).map(function (data) { data.id = id++; return data; }));
+
     $("#applyFilter").on("click", function() {
-        $(".thumbnails-panel").thumbnails("filter", [1, 5, 7]);
+        thumbnails.filter([1, 5, 7]);
+        centerExpandedThumbnail();
     });
     $("#applyNewFilter").on("click", function() {
-        $(".thumbnails-panel").thumbnails("filter", 4);
+        thumbnails.filter(4);
+        centerExpandedThumbnail();
     });
     $("#applyFunctionFilter").on("click", function() {
-        $(".thumbnails-panel").thumbnails("filter", function(outline) {
+        thumbnails.filter(function(outline) {
             return outline.rank > 7;
         });
+        centerExpandedThumbnail();
     });
     $("#applyNullFilter").on("click", function() {
-        $(".thumbnails-panel").thumbnails("filter", undefined);
+        thumbnails.filter(undefined);
+        centerExpandedThumbnail();
     });
     $("#highlight").on("click", function() {
-        $(".thumbnails-panel").thumbnails("highlight", {"name":"Washington DC","type":"place"});
+        thumbnails.highlight({"name":"Washington DC","type":"place"});
     });
     $("#highlightSomethingElse").on("click", function() {
-        $(".thumbnails-panel").thumbnails("highlight", {"name":"Donald Trump","type":"person"});
+        thumbnails.highlight({"name":"Donald Trump","type":"person"});
     });
     $("#highlightMultiple").on("click", function() {
-        $(".thumbnails-panel").thumbnails("highlight", [{"name":"Washington DC","type":"place"}, {"name":"Donald Trump","type":"person"}]);
+        thumbnails.highlight([{"name":"Washington DC","type":"place"}, {"name":"Donald Trump","type":"person"}]);
     });
     $("#unhighlight").on("click", function() {
-        $(".thumbnails-panel").thumbnails("highlight", undefined);
+        thumbnails.highlight(undefined);
     });
     $("#loadmore").on("click", function() {
-        $(".thumbnails-panel").thumbnails("loaddata", JSON.parse(JSON.stringify(thumbnailsSampleData)).map(function (data) { data.id = id++; return data; }), true);
+        thumbnails.loadData(JSON.parse(JSON.stringify(thumbnailsSampleData)).map(function (data) { data.id = id++; return data; }), true);
     });
-    var inlineDisplayMode = false;
     $("#toggleDisplayMode").on("click", function() {
         inlineDisplayMode = !inlineDisplayMode;
-        $(".thumbnails-panel").thumbnails("toggleInlineDisplayMode", inlineDisplayMode);
+        thumbnails.toggleInlineDisplayMode(inlineDisplayMode);
+    });
+    $("#toggleBlur").on("click", function() {
+        isBlur = !isBlur;
+        thumbnails.enableBlur(isBlur);
     });
     $(window).resize(_.debounce(function () {
-        $(".thumbnails-panel").thumbnails("resize", undefined);
+        thumbnails.resize();
     }, entitiesRepositionDelay));
 </script>
 </body>
