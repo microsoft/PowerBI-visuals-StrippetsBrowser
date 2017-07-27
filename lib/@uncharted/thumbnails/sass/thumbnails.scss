@@ -35,58 +35,41 @@
   position: relative;
   overflow: hidden;
   @import 'thumbnails.base';
+  @import 'thumbnails.base.variables';
 
-  // Thumbnails style
-  .thumbnails-container {
-    display: flex;
-    -ms-flex-flow: row wrap;
-    flex-flow: row wrap;
-    -ms-justify-content: center;
-    justify-content: center;
-  }
 
-  // horizontally align thumbnails with horizontal-align class on the viewport
-  .thumbnails {
-    &.viewport {
-      height: 100%;
-      background: #f2f2f2;
-      overflow-y: auto;
-      -ms-overflow-style: -ms-autohiding-scrollbar;
-      &.inline-thumbnails {
-        overflow-y: hidden;
-        .thumbnails-container {
-          display: flex;
-          -ms-flex-wrap: nowrap;
-          flex-wrap: nowrap;
-          overflow: visible;
-          -ms-justify-content: flex-start;
-          justify-content: flex-start;
-          height: 100%;
-        }
-        .dummyThumbnail {
-          display: none;
-        }
-        .infinite-scroll {
-          display: none;
-        }
-        .thumbnail {
-          min-height: 150px !important;
-          height: 100% !important;
-          max-height: 410px !important;
-          min-width: 210px !important;
-        }
-        .moreDataLoader {
-          margin: auto 20px auto 30px;
-        }
-        .reader-holder {
-          display: none;
-        }
+
+  .thumbnails.viewport {
+    height: 100%;
+    background: #f2f2f2;
+    overflow-y: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+
+    .thumbnails-container {
+      display: flex;
+      -ms-flex-flow: row wrap;
+      flex-flow: row wrap;
+      -ms-justify-content: center;
+      justify-content: center;
+    }
+
+    // horizontally align thumbnails with horizontal-align class on the viewport
+    &.inline-thumbnails {
+      overflow-y: hidden;
+      .thumbnails-container {
+        display: flex;
+        -ms-flex-wrap: nowrap;
+        flex-wrap: nowrap;
+        overflow: visible;
+        -ms-justify-content: flex-start;
+        justify-content: flex-start;
+        height: 100%;
+      }
+      .reader-holder {
+        display: none;
       }
     }
-  }
 
-  .moreDataLoader {
-    margin: 0 100%;
   }
 
   @-webkit-keyframes sk-bouncedelay {
@@ -111,4 +94,8 @@
 
   @import 'thumbnails.thumbnail';
   @import 'thumbnails.readerview';
+
+  @import 'strippets.variables';
+  @import 'strippets.outline';
+  @import 'thumbnails.outlineReader';  
 }

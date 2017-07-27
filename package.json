@@ -24,9 +24,9 @@
   "license": "https://raw.githubusercontent.com/Microsoft/PowerBI-visuals-StrippetsBrowser/master/LICENSE",
   "privacyTerms": "https://privacy.microsoft.com/en-US/privacystatement/",
   "privateSubmodules": {
-    "@uncharted/strippets.common": "0.2.6",
-    "@uncharted/strippets": "0.4.46",
-    "@uncharted/thumbnails": "0.4.39"
+    "@uncharted/strippets.common": "0.2.7",
+    "@uncharted/strippets": "0.4.47",
+    "@uncharted/thumbnails": "1.0.6"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.35",
@@ -54,7 +54,7 @@
     "mkdirp": "^0.5.1",
     "mocha": "^3.1.2",
     "mv": "^2.1.1",
-    "node-sass": "^3.11.2",
+    "node-sass": "^4.5.3",
     "node-zip": "^1.1.1",
     "npm-run-all": "^3.1.0",
     "onchange": "^3.0.2",
@@ -63,10 +63,10 @@
     "sinon": "^2.1.0",
     "sinon-chai": "^2.8.0",
     "tar.gz": "^1.0.5",
-    "ts-loader": "^0.8.2",
-    "tslint": "^3.15.1",
-    "tslint-loader": "^2.1.5",
-    "typescript": "^2.0.3",
+    "ts-loader": "^2.3.2",
+    "tslint": "^5.5.0",
+    "tslint-loader": "^3.5.3",
+    "typescript": "^2.4.2",
     "webpack": "^1.13.3"
   },
   "dependencies": {

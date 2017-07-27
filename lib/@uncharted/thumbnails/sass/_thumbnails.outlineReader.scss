@@ -1,0 +1,59 @@
+
+$outline-reader-entity-bar-width: 24px;
+@if $outline-reader-disable-entity-bar == true {
+    $outline-reader-entity-bar-width: 0px;
+}
+
+.reader-content {
+  height: 100%;
+}
+
+.outlineItemContainer {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  .outlineHeader {
+    .sourceIcon {
+      filter: none;
+    }
+  }
+  .outlineItem {
+    width: 100%;
+    box-shadow: initial;
+    border: none;
+  }
+  &.read .outlineItem {
+    margin: 0;
+  }
+  .reader {
+    width: calc(100% - #{$outline-reader-entity-bar-width}) !important;
+    width: -webkit-calc(100% - #{$outline-reader-entity-bar-width}) !important;
+    .readerContent {
+      $margin-left: $thumbnail-card-margin * 2 + $outline-reader-entity-bar-width ; // 24px is entity bar width
+      margin-left: -$margin-left;
+      padding-left: $margin-left;
+    }
+    ._window-close {
+      @if $outline-reader-disable-entity-bar == true {
+        right: 16px !important;
+      }
+      @else {
+        right: 40px !important;
+      }
+    }
+  }
+  .mainOutlineContent {
+    @if $outline-reader-disable-entity-bar == true {
+      display: none;
+    }
+  }
+}
+
+// reader in vertical readerview
+.readerview .outlineItemContainer .reader {
+    .readerContent {
+      margin-left: -$outline-reader-entity-bar-width;
+      padding-left: $outline-reader-entity-bar-width;
+    }
+}
+

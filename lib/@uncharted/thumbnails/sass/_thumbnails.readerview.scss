@@ -21,7 +21,6 @@
  * SOFTWARE.
  */
 
-$reader-animation-duration: 0.3s;
 
 .reader-holder {
   height: 0;
@@ -169,7 +168,7 @@ $reader-animation-duration: 0.3s;
     border: none;
   }
   .outlineItemContainer.read .outlineItem {
-    margin: 0 !important;
+    margin: 0;
   }
   .entityContainer {
     visibility: hidden;
@@ -186,25 +185,4 @@ $reader-animation-duration: 0.3s;
     }
   }
 
-}
-
-/*==================== Story Style ====================*/
-@import 'strippets.variables';
-@import 'strippets.outline';
-.outlineItemContainer {
-  margin: 0;
-  height: 100%;
-}
-.outlineItemContainer .outlineItem {
-  box-shadow: initial;
-  border: none;
-}
-.outlineItemContainer.read .outlineItem {
-  margin: 0 !important;
-}
-.entityContainer {
-  visibility: hidden;
-}
-.outlineItemContainer.outline-loaded .entityContainer {
-  visibility: visible;
 }
