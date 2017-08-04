@@ -1415,7 +1415,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 return tn.data.id === id;
             });
             if (thumbnail) {
-                this.mediator.publish(thumbnailsDefaults.events.thumbnailClicked, thumbnail.data);
+                this.thumbnails.instance.openReader(thumbnail.data);
             }
         }
     }
