@@ -590,7 +590,6 @@ export default class StrippetBrowser16424341054522 implements IVisual {
 
     // https://stackoverflow.com/questions/35962586/javascript-remove-inline-event-handlers-attributes-of-a-node#35962814
     public static removeScriptAttributes(el) {
-        const listOfEvents = [];
         const attributes = [].slice.call(el.attributes);
 
         for (let i = 0; i < attributes.length; i++) {
@@ -601,7 +600,6 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 const eventHandlers: any = {};
                 eventHandlers.attribute = attributes[i].name;
                 eventHandlers.value = attributes[i].value;
-                listOfEvents.push(eventHandlers);
                 el.attributes.removeNamedItem(att);
             }
         }
