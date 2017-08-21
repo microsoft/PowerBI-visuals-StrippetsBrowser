@@ -596,10 +596,6 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             const att = attributes[i].name;
 
             if (att.indexOf('on') === 0) {
-
-                const eventHandlers: any = {};
-                eventHandlers.attribute = attributes[i].name;
-                eventHandlers.value = attributes[i].value;
                 el.attributes.removeNamedItem(att);
             }
         }
