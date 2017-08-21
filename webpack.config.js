@@ -10,6 +10,12 @@ module.exports = {
         extensions: ['', '.webpack.js', '.web.js', '.js', '.ts']
     },
     module: {
+        preLoaders: [
+            {
+                test: /\.ts$/,
+                loader: "tslint"
+            }
+        ],
         loaders: [
             {
                 test: new RegExp(regex),
@@ -25,7 +31,7 @@ module.exports = {
     externals: [
         {
             jquery: "jQuery",
-            "lodash": "_"
+            lodash: "_"
         },
     ],
 };

@@ -48,8 +48,8 @@ import { Bucket, HitNode, MappedEntity } from './interfaces';
 import { COLOR_PALETTE, getSegmentColor } from './utils';
 
 import * as Promise from 'bluebird';
-import * as $ from 'jquery';
 import * as _ from 'lodash';
+import * as $ from 'jquery';
 
 require('velocity-animate');
 const moment = require('moment');
@@ -74,7 +74,7 @@ const ENTITIES_REPOSITION_DELAY = 500;
  * @type {string[]}
  */
 const HTML_WHITELIST_STANDARD = [
-    'A', 'ABBR', 'ACRONYM', 'ADDRESS', 'AREA', 'ARTICLE', 'ASIDE', 'AUDIO',
+    'A', 'ABBR', 'ACRONYM', 'ADDRESS', 'AREA', 'ARTICLE', 'ASIDE',
     'B', 'BDI', 'BDO', 'BLOCKQUOTE', 'BR',
     'CAPTION', 'CITE', 'CODE', 'COL', 'COLGROUP',
     'DD', 'DEL', 'DETAILS', 'DFN', 'DIV', 'DL', 'DT',
@@ -214,6 +214,17 @@ export default class StrippetBrowser16424341054522 implements IVisual {
     private suppressNextUpdate: boolean;
     private mediator: any = new Mediator();
 
+    private static cleanString (str: any) {
+        if (str && str.indexOf && str.indexOf('>') > -1) {
+            return _.escape(str);
+        }
+        return str || '';
+    }
+
+    private static  asUtf8 (value: string) {
+        return $('<div />').html(value).text();
+    }
+
     /**
      * Convert PowerBI data into a format compatible with the Thumbnails and Outlines components.
      * @param {DataView} dataView - data from PowerBI
@@ -267,9 +278,6 @@ export default class StrippetBrowser16424341054522 implements IVisual {
 
         const getHighlightValue = (itemIndex: number) => {
             return isHighlightingOn ? valuesDV[0].highlights[itemIndex] : false;
-        };
-        const asUtf8 = (value: string) => {
-            return $('<div />').html(value).text();
         };
 
         const bucketMap = {};
@@ -354,20 +362,25 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             // will result in slower performance.
             const index = adjustedIndex + lastDataViewLength;
             const isHighlighted = getHighlightValue(index);
-            const title = getCategoryValue('title', index);
             if (!strippetsData[id]) {
-                strippetsData[id] = {
+                const title = getCategoryValue('title', index);
+                const summary = getCategoryValue('summary', index);
+                let articleDate = getCategoryValue('articleDate', index);
+                if (articleDate) {
+                    articleDate = StrippetBrowser16424341054522.cleanString(articleDate);
+                }
+                    strippetsData[id] = {
                     id: id,
-                    title: asUtf8(title ? String(title) : ''),
-                    summary: getCategoryValue('summary', index),
+                    title: StrippetBrowser16424341054522.asUtf8(title ? StrippetBrowser16424341054522.cleanString(String(title)) : ''),
+                    summary: summary ? StrippetBrowser16424341054522.sanitizeHTML(String(summary), StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY) : '',
                     content: getCategoryValue('content', index),
-                    imageUrl: getCategoryValue('imageUrl', index),
-                    author: getCategoryValue('author', index),
-                    source: String(getCategoryValue('source', index) || ''),
-                    sourceUrl: String(getCategoryValue('sourceUrl', index) || ''),
-                    sourceimage: getCategoryValue('sourceImage', index),
-                    articleDate: getCategoryValue('articleDate', index),
-                    articledate: getCategoryValue('articleDate', index), // thumbnails data model has 'articledate' instead of 'articleDate'
+                    imageUrl: StrippetBrowser16424341054522.cleanString(getCategoryValue('imageUrl', index)),
+                    author: StrippetBrowser16424341054522.cleanString(getCategoryValue('author', index)),
+                    source: StrippetBrowser16424341054522.cleanString(String(getCategoryValue('source', index) || '')),
+                    sourceUrl: StrippetBrowser16424341054522.cleanString(String(getCategoryValue('sourceUrl', index) || '')),
+                    sourceimage: StrippetBrowser16424341054522.cleanString(getCategoryValue('sourceImage', index)),
+                    articleDate: articleDate,
+                    articledate: articleDate, // thumbnails data model has 'articledate' instead of 'articleDate'
                     entities: [],
                     readerUrl: id,
                     isHighlighted: isHighlighted,
@@ -575,6 +588,19 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         return outlinesInstance;
     }
 
+    // https://stackoverflow.com/questions/35962586/javascript-remove-inline-event-handlers-attributes-of-a-node#35962814
+    public static removeScriptAttributes(el) {
+        const attributes = [].slice.call(el.attributes);
+
+        for (let i = 0; i < attributes.length; i++) {
+            const att = attributes[i].name;
+
+            if (att.indexOf('on') === 0) {
+                el.attributes.removeNamedItem(att);
+            }
+        }
+    }
+
     /**
      * Removes dangerous tags, such as scripts, from the given HTML content.
      * @param {String} html - HTML content to clean
@@ -602,6 +628,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
 
             let filter: any = function (node) {
                 if (whiteList.indexOf(node.nodeName.toUpperCase()) === -1) {
+                    StrippetBrowser16424341054522.removeScriptAttributes(node);
                     return NodeFilter.FILTER_ACCEPT;
                 }
 
@@ -658,12 +685,12 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                         }).done((responseBody) => {
                             const highlightedContent = t.highlight(StrippetBrowser16424341054522.sanitizeHTML(responseBody.content || responseBody, StrippetBrowser16424341054522.HTML_WHITELIST_CONTENT), data.entities);
                             resolve({
-                                title: data.title || '',
+                                title: StrippetBrowser16424341054522.asUtf8(data.title ? StrippetBrowser16424341054522.cleanString(String(data.title)) : ''),
                                 content: highlightedContent || '',
-                                author: data.author || '',
-                                source: data.source || '',
-                                sourceUrl: data.sourceUrl || '',
-                                figureImgUrl: data.imageUrl || '',
+                                author: StrippetBrowser16424341054522.cleanString(data.author),
+                                source: StrippetBrowser16424341054522.cleanString(data.source),
+                                sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
+                                figureImgUrl: StrippetBrowser16424341054522.cleanString(data.imageUrl),
                                 figureCaption: '',
                                 lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                             });
@@ -678,7 +705,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                         content: '<iframe src="' + data.content + '" style="width:100%;height:100%;border:none;"></iframe>',
                         author: '',
                         source: '',
-                        sourceUrl: data.sourceUrl || '',
+                        sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
                         figureImgUrl: '',
                         figureCaption: '',
                         lastupdatedon: '',
@@ -687,12 +714,12 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 }
                 else {
                     const readerData = {
-                        title: data.title || '',
+                        title: StrippetBrowser16424341054522.asUtf8(data.title ? StrippetBrowser16424341054522.cleanString(String(data.title)) : ''),
                         content: '<a href="#" onclick="javascript:window.open(\'' + data.content + '\')">' + data.content + '</a>',
-                        author: data.author || '',
-                        source: data.source || '',
-                        sourceUrl: data.sourceUrl || '',
-                        figureImgUrl: data.imageUrl || '',
+                        author: StrippetBrowser16424341054522.cleanString(data.author),
+                        source: StrippetBrowser16424341054522.cleanString(data.source),
+                        sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
+                        figureImgUrl: StrippetBrowser16424341054522.cleanString(data.imageUrl),
                         figureCaption: '',
                         lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                     };
@@ -700,12 +727,12 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 }
             } else {
                 const readerData = {
-                    title: data.title || '',
+                    title: StrippetBrowser16424341054522.asUtf8(data.title ? StrippetBrowser16424341054522.cleanString(String(data.title)) : ''),
                     content: t.highlight(StrippetBrowser16424341054522.sanitizeHTML(data.content, StrippetBrowser16424341054522.HTML_WHITELIST_CONTENT), data.entities) || '',
-                    author: data.author || '',
-                    source: data.source || '',
-                    sourceUrl: data.sourceUrl || '',
-                    figureImgUrl: data.imageUrl || '',
+                    author: StrippetBrowser16424341054522.cleanString(data.author),
+                    source: StrippetBrowser16424341054522.cleanString(data.source),
+                    sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
+                    figureImgUrl: StrippetBrowser16424341054522.cleanString(data.imageUrl),
                     figureCaption: '',
                     lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                 };
@@ -975,11 +1002,13 @@ export default class StrippetBrowser16424341054522 implements IVisual {
     private saveThumbnailType(): void {
         this.suppressNextUpdate = true;
         this.host.persistProperties({
-            merge: [{
-                objectName: 'presentation',
-                selector: undefined,
-                properties: { strippetType: this.settings.presentation.strippetType },
-            },],
+            merge: [
+                {
+                    objectName: 'presentation',
+                    selector: undefined,
+                    properties: { strippetType: this.settings.presentation.strippetType },
+                },
+            ],
         });
     }
 
@@ -1176,11 +1205,13 @@ export default class StrippetBrowser16424341054522 implements IVisual {
 
                     if (this.isThumbnailsWrapLayout !== oldIsWrap) {
                         this.host.persistProperties({
-                            merge: [{
-                                objectName: 'presentation',
-                                selector: undefined,
-                                properties: { wrap: this.isThumbnailsWrapLayout },
-                            },],
+                            merge: [
+                                {
+                                    objectName: 'presentation',
+                                    selector: undefined,
+                                    properties: { wrap: this.isThumbnailsWrapLayout },
+                                },
+                            ],
                         });
                     }
 
@@ -1451,7 +1482,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         }
     }
 
-    ///**
+    // /**
     // * Gets the inline css used for this element
     // */
     // protected getCss():string[] {
