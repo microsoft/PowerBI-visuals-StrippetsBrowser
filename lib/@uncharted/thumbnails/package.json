@@ -1,6 +1,6 @@
 {
   "name": "@uncharted/thumbnails",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Uncharted Software Inc. Thumbnails visual component",
   "main": "dist/uncharted.thumbnails.js",
   "scripts": {
