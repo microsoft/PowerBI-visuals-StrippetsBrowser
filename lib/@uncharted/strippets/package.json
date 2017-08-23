@@ -1,6 +1,6 @@
 {
   "name": "@uncharted/strippets",
-  "version": "0.4.49",
+  "version": "0.4.50",
   "description": "Uncharted Software Inc. Outlines visual component",
   "main": "src/index.js",
   "scripts": {
