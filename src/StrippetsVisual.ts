@@ -898,7 +898,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
 
                 // used by the NodeFilter above
                 filterRegex = new RegExp('(?:^|\\s|[<\\[\\({"\'])' + StrippetBrowser16424341054522.escapeRegex(entity.text) + '(?:^|\\s|[.,;:!?\\]}>\\)\'"])', 'ig');
-                
+
                 // walk the DOM tree once per entity, so that newly-added spans are treated as nodes
                 treeWalker.currentNode = treeWalker.root;
 
