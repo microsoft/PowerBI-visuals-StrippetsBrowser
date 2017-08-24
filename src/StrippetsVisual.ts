@@ -843,7 +843,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             for (let i = 0; i < entityCount; i++) {
                 const entity = entities[i];
                 const name = entity.name;
-                const trim = name.replace(/(^\W)|(\W$)/g, '');
+                const trim = name.trim();
                 if (trim && !entityMap[trim]) {
                     const type = entity.type;
                     const iconMap = _.find(t.data.iconMap, (im: any) => {
@@ -897,7 +897,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 let textNodes = [];
 
                 // used by the NodeFilter above
-                filterRegex = new RegExp('\\b' + StrippetBrowser16424341054522.escapeRegex(entity.text) + '\\b', 'ig');
+                filterRegex = new RegExp('(?:^|\\s|[<\\[\\({"\'])' + StrippetBrowser16424341054522.escapeRegex(entity.text) + '(?:^|\\s|[.,;:!?\\]}>\\)\'"])', 'ig');
 
                 // walk the DOM tree once per entity, so that newly-added spans are treated as nodes
                 treeWalker.currentNode = treeWalker.root;
