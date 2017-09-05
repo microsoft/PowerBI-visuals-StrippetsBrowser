@@ -1520,7 +1520,6 @@ export default class StrippetBrowser16424341054522 implements IVisual {
     public destroy(): void {
         this.clearWrapTimeout();
         if (this.thumbnails && this.thumbnails.instance) {
-            this.thumbnails.instance._unregisterEvents();
             this.thumbnails.instance._resetThumbnailsContainer();
         }
 
