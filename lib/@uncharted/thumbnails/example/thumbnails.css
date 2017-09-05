@@ -278,7 +278,7 @@
   .thumbnails-panel .meta-line li {
     display: inline; }
   .thumbnails-panel .meta-line li:before {
-    content: "•"; }
+    content: "\2022"; }
   .thumbnails-panel .meta-line li:first-child:before {
     content: ""; }
   .thumbnails-panel .thumbnails.viewport {
