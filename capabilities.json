@@ -319,6 +319,13 @@
           },
           "displayName": "Wrap",
           "description": "If true, thumbnail cards wraps on overflow."
+        },
+        "filter": {
+          "type": {
+            "bool": true
+          },
+          "displayName": "Filter",
+          "description": "If true, selecting a thumbnail filters other visuals to that article."
         }
       },
       "displayName": "Configuration"
@@ -350,6 +357,30 @@
         }
       },
       "displayName": "Content"
+    },
+    "style": {
+      "properties": {
+        "headerBackground": {
+          "displayName": "Header Color",
+          "description": "Background color of the header box",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": "#f6f6f6"
+              }
+            }
+          }
+        },
+        "boxShadow": {
+          "type": {
+            "bool": true
+          },
+          "displayName": "Box Shadow",
+          "description": "If true, use a box shadow style for the cards and reader."
+        }
+      },
+      "displayName": "Style",
+      "description": "Style options"
     }
   },
   "supportsHighlight": true,

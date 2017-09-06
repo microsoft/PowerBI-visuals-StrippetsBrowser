@@ -161,6 +161,28 @@
     }
 }
 
+.visual .flat-style {
+    .thumbnails-panel {
+        background-color: transparent;
+    }
+    .viewport {
+        background-color: transparent;
+    }
+    .nav {
+        background-color: transparent;
+    }
+    .card {
+        box-shadow: none;
+    }
+    .outlineItem {
+        box-shadow: none;
+        margin-right: 1px;
+    }
+    .sourceIcon {
+        border-bottom: none;
+    }
+}
+
 .no-highlight {
     .entity {
         &.highlight {

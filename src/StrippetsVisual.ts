@@ -125,13 +125,22 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      */
     private static DEFAULT_SETTINGS = {
         presentation: {
-            wrap: false,
-            viewControls: true,
             strippetType: 'thumbnails',
+            viewControls: true,
+            wrap: false,
+            filter: false,
         },
         content: {
             readerContentType: 'html',
             summaryUrl: false,
+        },
+        style: {
+            headerBackground: {
+                solid: {
+                    color: '#f6f6f6',
+                }
+            },
+            boxShadow: true,
         }
     };
 
@@ -213,15 +222,16 @@ export default class StrippetBrowser16424341054522 implements IVisual {
     private colors: IColorInfo[];
     private suppressNextUpdate: boolean;
     private mediator: any = new Mediator();
+    private headerBackgroundColor = this.settings.style.headerBackground.solid.color;
 
-    private static cleanString (str: any) {
+    private static cleanString(str: any) {
         if (str && str.indexOf && str.indexOf('>') > -1) {
             return _.escape(str);
         }
         return str || '';
     }
 
-    private static  asUtf8 (value: string) {
+    private static asUtf8(value: string) {
         return $('<div />').html(value).text();
     }
 
@@ -369,7 +379,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 if (articleDate) {
                     articleDate = StrippetBrowser16424341054522.cleanString(articleDate);
                 }
-                    strippetsData[id] = {
+                strippetsData[id] = {
                     id: id,
                     title: StrippetBrowser16424341054522.asUtf8(title ? StrippetBrowser16424341054522.cleanString(String(title)) : ''),
                     summary: summary ? StrippetBrowser16424341054522.sanitizeHTML(String(summary), StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY) : '',
@@ -1053,6 +1063,32 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         return _.some(columns || [], (col: any) => col && col.roles.id);
     }
 
+    private updateSettingsColor(thisVariable, setting, cssClasses, properties) {
+        if (this[thisVariable] !== setting) {
+            for (let i = 0; i < cssClasses.length; i++) {
+                const cssClass = cssClasses[i];
+                for (let j = 0; j < properties.length; j++) {
+                    const property = properties[j];
+                    $('head').append('<style type="text/css">' + cssClass + ' { ' + property + ': ' +
+                    setting + ' !important; }</style>');
+                }
+            }
+            this[thisVariable] = setting;
+        }
+    }
+
+    private updateHeaderBackgroundColor() {
+        this.updateSettingsColor('headerBackgroundColor',
+            this.settings.style.headerBackground.solid.color,
+            ['.outlineHeader'],
+            ['background-color']
+        );
+    }
+
+    private updateSettingsColors() {
+        this.updateHeaderBackgroundColor();
+    }
+
     /**
      * Notifies the IVisual of an update (data, viewmode, size change).
      * @param {VisualUpdateOptions} options - data and config from PowerBI
@@ -1064,12 +1100,15 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         }
 
         this.element.css({ width: options.viewport.width, height: options.viewport.height });
+
         if (options.dataViews && options.dataViews.length > 0) {
 
             let shouldLoadMore = false;
             const dataView = options.dataViews && options.dataViews.length && options.dataViews[0];
             const newObjects = dataView && dataView.metadata && dataView.metadata.objects;
             this.settings = $.extend(true, {}, StrippetBrowser16424341054522.DEFAULT_SETTINGS, newObjects);
+            this.updateSettingsColors();
+            this.element.toggleClass('flat-style', !this.settings.style.boxShadow);
 
             if (options.type & powerbi.VisualUpdateType.Resize || this.$tabs.is(':visible') !== this.settings.presentation.viewControls || !this.data) {
                 // set the strippets container width dynamically.
@@ -1265,7 +1304,6 @@ export default class StrippetBrowser16424341054522 implements IVisual {
 
         this.hideLoader();
         this.updateOutlines.call(this, data, append);
-
     }
 
     /**
