@@ -43,9 +43,11 @@ import SelectionManager = powerbi.visuals.utility.SelectionManager;
 import SelectionId = powerbi.visuals.SelectionId;
 import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
+import DataViewScopeIdentity = powerbi.DataViewScopeIdentity;
 import IColorInfo = powerbi.IColorInfo;
 import { Bucket, HitNode, MappedEntity } from './interfaces';
-import { COLOR_PALETTE, getSegmentColor } from './utils';
+import { COLOR_PALETTE, getSegmentColor, findColumn } from './utils';
+import SQExprBuilder = powerbi.data.SQExprBuilder;
 
 import * as Promise from 'bluebird';
 import * as _ from 'lodash';
@@ -116,7 +118,7 @@ const BUCKET_DEFAULT_GREY = '#DDDDDD';
  * The Strippet Browser has two tabs, corresponding to its two view: Thumbnails and Outlines,
  * which are implemented by the dynamically-loaded thumbnails and strippets components, respectively.
  */
-export default class StrippetBrowser16424341054522 implements IVisual {
+export default class StrippetBrowser16424341054523 implements IVisual {
     public static HTML_WHITELIST_SUMMARY = HTML_WHITELIST_STANDARD;
     public static HTML_WHITELIST_CONTENT = HTML_WHITELIST_STANDARD.concat(HTML_WHITELIST_MEDIA);
 
@@ -209,7 +211,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      * Allows the visual to notify the host of changes in selection state.
      */
     private selectionManager: SelectionManager;
-    private settings = $.extend({}, StrippetBrowser16424341054522.DEFAULT_SETTINGS);
+    private settings = $.extend({}, StrippetBrowser16424341054523.DEFAULT_SETTINGS);
     private baseRowsLoaded: number = 0;
     private minOutlineCount = 10;
     private isThumbnailsWrapLayout: boolean;
@@ -223,6 +225,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
     private suppressNextUpdate: boolean;
     private mediator: any = new Mediator();
     private headerBackgroundColor = this.settings.style.headerBackground.solid.color;
+    private dataView: DataView;
 
     private static cleanString(str: any) {
         if (str && str.indexOf && str.indexOf('>') > -1) {
@@ -377,18 +380,18 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 const summary = getCategoryValue('summary', index);
                 let articleDate = getCategoryValue('articleDate', index);
                 if (articleDate) {
-                    articleDate = StrippetBrowser16424341054522.cleanString(articleDate);
+                    articleDate = StrippetBrowser16424341054523.cleanString(articleDate);
                 }
                 strippetsData[id] = {
                     id: id,
-                    title: StrippetBrowser16424341054522.asUtf8(title ? StrippetBrowser16424341054522.cleanString(String(title)) : ''),
-                    summary: summary ? StrippetBrowser16424341054522.sanitizeHTML(String(summary), StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY) : '',
+                    title: StrippetBrowser16424341054523.asUtf8(title ? StrippetBrowser16424341054523.cleanString(String(title)) : ''),
+                    summary: summary ? StrippetBrowser16424341054523.sanitizeHTML(String(summary), StrippetBrowser16424341054523.HTML_WHITELIST_SUMMARY) : '',
                     content: getCategoryValue('content', index),
-                    imageUrl: StrippetBrowser16424341054522.cleanString(getCategoryValue('imageUrl', index)),
-                    author: StrippetBrowser16424341054522.cleanString(getCategoryValue('author', index)),
-                    source: StrippetBrowser16424341054522.cleanString(String(getCategoryValue('source', index) || '')),
-                    sourceUrl: StrippetBrowser16424341054522.cleanString(String(getCategoryValue('sourceUrl', index) || '')),
-                    sourceimage: StrippetBrowser16424341054522.cleanString(getCategoryValue('sourceImage', index)),
+                    imageUrl: StrippetBrowser16424341054523.cleanString(getCategoryValue('imageUrl', index)),
+                    author: StrippetBrowser16424341054523.cleanString(getCategoryValue('author', index)),
+                    source: StrippetBrowser16424341054523.cleanString(String(getCategoryValue('source', index) || '')),
+                    sourceUrl: StrippetBrowser16424341054523.cleanString(String(getCategoryValue('sourceUrl', index) || '')),
+                    sourceimage: StrippetBrowser16424341054523.cleanString(getCategoryValue('sourceImage', index)),
                     articleDate: articleDate,
                     articledate: articleDate, // thumbnails data model has 'articledate' instead of 'articleDate'
                     entities: [],
@@ -565,9 +568,11 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                     enabled: true,
                     onLoadUrl: $.proxy(t.onLoadArticle, t),
                     onReaderOpened: (id) => {
+                        t.applySelection({ id: id });
                         t.lastOpenedStoryId = id;
                     },
                     onReaderClosed: () => {
+                        this.applySelection(null);
                         t.lastOpenedStoryId = null;
                     },
                 },
@@ -638,7 +643,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
 
             let filter: any = function (node) {
                 if (whiteList.indexOf(node.nodeName.toUpperCase()) === -1) {
-                    StrippetBrowser16424341054522.removeScriptAttributes(node);
+                    StrippetBrowser16424341054523.removeScriptAttributes(node);
                     return NodeFilter.FILTER_ACCEPT;
                 }
 
@@ -685,7 +690,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         const t = this;
         const data = _.find(<any>t.data.items, (d: any) => d.id === articleId);
         if (data) {
-            if (StrippetBrowser16424341054522.isUrl(data.content)) {
+            if (StrippetBrowser16424341054523.isUrl(data.content)) {
                 if (t.settings.content.readerContentType === 'readability') {
                     return new Promise((resolve: any, reject: any) => {
                         $.ajax({
@@ -693,14 +698,14 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                             method: 'GET',
                             url: data.content,
                         }).done((responseBody) => {
-                            const highlightedContent = t.highlight(StrippetBrowser16424341054522.sanitizeHTML(responseBody.content || responseBody, StrippetBrowser16424341054522.HTML_WHITELIST_CONTENT), data.entities);
+                            const highlightedContent = t.highlight(StrippetBrowser16424341054523.sanitizeHTML(responseBody.content || responseBody, StrippetBrowser16424341054523.HTML_WHITELIST_CONTENT), data.entities);
                             resolve({
-                                title: StrippetBrowser16424341054522.asUtf8(data.title ? StrippetBrowser16424341054522.cleanString(String(data.title)) : ''),
+                                title: StrippetBrowser16424341054523.asUtf8(data.title ? StrippetBrowser16424341054523.cleanString(String(data.title)) : ''),
                                 content: highlightedContent || '',
-                                author: StrippetBrowser16424341054522.cleanString(data.author),
-                                source: StrippetBrowser16424341054522.cleanString(data.source),
-                                sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
-                                figureImgUrl: StrippetBrowser16424341054522.cleanString(data.imageUrl),
+                                author: StrippetBrowser16424341054523.cleanString(data.author),
+                                source: StrippetBrowser16424341054523.cleanString(data.source),
+                                sourceUrl: StrippetBrowser16424341054523.cleanString(data.sourceUrl),
+                                figureImgUrl: StrippetBrowser16424341054523.cleanString(data.imageUrl),
                                 figureCaption: '',
                                 lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                             });
@@ -715,7 +720,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                         content: '<iframe src="' + data.content + '" style="width:100%;height:100%;border:none;"></iframe>',
                         author: '',
                         source: '',
-                        sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
+                        sourceUrl: StrippetBrowser16424341054523.cleanString(data.sourceUrl),
                         figureImgUrl: '',
                         figureCaption: '',
                         lastupdatedon: '',
@@ -724,12 +729,12 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 }
                 else {
                     const readerData = {
-                        title: StrippetBrowser16424341054522.asUtf8(data.title ? StrippetBrowser16424341054522.cleanString(String(data.title)) : ''),
+                        title: StrippetBrowser16424341054523.asUtf8(data.title ? StrippetBrowser16424341054523.cleanString(String(data.title)) : ''),
                         content: '<a href="#" onclick="javascript:window.open(\'' + data.content + '\')">' + data.content + '</a>',
-                        author: StrippetBrowser16424341054522.cleanString(data.author),
-                        source: StrippetBrowser16424341054522.cleanString(data.source),
-                        sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
-                        figureImgUrl: StrippetBrowser16424341054522.cleanString(data.imageUrl),
+                        author: StrippetBrowser16424341054523.cleanString(data.author),
+                        source: StrippetBrowser16424341054523.cleanString(data.source),
+                        sourceUrl: StrippetBrowser16424341054523.cleanString(data.sourceUrl),
+                        figureImgUrl: StrippetBrowser16424341054523.cleanString(data.imageUrl),
                         figureCaption: '',
                         lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                     };
@@ -737,12 +742,12 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 }
             } else {
                 const readerData = {
-                    title: StrippetBrowser16424341054522.asUtf8(data.title ? StrippetBrowser16424341054522.cleanString(String(data.title)) : ''),
-                    content: t.highlight(StrippetBrowser16424341054522.sanitizeHTML(data.content, StrippetBrowser16424341054522.HTML_WHITELIST_CONTENT), data.entities) || '',
-                    author: StrippetBrowser16424341054522.cleanString(data.author),
-                    source: StrippetBrowser16424341054522.cleanString(data.source),
-                    sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
-                    figureImgUrl: StrippetBrowser16424341054522.cleanString(data.imageUrl),
+                    title: StrippetBrowser16424341054523.asUtf8(data.title ? StrippetBrowser16424341054523.cleanString(String(data.title)) : ''),
+                    content: t.highlight(StrippetBrowser16424341054523.sanitizeHTML(data.content, StrippetBrowser16424341054523.HTML_WHITELIST_CONTENT), data.entities) || '',
+                    author: StrippetBrowser16424341054523.cleanString(data.author),
+                    source: StrippetBrowser16424341054523.cleanString(data.source),
+                    sourceUrl: StrippetBrowser16424341054523.cleanString(data.sourceUrl),
+                    figureImgUrl: StrippetBrowser16424341054523.cleanString(data.imageUrl),
                     figureCaption: '',
                     lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                 };
@@ -767,7 +772,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      */
     public static isUrl(candidate) {
         // weak pattern, revisit later on.
-        return StrippetBrowser16424341054522.URL_PATTERN.test(candidate);
+        return StrippetBrowser16424341054523.URL_PATTERN.test(candidate);
     }
 
     /**
@@ -907,7 +912,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 let textNodes = [];
 
                 // used by the NodeFilter above
-                filterRegex = new RegExp('(?:^|\\s|[<\\[\\({"\'])' + StrippetBrowser16424341054522.escapeRegex(entity.text) + '(?:^|\\s|[.,;:!?\\]}>\\)\'"])', 'ig');
+                filterRegex = new RegExp('(?:^|\\s|[<\\[\\({"\'])' + StrippetBrowser16424341054523.escapeRegex(entity.text) + '(?:^|\\s|[.,;:!?\\]}>\\)\'"])', 'ig');
 
                 // walk the DOM tree once per entity, so that newly-added spans are treated as nodes
                 treeWalker.currentNode = treeWalker.root;
@@ -921,7 +926,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                     for (let i = 0; i < textNodeCount; i++) {
                         let node = textNodes[i];
                         filterRegex.lastIndex = 0;
-                        StrippetBrowser16424341054522.textNodeReplace(node, filterRegex, function (match) {
+                        StrippetBrowser16424341054523.textNodeReplace(node, filterRegex, function (match) {
                             return {
                                 name: 'span',
                                 attrs: {
@@ -942,6 +947,37 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         }
 
         return highlightedContent;
+    }
+
+    /**
+     * Send the selected article to the host, for filtering.
+     *
+     * @param {selectedDocument} The data for the selected article
+     */
+    private applySelection(selectedDocument) {
+        if (this.settings.presentation.filter) {
+            let sqExpr;
+            if (this.dataView && selectedDocument) {
+                const articleIdColumn = findColumn(this.dataView, 'id');
+                if (articleIdColumn) {
+                    sqExpr = SQExprBuilder.equal(articleIdColumn.expr, SQExprBuilder.typedConstant(selectedDocument.id, articleIdColumn.type));
+                }
+            }
+            this.sendSelectionToHost(sqExpr ? [powerbi.data.createDataViewScopeIdentity(sqExpr)] : []);
+        }
+    }
+
+    /**
+     * Send a selection for the given data view scope identities to the host.
+     *
+     * @param {DataViewScopeIdentity[]} identities An array of PowerBI DataViewScopeIdentities.
+     */
+    private sendSelectionToHost(identities: DataViewScopeIdentity[]) {
+        const selectArgs = {
+            data: identities.map((identity: DataViewScopeIdentity) => ({ data: [identity] })),
+            visualObjects: [],
+        };
+        this.host.onSelect(selectArgs);
     }
 
     /**
@@ -999,12 +1035,14 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         // Handle reader open & close events
         thumbnailsInstance.off(THUMBNAIL_READER_CLOSE_EVENTS);
         thumbnailsInstance.on(THUMBNAIL_READER_CLOSE_EVENTS, () => {
+            t.applySelection(null);
             t.closeReader();
             t.lastOpenedStoryId = null;
         });
         thumbnailsInstance.on('outlineReader:contentLoad', (id) => {
             t.lastOpenedStoryId = id;
         });
+        thumbnailsInstance.on('thumbnail:click', t.applySelection.bind(t));
 
         return thumbnailsInstance;
     }
@@ -1088,11 +1126,17 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             let shouldLoadMore = false;
             const dataView = options.dataViews && options.dataViews.length && options.dataViews[0];
             const newObjects = dataView && dataView.metadata && dataView.metadata.objects;
-            this.settings = $.extend(true, {}, StrippetBrowser16424341054522.DEFAULT_SETTINGS, newObjects);
+            const wasFiltering = this.settings.presentation.filter;
+            this.settings = $.extend(true, {}, StrippetBrowser16424341054523.DEFAULT_SETTINGS, newObjects);
             this.updateSettingsColor('headerBackgroundColor',
                 this.settings.style.headerBackground.solid.color,
                 '.outlineHeader', 'background-color'
             );
+            if (wasFiltering && !this.settings.presentation.filter) {
+                // clear any current filter
+                this.sendSelectionToHost([]);
+            }
+
             this.element.toggleClass('flat-style', !this.settings.style.boxShadow);
 
             if (options.type & powerbi.VisualUpdateType.Resize || this.$tabs.is(':visible') !== this.settings.presentation.viewControls || !this.data) {
@@ -1125,18 +1169,18 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 const previousLastItemIndex = loadedPreviously ? this.data.items.length - 1 : 0;
 
                 const isHighlighting = (dataView.categorical
-                    && dataView.categorical.values
-                    && dataView.categorical.values.length
-                    && dataView.categorical.values[0].highlights
-                    && dataView.categorical.values[0].highlights.length > 0);
+                && dataView.categorical.values
+                && dataView.categorical.values.length
+                && dataView.categorical.values[0].highlights
+                && dataView.categorical.values[0].highlights.length > 0);
 
                 // if highlighting and the reader is opened, close it.
                 if (isHighlighting && this.lastOpenedStoryId) {
                     this.closeReader();
                 }
-                this.hasMoreData = !!dataView.metadata.segment && StrippetBrowser16424341054522.hasRequiredFields(dataView);
+                this.hasMoreData = !!dataView.metadata.segment && StrippetBrowser16424341054523.hasRequiredFields(dataView);
 
-                const data = StrippetBrowser16424341054522.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, loadedPreviously ? this.lastDataViewLength : 0, this.colors);
+                const data = StrippetBrowser16424341054523.converter(options.dataViews[0], true, loadedPreviously ? this.data : null, loadedPreviously ? this.lastDataViewLength : 0, this.colors);
                 this.lastDataViewLength = currentDataViewSize;
 
                 //  initialize with highlighting disabled
@@ -1183,14 +1227,15 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 if (isHighlighting) {
                     const partiallyHighlighted = this.data.items.some((item) => {
                         return item.isHighlighted && item.entities.some((entity) => {
-                            return !entity.isHighlighted;
-                        });
+                                return !entity.isHighlighted;
+                            });
                     });
                     this.setHighlighting(partiallyHighlighted);
                 } else {
                     this.setHighlighting(true);
                 }
 
+                this.dataView = dataView;
             }
 
             if (shouldLoadMore) {
@@ -1376,7 +1421,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             data.items.forEach(item => {
                 if (!item.summary && item.content) {
                     item.summary = item.content;
-                    if (this.settings.content.readerContentType === 'readability' && StrippetBrowser16424341054522.isUrl(item.summary) &&
+                    if (this.settings.content.readerContentType === 'readability' && StrippetBrowser16424341054523.isUrl(item.summary) &&
                         this.settings.content.summaryUrl) {
                         const promise = new Promise((resolve: any, reject: any) => {
                             $.ajax({
@@ -1384,7 +1429,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                                 method: 'GET',
                                 url: item.summary,
                             }).done((responseBody) => {
-                                item.summary = StrippetBrowser16424341054522.sanitizeHTML(responseBody.content || responseBody, StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY);
+                                item.summary = StrippetBrowser16424341054523.sanitizeHTML(responseBody.content || responseBody, StrippetBrowser16424341054523.HTML_WHITELIST_SUMMARY);
                                 resolve(true);
                             }).fail((err) => {
                                 reject(err);
@@ -1392,7 +1437,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                         });
                         promises.push(promise);
                     } else {
-                        item.summary = StrippetBrowser16424341054522.sanitizeHTML(item.summary, StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY);
+                        item.summary = StrippetBrowser16424341054523.sanitizeHTML(item.summary, StrippetBrowser16424341054523.HTML_WHITELIST_SUMMARY);
                     }
                 }
             });

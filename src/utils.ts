@@ -110,3 +110,19 @@ export function getSegmentColor(baseColor: string, opacity: number = 100, segmen
     const lightness = minLightness + (lightnessFactor * segmentIndex);
     return `hsla(${hue}, ${saturation}%, ${lightness}%, ${opacity / 100})`;
 }
+
+/**
+ * Finds and returns the dataview column(s) that matches the given data role name.
+ *
+ * @param  {DataView} dataView     A PowerBI dataView object.
+ * @param  {string}   dataRoleName A name of the role for the columen.
+ * @param  {boolean}  multi        A boolean flag indicating whether to find multiple matching columns or not           .
+ * @return {any}                   A dataview table column or an array of the columns.
+ */
+export function findColumn(dataView: DataView, dataRoleName: string, multi?: boolean): any {
+    const columns = dataView.metadata.columns;
+    const result =  _.filter(columns || [], (col: any) => col && col.roles[dataRoleName]);
+    return multi
+        ? (result[0] && result)
+        : result[0];
+}

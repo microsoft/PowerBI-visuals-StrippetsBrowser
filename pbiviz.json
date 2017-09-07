@@ -2,8 +2,8 @@
   "visual": {
     "name": "StrippetBrowser",
     "displayName": "Strippet Browser",
-    "guid": "StrippetBrowser16424341054522",
-    "visualClassName": "StrippetBrowser16424341054522",
+    "guid": "StrippetBrowser16424341054523",
+    "visualClassName": "StrippetBrowser16424341054523",
     "description": "This visual is currently in beta testing and is undergoing active development. Strippet Browser displays document summaries with two options for level of detail. The outlines view (left) shows references to common entities across documents, while the thumbnails view (right) provides a preview of each document. Click a summary in either view to read the full document. Invoke highlighting using other components to see only documents that match. Strippet Browser is designed for use with Facet Key and Cluster Map.",
     "supportUrl": "http://community.powerbi.com",
     "gitHubUrl": "https://github.com/Microsoft/PowerBI-visuals-StrippetsBrowser/"

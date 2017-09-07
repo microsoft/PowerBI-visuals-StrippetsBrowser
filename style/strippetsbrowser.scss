@@ -171,6 +171,9 @@
 .visual .flat-style {
     .thumbnails-panel {
         background-color: transparent;
+        .outlineItemContainer .outlineHeader .sourceIcon {
+            border-bottom: none;
+        }
     }
     .viewport {
         background-color: transparent;
@@ -183,7 +186,7 @@
     }
     .outlineItem {
         box-shadow: none;
-        margin-left: 1px;
+        margin-left: 1px !important;
     }
     .sourceIcon {
         border-bottom: none;
