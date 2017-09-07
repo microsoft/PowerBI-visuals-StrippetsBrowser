@@ -109,6 +109,13 @@
             }
         }
     }
+    .thumbnails-panel {
+        .read {
+            .outlineItem {
+                margin-right: 0 !important;
+            }
+        }
+    }
 
     .highlightedText {
         background-color: inherit !important;
@@ -176,7 +183,7 @@
     }
     .outlineItem {
         box-shadow: none;
-        margin-right: 1px;
+        margin-left: 1px;
     }
     .sourceIcon {
         border-bottom: none;

@@ -1063,30 +1063,12 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         return _.some(columns || [], (col: any) => col && col.roles.id);
     }
 
-    private updateSettingsColor(thisVariable, setting, cssClasses, properties) {
+    private updateSettingsColor(thisVariable, setting, cssClass, property) {
         if (this[thisVariable] !== setting) {
-            for (let i = 0; i < cssClasses.length; i++) {
-                const cssClass = cssClasses[i];
-                for (let j = 0; j < properties.length; j++) {
-                    const property = properties[j];
-                    $('head').append('<style type="text/css">' + cssClass + ' { ' + property + ': ' +
-                    setting + ' !important; }</style>');
-                }
-            }
+            $('head').append('<style type="text/css">' + cssClass + ' { ' + property + ': ' +
+                setting + ' !important; }</style>');
             this[thisVariable] = setting;
         }
-    }
-
-    private updateHeaderBackgroundColor() {
-        this.updateSettingsColor('headerBackgroundColor',
-            this.settings.style.headerBackground.solid.color,
-            ['.outlineHeader'],
-            ['background-color']
-        );
-    }
-
-    private updateSettingsColors() {
-        this.updateHeaderBackgroundColor();
     }
 
     /**
@@ -1107,7 +1089,10 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             const dataView = options.dataViews && options.dataViews.length && options.dataViews[0];
             const newObjects = dataView && dataView.metadata && dataView.metadata.objects;
             this.settings = $.extend(true, {}, StrippetBrowser16424341054522.DEFAULT_SETTINGS, newObjects);
-            this.updateSettingsColors();
+            this.updateSettingsColor('headerBackgroundColor',
+                this.settings.style.headerBackground.solid.color,
+                '.outlineHeader', 'background-color'
+            );
             this.element.toggleClass('flat-style', !this.settings.style.boxShadow);
 
             if (options.type & powerbi.VisualUpdateType.Resize || this.$tabs.is(':visible') !== this.settings.presentation.viewControls || !this.data) {
