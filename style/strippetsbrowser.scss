@@ -142,6 +142,9 @@
                     }
                 }
             }
+            .meta-line li:before {
+                content: "\2022";
+            }
         }
         .readerContentLoading {
             @-webkit-keyframes load7 {
@@ -262,3 +265,4 @@
         box-shadow: 0 1em 0 0;
     }
 }
+
