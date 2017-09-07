@@ -39,7 +39,13 @@ window['powerbi'] = {
     extensibility: {
         visualApiVersions: [],
     },
-    createEnumType: function(description) { return description; }
+    createEnumType: function(description) { return description; },
+    data: {
+        SQExprBuilder: {
+            equal: function () {},
+            typedConstant: function () {},
+        }
+    }
 };
 
 import * as $ from 'jquery';
