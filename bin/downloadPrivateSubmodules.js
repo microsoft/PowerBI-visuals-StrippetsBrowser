@@ -27,7 +27,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const fileTools = require('./fileTools.js');
-const targz = require('tar.gz');
+const targz = require('targz');
 const mv = require('mv');
 const exec = require('child_process').exec;
 
