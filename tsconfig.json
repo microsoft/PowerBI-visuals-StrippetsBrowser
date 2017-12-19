@@ -3,7 +3,7 @@
     "target": "es5",
     "sourceMap": true,
     "experimentalDecorators": true,
-    "types": ["mocha", "sinon-chai", "requirejs"]
+    "types": ["mocha", "sinon-chai", "requirejs", "bluebird"]
   },
   "compileOnSave": false,
   "exclude": [

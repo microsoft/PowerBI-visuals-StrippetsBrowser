@@ -27,7 +27,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const fileTools = require('./fileTools.js');
-const targz = require('tar.gz');
+const targz = require('targz');
 const mv = require('mv');
 const exec = require('child_process').exec;
 
@@ -151,7 +151,10 @@ function main() {
                             if (error) {
                                 console.error(error);
                             } else {
-                                const extract = new targz().extract(tarballPath , tmpPath, function(err) {
+                                const extract = targz.decompress({
+                                    src: tarballPath,
+                                    dest: tmpPath,
+                                }, function(err) {
                                     if(err) {
                                         console.error(err);
                                     } else {
