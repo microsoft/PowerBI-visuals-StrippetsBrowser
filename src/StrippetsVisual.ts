@@ -893,7 +893,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             entityMap = _.toArray(entityMap).sort(function (a: MappedEntity, b: MappedEntity) {
                 return b.text.length - a.text.length;
             });
-            _.each(entityMap, function (entity) {
+            _.each(entityMap, function (entity: MappedEntity) {
                 let textNodes = [];
 
                 // used by the NodeFilter above
