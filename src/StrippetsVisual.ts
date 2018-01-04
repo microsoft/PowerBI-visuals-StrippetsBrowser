@@ -45,7 +45,7 @@ import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
 import IColorInfo = powerbi.IColorInfo;
 import { Bucket, HitNode, MappedEntity } from './interfaces';
-import { COLOR_PALETTE, getSegmentColor } from './utils';
+import { COLOR_PALETTE, getSegmentColor, isImageUrlAllowed } from './utils';
 
 import * as Promise from 'bluebird';
 import * as _ from 'lodash';
@@ -225,6 +225,14 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         return $('<div />').text(value).text();
     }
 
+    private static cleanImageUrl (str: any) {
+        if (str && isImageUrlAllowed(str)) {
+            return StrippetBrowser16424341054522.cleanString(str);
+        }
+
+        return '';
+    }
+
     /**
      * Convert PowerBI data into a format compatible with the Thumbnails and Outlines components.
      * @param {DataView} dataView - data from PowerBI
@@ -369,16 +377,17 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 if (articleDate) {
                     articleDate = StrippetBrowser16424341054522.cleanString(articleDate);
                 }
-                    strippetsData[id] = {
+
+                strippetsData[id] = {
                     id: id,
                     title: StrippetBrowser16424341054522.asUtf8(title ? StrippetBrowser16424341054522.cleanString(String(title)) : ''),
                     summary: summary ? StrippetBrowser16424341054522.sanitizeHTML(String(summary), StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY) : '',
                     content: getCategoryValue('content', index),
-                    imageUrl: StrippetBrowser16424341054522.cleanString(getCategoryValue('imageUrl', index)),
+                    imageUrl: StrippetBrowser16424341054522.cleanImageUrl(getCategoryValue('imageUrl', index)),
                     author: StrippetBrowser16424341054522.cleanString(getCategoryValue('author', index)),
                     source: StrippetBrowser16424341054522.cleanString(String(getCategoryValue('source', index) || '')),
                     sourceUrl: StrippetBrowser16424341054522.cleanString(String(getCategoryValue('sourceUrl', index) || '')),
-                    sourceimage: StrippetBrowser16424341054522.cleanString(getCategoryValue('sourceImage', index)),
+                    sourceimage: StrippetBrowser16424341054522.cleanImageUrl(getCategoryValue('sourceImage', index)),
                     articleDate: articleDate,
                     articledate: articleDate, // thumbnails data model has 'articledate' instead of 'articleDate'
                     entities: [],
@@ -692,7 +701,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                                 author: StrippetBrowser16424341054522.cleanString(data.author),
                                 source: StrippetBrowser16424341054522.cleanString(data.source),
                                 sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
-                                figureImgUrl: StrippetBrowser16424341054522.cleanString(data.imageUrl),
+                                figureImgUrl: StrippetBrowser16424341054522.cleanImageUrl(data.imageUrl),
                                 figureCaption: '',
                                 lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                             });
@@ -721,7 +730,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                         author: StrippetBrowser16424341054522.cleanString(data.author),
                         source: StrippetBrowser16424341054522.cleanString(data.source),
                         sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
-                        figureImgUrl: StrippetBrowser16424341054522.cleanString(data.imageUrl),
+                        figureImgUrl: StrippetBrowser16424341054522.cleanImageUrl(data.imageUrl),
                         figureCaption: '',
                         lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                     };
@@ -734,7 +743,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                     author: StrippetBrowser16424341054522.cleanString(data.author),
                     source: StrippetBrowser16424341054522.cleanString(data.source),
                     sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
-                    figureImgUrl: StrippetBrowser16424341054522.cleanString(data.imageUrl),
+                    figureImgUrl: StrippetBrowser16424341054522.cleanImageUrl(data.imageUrl),
                     figureCaption: '',
                     lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                 };

@@ -110,3 +110,11 @@ export function getSegmentColor(baseColor: string, opacity: number = 100, segmen
     const lightness = minLightness + (lightnessFactor * segmentIndex);
     return `hsla(${hue}, ${saturation}%, ${lightness}%, ${opacity / 100})`;
 }
+
+// copied from powerbi.extensibility.utils.dataview
+// https://github.com/Microsoft/powerbi-visuals-utils-dataviewutils/blob/45e4408444f9792f94c4a49d0643639d95ece6ba/src/validationHelper.ts#L29
+export function isImageUrlAllowed(url: string): boolean {
+    // Excludes all URLs that don't contain .gif .jpg .png or .svg extensions and don't start from "http(s)://".
+    // Base64 encoded images are allowable too.
+    return (/^https?:\/\/.+\.(gif|jpg|png|svg)$/i).test(url) || (/^data:image\/(gif|jpeg|png|svg\+xml);base64,/i).test(url);
+}
