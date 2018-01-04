@@ -221,8 +221,8 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         return str || '';
     }
 
-    private static  asUtf8 (value: string) {
-        return $('<div />').html(value).text();
+    private static asUtf8 (value: string) {
+        return $('<div />').text(value).text();
     }
 
     /**
@@ -622,8 +622,10 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             if (!document.createTreeWalker) {
                 return ''; // in case someone's hax0ring us?
             }
-
             let div = $('<div/>');
+
+            // For the aforementioned reasons, we do need innerHTML, so suppress tslint
+            // tslint:disable-next-line
             div.html(html);
 
             let filter: any = function (node) {
@@ -833,6 +835,9 @@ export default class StrippetBrowser16424341054522 implements IVisual {
 
             // Create an off-screen sub-DOM so we can do object-oriented highlighting instead of failure-prone regex.
             let div = $('<div/>');
+
+            // For the aforementioned reasons, we do need innerHTML, so suppress tslint
+            // tslint:disable-next-line
             div.html(highlightedContent);
 
             let entityMap: any = {};
@@ -845,16 +850,16 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 const name = entity.name;
                 const trim = name.trim();
                 if (trim && !entityMap[trim]) {
-                    const type = entity.type;
+                    const entityType = entity.type;
                     const iconMap = _.find(t.data.iconMap, (im: any) => {
-                        return im.type === type && im.name === name;
+                        return im.type === entityType && im.name === name;
                     });
                     const mappedEntity: MappedEntity = {
                         color: iconMap ? iconMap.color : '',
                         key: trim.replace(/\s+/g, '_'),
                         name: entity.name,
                         text: trim,
-                        type: type
+                        entityType: entityType
                     };
                     entityMap[trim] = mappedEntity;
                 }
@@ -917,7 +922,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                                 attrs: {
                                     id: entity.key + '_' + i,
                                     class: highlightClass,
-                                    'data-type': entity.type,
+                                    'data-type': entity.entityType,
                                     'data-name': entity.name,
                                     style: entity.color
                                 },
