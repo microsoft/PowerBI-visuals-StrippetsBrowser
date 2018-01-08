@@ -45,7 +45,7 @@ import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
 import IColorInfo = powerbi.IColorInfo;
 import { Bucket, HitNode, MappedEntity } from './interfaces';
-import { COLOR_PALETTE, getSegmentColor } from './utils';
+import { COLOR_PALETTE, getSegmentColor, isImageUrlAllowed } from './utils';
 
 import * as Promise from 'bluebird';
 import * as _ from 'lodash';
@@ -221,8 +221,16 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         return str || '';
     }
 
-    private static  asUtf8 (value: string) {
-        return $('<div />').html(value).text();
+    private static asUtf8 (value: string) {
+        return $('<div />').text(value).text();
+    }
+
+    private static cleanImageUrl (str: any) {
+        if (str && isImageUrlAllowed(str)) {
+            return StrippetBrowser16424341054522.cleanString(str);
+        }
+
+        return '';
     }
 
     /**
@@ -369,16 +377,17 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 if (articleDate) {
                     articleDate = StrippetBrowser16424341054522.cleanString(articleDate);
                 }
-                    strippetsData[id] = {
+
+                strippetsData[id] = {
                     id: id,
                     title: StrippetBrowser16424341054522.asUtf8(title ? StrippetBrowser16424341054522.cleanString(String(title)) : ''),
                     summary: summary ? StrippetBrowser16424341054522.sanitizeHTML(String(summary), StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY) : '',
                     content: getCategoryValue('content', index),
-                    imageUrl: StrippetBrowser16424341054522.cleanString(getCategoryValue('imageUrl', index)),
+                    imageUrl: StrippetBrowser16424341054522.cleanImageUrl(getCategoryValue('imageUrl', index)),
                     author: StrippetBrowser16424341054522.cleanString(getCategoryValue('author', index)),
                     source: StrippetBrowser16424341054522.cleanString(String(getCategoryValue('source', index) || '')),
                     sourceUrl: StrippetBrowser16424341054522.cleanString(String(getCategoryValue('sourceUrl', index) || '')),
-                    sourceimage: StrippetBrowser16424341054522.cleanString(getCategoryValue('sourceImage', index)),
+                    sourceimage: StrippetBrowser16424341054522.cleanImageUrl(getCategoryValue('sourceImage', index)),
                     articleDate: articleDate,
                     articledate: articleDate, // thumbnails data model has 'articledate' instead of 'articleDate'
                     entities: [],
@@ -622,8 +631,10 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             if (!document.createTreeWalker) {
                 return ''; // in case someone's hax0ring us?
             }
-
             let div = $('<div/>');
+
+            // For the aforementioned reasons, we do need innerHTML, so suppress tslint
+            // tslint:disable-next-line
             div.html(html);
 
             let filter: any = function (node) {
@@ -690,7 +701,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                                 author: StrippetBrowser16424341054522.cleanString(data.author),
                                 source: StrippetBrowser16424341054522.cleanString(data.source),
                                 sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
-                                figureImgUrl: StrippetBrowser16424341054522.cleanString(data.imageUrl),
+                                figureImgUrl: StrippetBrowser16424341054522.cleanImageUrl(data.imageUrl),
                                 figureCaption: '',
                                 lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                             });
@@ -719,7 +730,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                         author: StrippetBrowser16424341054522.cleanString(data.author),
                         source: StrippetBrowser16424341054522.cleanString(data.source),
                         sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
-                        figureImgUrl: StrippetBrowser16424341054522.cleanString(data.imageUrl),
+                        figureImgUrl: StrippetBrowser16424341054522.cleanImageUrl(data.imageUrl),
                         figureCaption: '',
                         lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                     };
@@ -732,7 +743,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                     author: StrippetBrowser16424341054522.cleanString(data.author),
                     source: StrippetBrowser16424341054522.cleanString(data.source),
                     sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
-                    figureImgUrl: StrippetBrowser16424341054522.cleanString(data.imageUrl),
+                    figureImgUrl: StrippetBrowser16424341054522.cleanImageUrl(data.imageUrl),
                     figureCaption: '',
                     lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
                 };
@@ -833,6 +844,9 @@ export default class StrippetBrowser16424341054522 implements IVisual {
 
             // Create an off-screen sub-DOM so we can do object-oriented highlighting instead of failure-prone regex.
             let div = $('<div/>');
+
+            // For the aforementioned reasons, we do need innerHTML, so suppress tslint
+            // tslint:disable-next-line
             div.html(highlightedContent);
 
             let entityMap: any = {};
@@ -845,16 +859,16 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 const name = entity.name;
                 const trim = name.trim();
                 if (trim && !entityMap[trim]) {
-                    const type = entity.type;
+                    const entityType = entity.type;
                     const iconMap = _.find(t.data.iconMap, (im: any) => {
-                        return im.type === type && im.name === name;
+                        return im.type === entityType && im.name === name;
                     });
                     const mappedEntity: MappedEntity = {
                         color: iconMap ? iconMap.color : '',
                         key: trim.replace(/\s+/g, '_'),
                         name: entity.name,
                         text: trim,
-                        type: type
+                        entityType: entityType
                     };
                     entityMap[trim] = mappedEntity;
                 }
@@ -917,7 +931,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                                 attrs: {
                                     id: entity.key + '_' + i,
                                     class: highlightClass,
-                                    'data-type': entity.type,
+                                    'data-type': entity.entityType,
                                     'data-name': entity.name,
                                     style: entity.color
                                 },

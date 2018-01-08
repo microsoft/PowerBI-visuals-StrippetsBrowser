@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2016 Uncharted Software Inc.
- * http://www.uncharted.software/
+ * https://www.uncharted.software/
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -83,19 +83,19 @@ export default {
             "",
             ""
         ], [
-            "http://lipsum.com/feed/html",
-            "http://lipsum.com/feed/html",
-            "http://lipsum.com/feed/html",
-            "http://lipsum.com/feed/html",
-            "http://lipsum.com/feed/html",
-            "http://lipsum.com/feed/html",
-            "http://lipsum.com/feed/html",
-            "http://lipsum.com/feed/html",
-            "http://lipsum.com/feed/html",
-            "http://lipsum.com/feed/html",
-            "http://lipsum.com/feed/html",
-            "http://lipsum.com/feed/html",
-            "http://lipsum.com/feed/html"
+            "https://lipsum.com/feed/html",
+            "https://lipsum.com/feed/html",
+            "https://lipsum.com/feed/html",
+            "https://lipsum.com/feed/html",
+            "https://lipsum.com/feed/html",
+            "https://lipsum.com/feed/html",
+            "https://lipsum.com/feed/html",
+            "https://lipsum.com/feed/html",
+            "https://lipsum.com/feed/html",
+            "https://lipsum.com/feed/html",
+            "https://lipsum.com/feed/html",
+            "https://lipsum.com/feed/html",
+            "https://lipsum.com/feed/html"
         ],
         [
             "person",

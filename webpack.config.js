@@ -28,6 +28,9 @@ module.exports = {
             { test: /\.handlebars$/, loader: "handlebars-loader" },
         ]
     },
+    tslint: {
+        typeCheck: true,
+    },
     externals: [
         {
             jquery: "jQuery",
