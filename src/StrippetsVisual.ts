@@ -213,6 +213,8 @@ export default class StrippetBrowser16424341054522 implements IVisual {
     private colors: IColorInfo[];
     private suppressNextUpdate: boolean;
     private mediator: any = new Mediator();
+    private loadMoreData: Function;
+    private launchUrl: Function;
 
     private static cleanString (str: any) {
         if (str && str.indexOf && str.indexOf('>') > -1) {
@@ -547,6 +549,17 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         this.$container.on('touchstart', killEvent);
         this.$container.on('touchmove', killEvent);
         this.$container.on('touchend', killEvent);
+
+        const findApi = (methodName) => {
+            return options.host[methodName] ? (arg) => {
+                options.host[methodName](arg);
+            } : this.host && this.host[methodName] ? (arg) => {
+                this.host[methodName](arg);
+            } : null;
+        };
+
+        this.loadMoreData = findApi("loadMoreData");
+        this.launchUrl = findApi("launchUrl");
     }
 
     /**
@@ -569,6 +582,9 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                     onReaderClosed: () => {
                         t.lastOpenedStoryId = null;
                     },
+                    onSourceUrlClicked: (href) => {
+                        t.launchUrl && t.launchUrl(href);
+                    },
                 },
                 enableExpandedMode: false,
             },
@@ -582,10 +598,10 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             if ($(e.target).width() + e.target.scrollLeft >= e.target.scrollWidth) {
                 infiniteScrollTimeoutId = setTimeout(() => {
                     clearTimeout(infiniteScrollTimeoutId);
-                    if (!t.isLoadingMore && t.hasMoreData) {
+                    if (!t.isLoadingMore && t.hasMoreData && t.loadMoreData) {
                         t.isLoadingMore = true;
                         t.showLoader();
-                        t.host.loadMoreData();
+                        t.loadMoreData();
                     }
                 }, t.INFINITE_SCROLL_DELAY);
             }
@@ -962,6 +978,9 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             config: {
                 outlineReader: {
                     onLoadUrl: t.onLoadArticle.bind(t),
+                    onSourceUrlClicked: (href) => {
+                        t.launchUrl && t.launchUrl(href);
+                    },
                 },
                 thumbnail: {
                     height: '300px'
@@ -976,10 +995,10 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 if ($(e.target).width() + e.target.scrollLeft >= e.target.scrollWidth) {
                     infiniteScrollTimeoutId = setTimeout(() => {
                         clearTimeout(infiniteScrollTimeoutId);
-                        if (!t.isLoadingMore && t.hasMoreData) {
+                        if (!t.isLoadingMore && t.hasMoreData && t.loadMoreData) {
                             t.isLoadingMore = true;
                             t.showLoader();
-                            t.host.loadMoreData();
+                            t.loadMoreData();
                         }
                     }, t.INFINITE_SCROLL_DELAY);
                 }
@@ -987,10 +1006,10 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 if ($(e.target).height() + e.target.scrollTop >= e.target.scrollHeight) {
                     infiniteScrollTimeoutId = setTimeout(() => {
                         clearTimeout(infiniteScrollTimeoutId);
-                        if (!t.isLoadingMore && t.hasMoreData) {
+                        if (!t.isLoadingMore && t.hasMoreData && t.loadMoreData) {
                             t.isLoadingMore = true;
                             t.showLoader();
-                            t.host.loadMoreData();
+                            t.loadMoreData();
                         }
                     }, t.INFINITE_SCROLL_DELAY);
                 }
@@ -1161,7 +1180,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                         }, 0) < this.minOutlineCount);
                 };
 
-                shouldLoadMore = shouldLoadMore || getShouldLoadMore();
+                shouldLoadMore = this.loadMoreData && (shouldLoadMore || getShouldLoadMore());
 
                 // count of unhighlighted rows to use as a baseline.
                 if (!isHighlighting) {
@@ -1186,7 +1205,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             if (shouldLoadMore) {
                 this.showLoader();
                 console.log('WidgetStrippets.update loadMoreData');
-                this.host.loadMoreData();
+                this.loadMoreData();
             }
 
             // POST PROCESS (once all the thumbnails have been rendered)

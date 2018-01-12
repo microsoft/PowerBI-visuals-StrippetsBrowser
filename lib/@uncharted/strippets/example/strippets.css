@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /**
  * Copyright (c) 2016 Uncharted Software Inc.
  * http://www.uncharted.software/
@@ -607,7 +606,7 @@
       .strippets .reader .readerContentBody .meta-line li {
         display: inline; }
       .strippets .reader .readerContentBody .meta-line li:before {
-        content: "•"; }
+        content: "\2022"; }
       .strippets .reader .readerContentBody .meta-line li:first-child:before {
         content: ""; }
       .strippets .reader .readerContentBody img {
