@@ -22,7 +22,6 @@
  */
 
 import DataView = powerbi.DataView;
-import * as _ from 'lodash';
 
 /**
  * Default entity colors for when no colors are specified by the data

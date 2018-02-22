@@ -39,7 +39,7 @@ import IDataColorPalette = powerbi.IDataColorPalette;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 import IVisualHostServices = powerbi.IVisualHostServices;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
-import SelectionManager = powerbi.visuals.utility.SelectionManager;
+import ISelectionManager = powerbi.extensibility.ISelectionManager;
 import SelectionId = powerbi.visuals.SelectionId;
 import DataViewCategorical = powerbi.DataViewCategorical;
 import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
@@ -49,7 +49,6 @@ import { COLOR_PALETTE, getSegmentColor, isImageUrlAllowed } from './utils';
 
 import * as Promise from 'bluebird';
 import * as _ from 'lodash';
-import * as $ from 'jquery';
 
 require('velocity-animate');
 const moment = require('moment');
@@ -199,7 +198,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
     /**
      * Allows the visual to notify the host of changes in selection state.
      */
-    private selectionManager: SelectionManager;
+    private selectionManager: ISelectionManager;
     private settings = $.extend({}, StrippetBrowser16424341054522.DEFAULT_SETTINGS);
     private baseRowsLoaded: number = 0;
     private minOutlineCount = 10;
@@ -517,9 +516,9 @@ export default class StrippetBrowser16424341054522 implements IVisual {
 
         this.$container = this.element.find('.strippets-container');
         this.$tabs = this.element.find('.nav');
-        this.host = options.host.createSelectionManager()['hostServices'];
-        this.selectionManager = new SelectionManager({ hostServices: this.host });
-        this.colors = options.host.colors;
+        this.selectionManager = options.host.createSelectionManager();
+        this.host = this.selectionManager['hostServices'];
+        this.colors = options.host.colors || (options.host['colorPalette'] ? options.host['colorPalette'].colors : []);
 
         this.inSandbox = this.element.parents('body.visual-sandbox').length > 0;
 

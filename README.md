@@ -11,7 +11,8 @@
 
 ## Building
 
-Run `npm run package` to package the visual.
+1. Run `npm install` to download the dependencies.
+2. Run `npm run package` to package the visual.
 
 A `.pbiviz` file will be generated in the `dist` folder
 
