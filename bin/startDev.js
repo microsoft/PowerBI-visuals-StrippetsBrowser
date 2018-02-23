@@ -21,8 +21,6 @@
  * SOFTWARE.
  */
 
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
@@ -40,9 +38,6 @@ const config = {
     capabilitiesJsonPath: pbivizJson.capabilities,
     tmpDropDir: '.tmp/drop',
     sassEntry: pbivizJson.style,
-    sassPaths: [
-        'lib/@uncharted/strippets/sass',
-    ],
     server: {
         cert: 'certs/PowerBICustomVisualTest_public.crt', 
         key: 'certs/PowerBICustomVisualTest_private.key',
@@ -58,7 +53,7 @@ const pbiResource = {
 
 const compileSass = () => {
     console.info('Building css...');
-    const cssContent = sass.renderSync({ file: config.sassEntry, includePaths: config.sassPaths }).css;
+    const cssContent = sass.renderSync({ file: config.sassEntry }).css;
     fs.writeFileSync(pbiResource.cssFile, cssContent);
 };
 

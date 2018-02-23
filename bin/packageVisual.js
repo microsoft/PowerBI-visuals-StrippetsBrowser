@@ -42,11 +42,11 @@ const config = {
 };
 
 const packagingWebpackConfig = {
-    tslint: {
-        emitErrors: true,
-        failOnHint: true,
-        typeCheck: true,
-    },
+    //tslint: {
+    //    emitErrors: true,
+    //    failOnHint: true
+    //},
+    //},
     output: {
         filename: 'visual.js', path: '/'
     }
@@ -150,7 +150,10 @@ const _buildPackageJson = () => {
 const buildPackageJson = pbivizJson.apiVersion ? _buildPackageJson() : _buildLegacyPackageJson();
 
 const compileSass = () => {
-    const sassOutput = sass.renderSync({ file: pbivizJson.style, includePaths: config.sassPaths }).css.toString();
+    const sassOutput = sass.renderSync({
+        file: pbivizJson.style,
+        includePaths: config.sassPaths
+    }).css.toString();
     const options = { level: { 2: { all: true } } };
     const cssContent = new CleanCSS(options).minify(sassOutput).styles;
     return cssContent;
@@ -198,7 +201,7 @@ const _buildLegacyPackage = (fileContent) => {
 };
 
 const _buildPackage = (fileContent) => {
-    const jsContent = fileContent;
+    const jsContent = 'var window = window.document.defaultView;\nvar $ = window.$;\n var _ = window._;\n' + fileContent;
     const cssContent = compileSass();
     const icon = fs.readFileSync(pbivizJson.assets.icon);
     const iconType = pbivizJson.assets.icon.indexOf('.svg') >= 0 ? 'svg+xml' : 'png';
