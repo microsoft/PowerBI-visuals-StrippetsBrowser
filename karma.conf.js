@@ -22,6 +22,7 @@ module.exports = function(config) {
                 preLoaders: webpackConfig.module.preLoaders,
                 loaders: webpackConfig.module.loaders,
             },
+            tslint: webpackConfig.tslint,
             resolve: webpackConfig.resolve,
             externals: [
                 {

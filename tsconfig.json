@@ -2,8 +2,13 @@
   "compilerOptions": {
     "target": "es5",
     "sourceMap": true,
+    "allowJs": true,
     "experimentalDecorators": true,
-    "types": ["mocha", "sinon-chai", "requirejs", "bluebird"]
+    "lib": [
+      "es2015",
+      "DOM"
+    ],
+    "outDir": "generated"
   },
   "compileOnSave": false,
   "exclude": [

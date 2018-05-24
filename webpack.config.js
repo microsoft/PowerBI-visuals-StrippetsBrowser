@@ -13,7 +13,7 @@ module.exports = {
         preLoaders: [
             {
                 test: /\.ts$/,
-                loader: "tslint"
+                loader: 'tslint'
             }
         ],
         loaders: [
@@ -25,13 +25,18 @@ module.exports = {
                 test: /\.ts?$/,
                 loader: 'ts-loader',
             },
-            { test: /\.handlebars$/, loader: "handlebars-loader" },
+            { test: /\.handlebars$/, loader: 'handlebars-loader' },
         ]
+    },
+    tslint: {
+        typeCheck: true,
     },
     externals: [
         {
-            jquery: "jQuery",
-            lodash: "_"
+            bluebird: 'Promise',
+            lodash: '_',
+            underscore: '_',
+            jquery: '$'
         },
     ],
 };
