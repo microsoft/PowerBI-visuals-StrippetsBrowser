@@ -1,6 +1,6 @@
 {
   "name": "strippetbrowser",
-  "version": "0.2.16",
+  "version": "1.0.1",
   "description": "Strippets Browser PowerBI custom visual",
   "main": "src/index.js",
   "scripts": {
@@ -82,7 +82,7 @@
     "bluebird": "^3.5.1",
     "font-awesome": "^4.7.0",
     "moment": "^2.20.1",
-    "underscore": "^1.8.3",
+    "underscore": "^1.9.0",
     "velocity-animate": "^1.5.1"
   }
 }
