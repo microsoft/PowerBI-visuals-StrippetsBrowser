@@ -557,7 +557,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             } : null;
         };
 
-        this.loadMoreData = findApi("loadMoreData");
+        this.loadMoreData = findApi("fetchMoreData") || findApi("loadMoreData");
         this.launchUrl = findApi("launchUrl");
     }
 
