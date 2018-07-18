@@ -1,6 +1,6 @@
 {
   "name": "strippetbrowser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Strippets Browser PowerBI custom visual",
   "main": "src/index.js",
   "scripts": {
