@@ -478,7 +478,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
 
         const bucketList = _.sortBy(bucketMap, (bucket: Bucket) => bucket.key);
         const numBuckets: number = Math.max(1, bucketList.length);
-        bucketList.map(function (bucket, index) {
+        bucketList.map(function (bucket: Bucket, index) {
             bucket.value = index / numBuckets;
         });
 
