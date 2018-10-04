@@ -45,7 +45,7 @@
     "chokidar": "^1.6.1",
     "clean-css": "^4.1.2",
     "connect": "^3.5.0",
-    "handlebars": "^4.0.11",
+    "handlebars": "^4.0.12",
     "handlebars-loader": "^1.4.0",
     "imports-loader": "^0.7.1",
     "jquery": "^3.3.1",
@@ -79,10 +79,10 @@
     "webpack": "^1.13.2"
   },
   "dependencies": {
-    "bluebird": "^3.5.1",
+    "bluebird": "^3.5.2",
     "font-awesome": "^4.7.0",
     "moment": "^2.20.1",
     "underscore": "^1.9.1",
-    "velocity-animate": "^1.5.1"
+    "velocity-animate": "^1.5.2"
   }
 }
