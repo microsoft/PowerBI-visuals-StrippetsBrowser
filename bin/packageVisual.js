@@ -175,6 +175,7 @@ const compileScripts = (callback) => {
         if (errors.length > 0) {
             return process.exit(1);
         }
+        console.log('Building OSS report...');
         buildOSSReport(jsonStats.modules, ossReport => {
             const fileContent = fs.readFileSync("/visual.js").toString();
             callback(err, fileContent, ossReport);
@@ -213,6 +214,7 @@ const _buildPackage = (fileContent) => {
         css: cssContent,
         iconBase64: iconBase64
     };
+    pbivizJson.visual.version = packageJson.version;
     zip.file('package.json', JSON.stringify(buildPackageJson, null, 2));
     zip.file(`resources/${pbivizJson.visual.guid}.pbiviz.json`, JSON.stringify(pbivizJson, null, 2));
     fs.writeFileSync(pbivizJson.output, zip.generate({ base64:false,compression:'DEFLATE' }), 'binary');
