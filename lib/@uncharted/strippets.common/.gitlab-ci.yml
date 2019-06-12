@@ -1,0 +1,27 @@
+image: docker.uncharted.software/chrome-headless-test:0.0.1
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - package-lock.json
+
+before_script:
+  - npm install
+
+stages:
+    - build
+    - deploy
+
+build:
+  stage: build
+  script:
+  - cat /etc/hosts
+  - . strippets.common.sh -a
+
+npm-publish:
+    stage: deploy
+    script:
+        - npm run ci-publish
+    only:
+        - master
