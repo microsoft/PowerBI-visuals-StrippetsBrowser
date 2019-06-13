@@ -718,7 +718,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                                 sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
                                 figureImgUrl: StrippetBrowser16424341054522.cleanImageUrl(data.imageUrl),
                                 figureCaption: '',
-                                lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
+                                lastupdatedon: data.articleDate ? moment.utc(data.articleDate).format('MMM. D, YYYY') : '',
                             });
                         }).fail((err) => {
                             reject(err);
@@ -747,7 +747,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                         sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
                         figureImgUrl: StrippetBrowser16424341054522.cleanImageUrl(data.imageUrl),
                         figureCaption: '',
-                        lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
+                        lastupdatedon: data.articleDate ? moment.utc(data.articleDate).format('MMM. D, YYYY') : '',
                     };
                     return new Promise((resolve: any) => resolve(readerData));
                 }
@@ -760,7 +760,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                     sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
                     figureImgUrl: StrippetBrowser16424341054522.cleanImageUrl(data.imageUrl),
                     figureCaption: '',
-                    lastupdatedon: data.articleDate ? moment(data.articleDate).format('MMM. D, YYYY') : '',
+                    lastupdatedon: data.articleDate ? moment.utc(data.articleDate).format('MMM. D, YYYY') : '',
                 };
                 return new Promise((resolve: any) => resolve(readerData));
             }
@@ -1130,7 +1130,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                     currentRowCount = currentDataViewSize;
                 }
 
-                const previousLastItemIndex = loadedPreviously ? this.data.items.length - 1 : 0;
+                const previousLastItemIndex = (loadedPreviously && this.data) ? this.data.items.length - 1 : 0;
 
                 const isHighlighting = (dataView.categorical
                     && dataView.categorical.values
