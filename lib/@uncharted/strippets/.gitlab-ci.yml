@@ -1,0 +1,38 @@
+image: docker.uncharted.software/chrome-headless-test:0.0.1
+
+before_script:
+    - node --version
+    - npm --version
+    - echo '@uncharted:registry=https://npm.uncharted.software/' > ~/.npmrc
+    - echo '//npm.uncharted.software/:_authToken=${NPM_TOKEN}' >> ~/.npmrc
+    - npm install
+
+stages:
+    - build
+    - deploy
+
+build:dev:
+    stage: build
+    except:
+        - master
+    script:
+        - . strippets.sh -i -c -b -t
+
+build:prod:
+    stage: build
+    only:
+        - master
+    artifacts:
+        paths:
+            - dist/
+    script:
+        - . strippets.sh -i -c -b -t
+
+publish:
+    stage: deploy
+    only:
+        - master
+    script:
+        - npm run ci-publish
+    dependencies:
+        - build:prod
