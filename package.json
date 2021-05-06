@@ -83,7 +83,7 @@
     "bluebird": "^3.5.5",
     "font-awesome": "^4.7.0",
     "moment": "^2.20.1",
-    "underscore": "^1.9.1",
+    "underscore": "^1.12.1",
     "velocity-animate": "^1.5.2"
   },
   "engines": {
