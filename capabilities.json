@@ -1,118 +1,127 @@
 {
+  "privileges": [
+    {
+      "name": "WebAccess",
+      "essential": false,
+      "parameters": [
+        "https://*"
+      ]
+    }
+  ],
   "dataRoles": [
     {
       "name": "id",
       "displayName": "Document Id",
       "description": "Unique ID for the document",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "articleValue",
       "displayName": "Enable Highlights",
       "description": "Bind anything to this field to enable entity highlights",
-      "kind": 1
+      "kind": "Measure"
     },
     {
       "name": "title",
       "displayName": "Title",
       "description": "Title of the document; shown on thumbnails and in the reader",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "summary",
       "displayName": "Summary",
       "description": "Summary of the content; only displayed on thumbnails",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "content",
       "displayName": "Content",
       "description": "Full content; only displayed in the reader",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "imageUrl",
       "displayName": "Title Image (url)",
       "description": "Main image for the document; displayed on thumbnails and in the reader",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "author",
       "displayName": "Author",
       "description": "Author for the byline displayed on thumbnails and in the reader",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "source",
       "displayName": "Source",
       "description": "Source domain for the document; shown in the reader header bar",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "sourceUrl",
       "displayName": "Source URL",
       "description": "Source link for the document; accessed by clicking the reader header bar",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "sourceImage",
       "displayName": "Source Image (url)",
       "description": "URL for an image to display in the top-right corner of the thumbnail",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "articleDate",
       "displayName": "Source Date",
       "description": "Date for the byline displayed on thumbnails and in the reader",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "entityId",
       "displayName": "Entity ID",
       "description": "Unique ID for each distinct entity; when working with uncertain data, used to merge entities that differ in Entity Type",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "entityType",
       "displayName": "Entity Type",
       "description": "Type or category of an entity",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "entityName",
       "displayName": "Entity Name",
       "description": "Display name of an entity; shown in Outline tooltips",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "entityPosition",
       "displayName": "Entity Position",
       "description": "Normalized position of an entity within the document; used to layout entity icons in Outlines",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "bucket",
       "displayName": "Segmented By",
       "description": "Used to segment entities with uncertain Entity Type",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "entityTypeColor",
       "displayName": "Entity Icon Color",
       "description": "Color of the entity's Outline icon",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "entityTypeClass",
       "displayName": "Entity Icon Class",
       "description": "Category of the entity used to select an icon for display on the Outline",
-      "kind": 0
+      "kind": "Grouping"
     },
     {
       "name": "dummySortingField",
       "displayName": "Sorting Field",
       "description": "Field that can be used to sort the visual's data based on an arbitrary column",
-      "kind": 2
+      "kind": "GroupingOrMeasure"
     }
   ],
   "dataViewMappings": [

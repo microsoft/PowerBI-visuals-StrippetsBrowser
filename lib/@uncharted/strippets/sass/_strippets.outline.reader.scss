@@ -25,7 +25,6 @@
   background-color: #ffffff;
   font-size: 0.93em;
   height: calc(100% - #{$outline-header-height});
-  height: -webkit-calc(100% - #{$outline-header-height});
   overflow: hidden;
   float: left;
   a {

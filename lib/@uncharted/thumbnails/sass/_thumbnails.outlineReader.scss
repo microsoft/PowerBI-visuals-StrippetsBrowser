@@ -27,11 +27,49 @@ $outline-reader-entity-bar-width: 24px;
   }
   .reader {
     width: calc(100% - #{$outline-reader-entity-bar-width}) !important;
-    width: -webkit-calc(100% - #{$outline-reader-entity-bar-width}) !important;
     .readerContent {
-      $margin-left: $thumbnail-card-margin * 2 + $outline-reader-entity-bar-width ; // 24px is entity bar width
-      margin-left: -$margin-left;
-      padding-left: $margin-left;
+      width: 100% !important;
+      margin-left: 0;
+      padding-left: 0;
+      overflow-y: scroll;
+      scrollbar-gutter: stable;
+      scrollbar-width: auto;
+      scrollbar-color: transparent transparent;
+      overscroll-behavior-y: contain;
+
+      &::-webkit-scrollbar {
+        width: 12px;
+      }
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: transparent;
+        border: 2px solid transparent;
+        border-radius: 6px;
+        background-clip: padding-box;
+      }
+      &:hover,
+      &:focus-within {
+        scrollbar-color: #616161 #f2f2f2;
+
+        &::-webkit-scrollbar-track {
+          background: #f2f2f2;
+        }
+        &::-webkit-scrollbar-thumb {
+          background-color: #616161;
+        }
+      }
+      @media (hover: none) {
+        scrollbar-color: #616161 #f2f2f2;
+
+        &::-webkit-scrollbar-track {
+          background: #f2f2f2;
+        }
+        &::-webkit-scrollbar-thumb {
+          background-color: #616161;
+        }
+      }
     }
     ._window-close {
       @if $outline-reader-disable-entity-bar == true {
@@ -48,12 +86,3 @@ $outline-reader-entity-bar-width: 24px;
     }
   }
 }
-
-// reader in vertical readerview
-.readerview .outlineItemContainer .reader {
-    .readerContent {
-      margin-left: -$outline-reader-entity-bar-width;
-      padding-left: $outline-reader-entity-bar-width;
-    }
-}
-

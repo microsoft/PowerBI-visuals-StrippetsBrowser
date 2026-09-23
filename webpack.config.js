@@ -1,42 +1,24 @@
 const webpack = require('webpack');
 const path = require('path');
-const ENTRY = './src/StrippetsVisual.ts';
-const regex = path.normalize(ENTRY).replace(/\\/g, '\\\\').replace(/\./g, '\\.');
-
 module.exports = {
-    entry: ENTRY,
-    devtool: 'eval',
+    mode: 'development',
+    devtool: 'inline-source-map',
     resolve: {
-        extensions: ['', '.webpack.js', '.web.js', '.js', '.ts']
+        extensions: ['.js', '.ts'],
+        modules: [path.resolve(__dirname, 'lib'), 'node_modules'],
     },
     module: {
-        preLoaders: [
+        rules: [
             {
                 test: /\.ts$/,
-                loader: 'tslint'
-            }
-        ],
-        loaders: [
-            {
-                test: new RegExp(regex),
-                loader: path.join(__dirname, 'bin', 'pbiPluginLoader'),
-            },
-            {
-                test: /\.ts?$/,
+                exclude: /node_modules/,
                 loader: 'ts-loader',
             },
             { test: /\.handlebars$/, loader: 'handlebars-loader' },
+            { test: /\.css$/, use: ['style-loader', 'css-loader'] },
         ]
     },
-    tslint: {
-        typeCheck: true,
-    },
-    externals: [
-        {
-            bluebird: 'Promise',
-            lodash: '_',
-            underscore: '_',
-            jquery: '$'
-        },
+    plugins: [
+        new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', _: 'underscore' }),
     ],
 };

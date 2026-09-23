@@ -21,35 +21,31 @@
  * SOFTWARE.
  */
 
-/// <reference path='../node_modules/powerbi-visuals/lib/powerbi-visuals.d.ts'/>
 // /* tslint:disable:quotemark */
 /* global powerbi, require, window */
 
-import IVisual = powerbi.extensibility.v110.IVisual;
-import VisualConstructorOptions = powerbi.extensibility.v110.VisualConstructorOptions;
-import VisualUpdateOptions = powerbi.VisualUpdateOptions;
+import powerbi from 'powerbi-visuals-api';
+import IVisual = powerbi.extensibility.visual.IVisual;
+import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
+import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 import DataView = powerbi.DataView;
-import IEnumType = powerbi.IEnumType;
-import IVisualStyle = powerbi.IVisualStyle;
-import VisualCapabilities = powerbi.VisualCapabilities;
-import VisualInitOptions = powerbi.VisualInitOptions;
-import VisualDataRoleKind = powerbi.VisualDataRoleKind;
 import VisualDataChangeOperationKind = powerbi.VisualDataChangeOperationKind;
-import IDataColorPalette = powerbi.IDataColorPalette;
-import VisualObjectInstance = powerbi.VisualObjectInstance;
-import IVisualHostServices = powerbi.IVisualHostServices;
-import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
+import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import ISelectionManager = powerbi.extensibility.ISelectionManager;
-import SelectionId = powerbi.visuals.SelectionId;
 import DataViewCategorical = powerbi.DataViewCategorical;
-import DataViewCategoricalSegment = powerbi.data.segmentation.DataViewCategoricalSegment;
 import IColorInfo = powerbi.IColorInfo;
 import { Bucket, HitNode, MappedEntity } from './interfaces';
 import { COLOR_PALETTE, getSegmentColor, isImageUrlAllowed } from './utils';
+import { FormattingSettingsService } from 'powerbi-visuals-utils-formattingmodel';
+import { VisualFormattingSettings } from './settings';
+import DOMPurify from 'dompurify';
+import '../style/strippetsbrowser.css';
 
-import * as Promise from 'bluebird';
+import Promise from 'bluebird';
+import $ from 'jquery';
 import * as _ from 'lodash';
 
+Object.assign(window, { jQuery: $ });
 require('velocity-animate');
 const moment = require('moment');
 const Mediator = require('@uncharted/strippets.common').mediator;
@@ -115,7 +111,7 @@ const BUCKET_DEFAULT_GREY = '#DDDDDD';
  * The Strippet Browser has two tabs, corresponding to its two view: Thumbnails and Outlines,
  * which are implemented by the dynamically-loaded thumbnails and strippets components, respectively.
  */
-export default class StrippetBrowser16424341054522 implements IVisual {
+export class StrippetBrowser16424341054522 implements IVisual {
     public static HTML_WHITELIST_SUMMARY = HTML_WHITELIST_STANDARD;
     public static HTML_WHITELIST_CONTENT = HTML_WHITELIST_STANDARD.concat(HTML_WHITELIST_MEDIA);
 
@@ -168,6 +164,8 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      * Local copy of the converted data
      */
     private data: any;
+    private lastDataView: DataView;
+    private pendingViewEcho: DataView;
 
     /**
      * True if the visual is sandboxed in an iframe.
@@ -193,24 +191,27 @@ export default class StrippetBrowser16424341054522 implements IVisual {
     /**
      * The visual's interface to PowerBI services.
      */
-    private host: IVisualHostServices;
+    private host: IVisualHost;
 
     /**
      * Allows the visual to notify the host of changes in selection state.
      */
     private selectionManager: ISelectionManager;
-    private settings = $.extend({}, StrippetBrowser16424341054522.DEFAULT_SETTINGS);
+    private settings = $.extend(true, {}, StrippetBrowser16424341054522.DEFAULT_SETTINGS);
     private baseRowsLoaded: number = 0;
     private minOutlineCount = 10;
     private isThumbnailsWrapLayout: boolean;
     private $loaderElement: JQuery;
     private INFINITE_SCROLL_DELAY = 50;
+    private queueLoadMore = _.debounce(() => this.loadMoreData(), this.INFINITE_SCROLL_DELAY);
     private lastOpenedStoryId: string;
     private thumbnailViewportHeight: number = 0;
-    private resizeOutlines: Function;
+    private resizeOutlines: _.DebouncedFunc<() => void>;
+    private renderVersion = 0;
+    private thumbnailsPending = false;
+    private destroyed = false;
     private thumbnailsWrapTimeout: any = null;
     private colors: IColorInfo[];
-    private suppressNextUpdate: boolean;
     private mediator: any = new Mediator();
     private loadMoreData: Function;
     private launchUrl: Function;
@@ -244,17 +245,21 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      * @returns {{items: *, iconMap: any, highlights: {entities: any, itemIds: any}}} data in the components' internal format
      */
     public static converter(dataView: DataView, updateIconMap: boolean = false, appendTo?: any, lastDataViewLength: number = 0, defaultColors = []) {
-        const categoricalDV = dataView.categorical;
-        const categoriesDV = categoricalDV.categories;
+        const categoricalDV = dataView?.categorical || {};
+        const categoriesDV = categoricalDV.categories || [];
         const valuesDV = categoricalDV.values;
         const categories = <any>{};
         const colors = COLOR_PALETTE.slice().concat(defaultColors.map((color: IColorInfo) => color.value));
 
         categoriesDV.forEach((category, index) => {
-            Object.keys(category.source.roles).forEach(categoryName => categories[categoryName] = index);
+            Object.keys(category.source.roles || {}).forEach(categoryName => {
+                if (category.source.roles[categoryName]) {
+                    categories[categoryName] = index;
+                }
+            });
         });
 
-        const updateIM = updateIconMap && categories['entityType'];
+        const updateIM = updateIconMap && categories['entityType'] !== undefined;
 
         const strippetsData = (appendTo && appendTo.items) ? appendTo.items.reduce((memo, i) => {
             memo[i.id] = i;
@@ -283,7 +288,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         const getCategoryValue = (fieldName: string, itemIndex: number) => {
             return categories[fieldName] !== undefined ? categoriesDV[categories[fieldName]].values[itemIndex] : null;
         };
-        const isHighlightingOn = valuesDV && valuesDV[0].highlights && valuesDV[0].highlights.length > 0;
+        const isHighlightingOn = valuesDV && valuesDV[0] && valuesDV[0].highlights && valuesDV[0].highlights.length > 0;
 
         const getHighlightValue = (itemIndex: number) => {
             return isHighlightingOn ? valuesDV[0].highlights[itemIndex] : false;
@@ -508,8 +513,8 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      * @param {VisualConstructorOptions} options Initialization options for the visual.
      */
     constructor(options: VisualConstructorOptions) {
-        const template = require('./../templates/strippets.handlebars');
-        this.$loaderElement = $(require('./../templates/loader.handlebars')());
+        const template = require('!!handlebars-loader!./../templates/strippets.handlebars');
+        this.$loaderElement = $(require('!!handlebars-loader!./../templates/loader.handlebars')());
         this.element = $('<div/>');
         this.element.append(template());
         $(options.element).append(this.element);
@@ -517,8 +522,8 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         this.$container = this.element.find('.strippets-container');
         this.$tabs = this.element.find('.nav');
         this.selectionManager = options.host.createSelectionManager();
-        this.host = this.selectionManager['hostServices'];
-        this.colors = options.host.colors || (options.host['colorPalette'] ? options.host['colorPalette'].colors : []);
+        this.host = options.host;
+        this.colors = COLOR_PALETTE.map((color, index) => options.host.colorPalette.getColor(String(index)));
 
         this.inSandbox = this.element.parents('body.visual-sandbox').length > 0;
 
@@ -530,14 +535,14 @@ export default class StrippetBrowser16424341054522 implements IVisual {
 
         this.initializeTabs(this.$tabs);
 
-        this.resizeOutlines = _.debounce(function () {
+        this.resizeOutlines = _.debounce(() => {
             if (this.outlines && this.outlines.instance) {
                 this.outlines.instance.resize();
             }
             else if (this.thumbnails && this.thumbnails.instance) {
                 this.thumbnails.instance.resize();
             }
-        }, ENTITIES_REPOSITION_DELAY).bind(this);
+        }, ENTITIES_REPOSITION_DELAY);
 
         // Kill touch events to prevent PBI mobile app refreshing while scrolling strippets
         const killEvent = (event) => {
@@ -549,16 +554,32 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         this.$container.on('touchmove', killEvent);
         this.$container.on('touchend', killEvent);
 
-        const findApi = (methodName) => {
-            return options.host[methodName] ? (arg) => {
-                options.host[methodName](arg);
-            } : this.host && this.host[methodName] ? (arg) => {
-                this.host[methodName](arg);
-            } : null;
+        this.loadMoreData = () => {
+            if (this.destroyed || this.isLoadingMore || !this.hasMoreData) {
+                return false;
+            }
+            this.isLoadingMore = this.host.fetchMoreData(true);
+            if (this.isLoadingMore) {
+                this.showLoader();
+            } else {
+                this.hasMoreData = false;
+                this.hideLoader();
+            }
+            return this.isLoadingMore;
         };
-
-        this.loadMoreData = findApi("loadMoreData");
-        this.launchUrl = findApi("launchUrl");
+        this.launchUrl = (url: string) => {
+            if (StrippetBrowser16424341054522.isUrl(url)) {
+                this.host.launchUrl(url);
+            }
+        };
+        this.element.on('click', 'a[href]', event => {
+            if (event.isDefaultPrevented()) {
+                return;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            this.launchUrl($(event.currentTarget).attr('href'));
+        });
     }
 
     /**
@@ -592,17 +613,9 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             entityIcons: [],
         }, t.mediator);
         // set up infinite scroll
-        let infiniteScrollTimeoutId: any;
         outlinesInstance.$viewport.on('scroll', (e) => {
             if ($(e.target).width() + e.target.scrollLeft >= e.target.scrollWidth) {
-                infiniteScrollTimeoutId = setTimeout(() => {
-                    clearTimeout(infiniteScrollTimeoutId);
-                    if (!t.isLoadingMore && t.hasMoreData && t.loadMoreData) {
-                        t.isLoadingMore = true;
-                        t.showLoader();
-                        t.loadMoreData();
-                    }
-                }, t.INFINITE_SCROLL_DELAY);
+                t.queueLoadMore();
             }
         });
 
@@ -632,63 +645,14 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      * @returns {String} HTML content, devoid of any tags not in the whitelist
      */
     public static sanitizeHTML(html: string, whiteList: string[]): string {
-        let cleanHTML = '';
-        if (html && whiteList && whiteList.length) {
-            // Stack Overflow is all like NEVER PARSE HTML WITH REGEX
-            // http://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags/1732454#1732454
-            // plus the C# whitelist regex I found didn't work in JS
-            // http://stackoverflow.com/questions/307013/how-do-i-filter-all-html-tags-except-a-certain-whitelist#315851
-            // So going with the innerHTML approach...
-            // http://stackoverflow.com/questions/6659351/removing-all-script-tags-from-html-with-js-regular-expression
-
-            let doomedNodeList = [];
-
-            if (!document.createTreeWalker) {
-                return ''; // in case someone's hax0ring us?
-            }
-            let div = $('<div/>');
-
-            // For the aforementioned reasons, we do need innerHTML, so suppress tslint
-            // tslint:disable-next-line
-            div.html(html);
-
-            let filter: any = function (node) {
-                if (whiteList.indexOf(node.nodeName.toUpperCase()) === -1) {
-                    StrippetBrowser16424341054522.removeScriptAttributes(node);
-                    return NodeFilter.FILTER_ACCEPT;
-                }
-
-                return NodeFilter.FILTER_SKIP;
-            };
-
-            filter.acceptNode = filter;
-
-            // Create a tree walker (hierarchical iterator) that only exposes non-whitelisted nodes, which we'll delete.
-            let treeWalker = document.createTreeWalker(
-                div.get()[0],
-                NodeFilter.SHOW_ELEMENT,
-                filter,
-                false
-            );
-
-            while (treeWalker.nextNode()) {
-                doomedNodeList.push(treeWalker.currentNode);
-            }
-
-            let length = doomedNodeList.length;
-            for (let i = 0; i < length; i++) {
-                if (doomedNodeList[i].parentNode) {
-                    try {
-                        doomedNodeList[i].parentNode.removeChild(doomedNodeList[i]);
-                    } catch (ex) { }
-                }
-            }
-
-            // convert back to a string.
-            cleanHTML = div.html().trim();
+        if (!html || !whiteList?.length) {
+            return '';
         }
-
-        return cleanHTML;
+        return DOMPurify.sanitize(html, {
+            ALLOWED_TAGS: whiteList.map(tag => tag.toLowerCase()),
+            FORBID_TAGS: ['style', 'link'],
+            FORBID_ATTR: ['style', 'srcset'],
+        }).trim();
     }
 
     /**
@@ -703,14 +667,9 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         if (data) {
             if (StrippetBrowser16424341054522.isUrl(data.content)) {
                 if (t.settings.content.readerContentType === 'readability') {
-                    return new Promise((resolve: any, reject: any) => {
-                        $.ajax({
-                            dataType: 'jsonp',
-                            method: 'GET',
-                            url: data.content,
-                        }).done((responseBody) => {
-                            const highlightedContent = t.highlight(StrippetBrowser16424341054522.sanitizeHTML(responseBody.content || responseBody, StrippetBrowser16424341054522.HTML_WHITELIST_CONTENT), data.entities);
-                            resolve({
+                    return StrippetBrowser16424341054522.fetchContent(data.content).then(content => {
+                            const highlightedContent = t.highlight(StrippetBrowser16424341054522.sanitizeHTML(content, StrippetBrowser16424341054522.HTML_WHITELIST_CONTENT), data.entities);
+                            return {
                                 title: StrippetBrowser16424341054522.asUtf8(data.title ? StrippetBrowser16424341054522.cleanString(String(data.title)) : ''),
                                 content: highlightedContent || '',
                                 author: StrippetBrowser16424341054522.cleanString(data.author),
@@ -719,29 +678,13 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                                 figureImgUrl: StrippetBrowser16424341054522.cleanImageUrl(data.imageUrl),
                                 figureCaption: '',
                                 lastupdatedon: data.articleDate ? moment.utc(data.articleDate).format('MMM. D, YYYY') : '',
-                            });
-                        }).fail((err) => {
-                            reject(err);
-                        });
+                            };
                     });
-                }
-                else if (t.settings.content.readerContentType === 'web') {
-                    const readerData = {
-                        title: '',
-                        content: '<iframe src="' + data.content + '" style="width:100%;height:100%;border:none;"></iframe>',
-                        author: '',
-                        source: '',
-                        sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
-                        figureImgUrl: '',
-                        figureCaption: '',
-                        lastupdatedon: '',
-                    };
-                    return new Promise((resolve: any) => resolve(readerData));
                 }
                 else {
                     const readerData = {
                         title: StrippetBrowser16424341054522.asUtf8(data.title ? StrippetBrowser16424341054522.cleanString(String(data.title)) : ''),
-                        content: '<a href="#" onclick="javascript:window.open(\'' + data.content + '\')">' + data.content + '</a>',
+                        content: '<a href="' + _.escape(data.content) + '">' + _.escape(data.content) + '</a>',
                         author: StrippetBrowser16424341054522.cleanString(data.author),
                         source: StrippetBrowser16424341054522.cleanString(data.source),
                         sourceUrl: StrippetBrowser16424341054522.cleanString(data.sourceUrl),
@@ -770,11 +713,21 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         }
     }
 
-    /**
-     * Regular expression used to determine if a given string represents a URL.
-     * @type {RegExp}
-     */
-    private static URL_PATTERN = new RegExp('^(https?)://[^\s/$.?#].[^\s]*', 'i');
+    private static async fetchContent(url: string): globalThis.Promise<string> {
+        if (!StrippetBrowser16424341054522.isUrl(url) || new URL(url).protocol !== 'https:') {
+            throw new Error('Remote content requires an HTTPS URL.');
+        }
+        const response = await fetch(url, { mode: 'cors', credentials: 'omit' });
+        if (!response.ok) {
+            throw new Error(`Content request failed: ${response.status}`);
+        }
+        const body = await response.json();
+        const content = typeof body === 'string' ? body : body?.content;
+        if (typeof content !== 'string') {
+            throw new Error('Content response must be a JSON string or an object with a content string.');
+        }
+        return content;
+    }
 
     /**
      * Test if the given string is a URL.
@@ -782,8 +735,15 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      * @returns {boolean} true if the candidate looks like a URL
      */
     public static isUrl(candidate) {
-        // weak pattern, revisit later on.
-        return StrippetBrowser16424341054522.URL_PATTERN.test(candidate);
+        if (typeof candidate !== 'string' || /[\s<>]/.test(candidate)) {
+            return false;
+        }
+        try {
+            const url = new URL(candidate);
+            return url.protocol === 'https:' && !url.username && !url.password;
+        } catch {
+            return false;
+        }
     }
 
     /**
@@ -860,9 +820,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             // Create an off-screen sub-DOM so we can do object-oriented highlighting instead of failure-prone regex.
             let div = $('<div/>');
 
-            // For the aforementioned reasons, we do need innerHTML, so suppress tslint
-            // tslint:disable-next-line
-            div.html(highlightedContent);
+            div.append(DOMPurify.sanitize(highlightedContent, { RETURN_DOM_FRAGMENT: true }));
 
             let entityMap: any = {};
 
@@ -917,7 +875,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             filter.acceptNode = filter;
 
             // Create a DOM tree walker that only iterates over text runs
-            let treeWalker = document.createTreeWalker(div.get()[0], NodeFilter.SHOW_TEXT, filter, false);
+            let treeWalker = document.createTreeWalker(div.get()[0], NodeFilter.SHOW_TEXT, filter);
 
             entityMap = _.toArray(entityMap).sort(function (a: MappedEntity, b: MappedEntity) {
                 return b.text.length - a.text.length;
@@ -988,29 +946,14 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         });
 
         // set up infinite scroll
-        let infiniteScrollTimeoutId: any;
         thumbnailsInstance._$element.on('scroll', (e) => {
             if ($(e.target).hasClass(thumbnailsDefaults.classes.thumbnails.inlineThumbnails.slice(1))) {
                 if ($(e.target).width() + e.target.scrollLeft >= e.target.scrollWidth) {
-                    infiniteScrollTimeoutId = setTimeout(() => {
-                        clearTimeout(infiniteScrollTimeoutId);
-                        if (!t.isLoadingMore && t.hasMoreData && t.loadMoreData) {
-                            t.isLoadingMore = true;
-                            t.showLoader();
-                            t.loadMoreData();
-                        }
-                    }, t.INFINITE_SCROLL_DELAY);
+                    t.queueLoadMore();
                 }
             } else {
                 if ($(e.target).height() + e.target.scrollTop >= e.target.scrollHeight) {
-                    infiniteScrollTimeoutId = setTimeout(() => {
-                        clearTimeout(infiniteScrollTimeoutId);
-                        if (!t.isLoadingMore && t.hasMoreData && t.loadMoreData) {
-                            t.isLoadingMore = true;
-                            t.showLoader();
-                            t.loadMoreData();
-                        }
-                    }, t.INFINITE_SCROLL_DELAY);
+                    t.queueLoadMore();
                 }
             }
         });
@@ -1032,7 +975,12 @@ export default class StrippetBrowser16424341054522 implements IVisual {
     }
 
     private saveThumbnailType(): void {
-        this.suppressNextUpdate = true;
+        if (this.lastDataView) {
+            this.pendingViewEcho = _.cloneDeep(this.lastDataView);
+            this.pendingViewEcho.metadata.objects = $.extend(true, {}, this.pendingViewEcho.metadata.objects, {
+                presentation: { strippetType: this.settings.presentation.strippetType },
+            });
+        }
         this.host.persistProperties({
             merge: [
                 {
@@ -1054,20 +1002,31 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         const $outlinesTab = $container.find('.outlinesNav');
 
         $thumbnailsTab.on('click', (e) => {
+            if (!t.data) {
+                e.stopPropagation();
+                return;
+            }
             if (this.settings.presentation.strippetType !== 'thumbnails') {
                 e.stopPropagation();
-                return t.showThumbnails(t.data, false).then(() => {
-                    if (t.lastOpenedStoryId) {
+                const version = ++t.renderVersion;
+                const pending = t.showThumbnails(t.getVisibleData(), false);
+                t.saveThumbnailType();
+                return pending.then(() => {
+                    if (!t.destroyed && version === t.renderVersion && t.lastOpenedStoryId) {
                         t.openReader(t.lastOpenedStoryId);
                     }
-                    t.saveThumbnailType();
                 });
             }
         });
         $outlinesTab.on('click', (e) => {
+            if (!t.data) {
+                e.stopPropagation();
+                return;
+            }
             if (this.settings.presentation.strippetType !== 'outlines') {
                 e.stopPropagation();
-                t.showOutlines(t.data, false);
+                t.renderVersion++;
+                t.showOutlines(t.getVisibleData(), false);
                 if (t.lastOpenedStoryId) {
                     t.openReader(t.lastOpenedStoryId);
                 }
@@ -1075,33 +1034,98 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             }
         });
         $container.on('click', () => {
-            t.closeReader();
+            if (t.data) {
+                t.closeReader();
+            }
         });
     }
 
+    private getVisibleData(): any {
+        const data = JSON.parse(JSON.stringify(this.data));
+        if (this.hasMoreData) {
+            data.items = data.items.slice(0, -1);
+        }
+        return data;
+    }
+
     private static hasRequiredFields(dataView: DataView): boolean {
-        const columns = dataView.metadata.columns;
+        const columns = dataView?.metadata?.columns;
         // return true if the id column is populated.
-        return _.some(columns || [], (col: any) => col && col.roles.id);
+        return _.some(columns || [], (col: any) => col?.roles?.id);
     }
 
     /**
      * Notifies the IVisual of an update (data, viewmode, size change).
      * @param {VisualUpdateOptions} options - data and config from PowerBI
      */
-    public update(options: VisualUpdateOptions): void {
-        if (this.suppressNextUpdate) {
-            this.suppressNextUpdate = false;
+    public async update(options: VisualUpdateOptions): globalThis.Promise<void> {
+        const events = this.host.eventService;
+        events.renderingStarted(options);
+        const isViewEcho = !!this.pendingViewEcho && !!(options.type & powerbi.VisualUpdateType.Data) &&
+            options.operationKind !== VisualDataChangeOperationKind.Append &&
+            _.isEqual(options.dataViews?.[0], this.pendingViewEcho);
+        if (options.type & powerbi.VisualUpdateType.Data) {
+            this.pendingViewEcho = null;
+        }
+        const version = (options.type & powerbi.VisualUpdateType.Data) && !isViewEcho
+            ? ++this.renderVersion : this.renderVersion;
+        try {
+            await this.render(options, version, isViewEcho);
+            if (!this.destroyed && version === this.renderVersion) {
+                this.resizeOutlines.flush();
+                await new globalThis.Promise<void>(resolve => {
+                    const finishWhenIdle = () => {
+                        if (this.destroyed || version !== this.renderVersion ||
+                            (!(<any>$).Velocity.State.isTicking && !this.element.find(':animated').length)) {
+                            resolve();
+                        } else {
+                            requestAnimationFrame(finishWhenIdle);
+                        }
+                    };
+                    requestAnimationFrame(() => requestAnimationFrame(finishWhenIdle));
+                });
+            }
+            events.renderingFinished(options);
+        } catch (error) {
+            if (!this.destroyed && version === this.renderVersion) {
+                this.hideLoader();
+            }
+            events.renderingFailed(options, String(error));
+        }
+    }
+
+    private async render(options: VisualUpdateOptions, version: number, isViewEcho = false): globalThis.Promise<void> {
+        const incomingData = options.dataViews?.[0];
+        if (incomingData && (options.type & powerbi.VisualUpdateType.Data)) {
+            this.lastDataView = _.cloneDeep(incomingData);
+            this.settings = $.extend(true, {}, StrippetBrowser16424341054522.DEFAULT_SETTINGS, incomingData.metadata?.objects);
+        }
+        this.settings.presentation.viewControls ? this.$tabs.show() : this.$tabs.hide();
+        this.element.css({ width: options.viewport.width, height: options.viewport.height });
+        this.viewportSize = options.viewport;
+        this.$container.width(Math.max(0, options.viewport.width - (this.settings.presentation.viewControls ? this.$tabs.width() : 0)));
+        this.resizeOutlines();
+        if (isViewEcho) {
             return;
         }
-
-        this.element.css({ width: options.viewport.width, height: options.viewport.height });
+        if ((options.type & powerbi.VisualUpdateType.Data) &&
+            !incomingData?.categorical?.categories?.some(category => category.source.roles?.id && category.values.length)) {
+            this.data = null;
+            this.thumbnailsPending = false;
+            this.lastDataView = null;
+            this.lastDataViewLength = 0;
+            this.hasMoreData = false;
+            this.isLoadingMore = false;
+            this.lastOpenedStoryId = null;
+            this.hideLoader();
+            this.thumbnails.instance?.loadData([], false);
+            this.outlines.instance?.loadData([], false);
+            return;
+        }
         if (options.dataViews && options.dataViews.length > 0) {
 
             let shouldLoadMore = false;
             const dataView = options.dataViews && options.dataViews.length && options.dataViews[0];
-            const newObjects = dataView && dataView.metadata && dataView.metadata.objects;
-            this.settings = $.extend(true, {}, StrippetBrowser16424341054522.DEFAULT_SETTINGS, newObjects);
 
             if (options.type & powerbi.VisualUpdateType.Resize || this.$tabs.is(':visible') !== this.settings.presentation.viewControls || !this.data) {
                 // set the strippets container width dynamically.
@@ -1119,7 +1143,8 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             }
 
             // if first load, make sure outlines are filled (for situations where there are alot of entities)
-            if (options.type & powerbi.VisualUpdateType.Data && dataView.categorical && dataView.categorical.categories) {
+            if (options.type & powerbi.VisualUpdateType.Data && dataView.categorical?.categories?.length) {
+                this.isLoadingMore = false;
                 // Sandbox mode vs non-sandbox mode handles merge data differently.
                 const currentDataViewSize = dataView.categorical.categories[0].values.length;
                 let currentRowCount = dataView.categorical.categories[0].values.length;
@@ -1131,6 +1156,8 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 }
 
                 const previousLastItemIndex = (loadedPreviously && this.data) ? this.data.items.length - 1 : 0;
+                const appendToComponent = loadedPreviously &&
+                    (this.settings.presentation.strippetType === 'outlines' || !this.thumbnailsPending);
 
                 const isHighlighting = (dataView.categorical
                     && dataView.categorical.values
@@ -1156,7 +1183,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 this.data = JSON.parse(JSON.stringify(data));
 
                 // setup append object if documents have already been loaded.
-                if (loadedPreviously && previousLastItemIndex > 0) {
+                if (appendToComponent && previousLastItemIndex > 0) {
                     data.items = data.items.slice(previousLastItemIndex);
                 }
                 // ignore the last element if there is more items to be loaded (in case there are more than N entities associated with the last document.
@@ -1168,7 +1195,10 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                     this.showOutlines.call(this, data, loadedPreviously);
                 }
                 else {
-                    this.showThumbnails.call(this, data, loadedPreviously);
+                    await this.showThumbnails.call(this, data, appendToComponent);
+                    if (this.destroyed || version !== this.renderVersion) {
+                        return;
+                    }
                 }
 
                 // Load more only if there is room to place more data. If not Highlighting, check items. If highlighting, check only highlighted items.
@@ -1202,8 +1232,6 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             }
 
             if (shouldLoadMore) {
-                this.showLoader();
-                console.log('WidgetStrippets.update loadMoreData');
                 this.loadMoreData();
             }
 
@@ -1214,7 +1242,6 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                 const desiredThumbnailHeight = viewportHeight - viewportPadding;
 
                 this.clearWrapTimeout();
-                this.thumbnailsWrapTimeout = setTimeout(() => {
                     let oldIsWrap = this.isThumbnailsWrapLayout;
                     if (this.thumbnailViewportHeight !== this.viewportSize.height) {
                         const actualThumbnailHeight = parseInt(this.thumbnails.$elem.find('.thumbnail').css('height'));
@@ -1247,8 +1274,6 @@ export default class StrippetBrowser16424341054522 implements IVisual {
                         });
                     }
 
-                    this.thumbnailsWrapTimeout = null;
-                }, 200);
             }
         }
     }
@@ -1273,8 +1298,8 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      */
     private showOutlines(data: any, append: boolean = false) {
         // highlight outline tab
-        this.$tabs.find('.navItem').removeClass('selected');
-        this.$tabs.find('.outlinesNav').addClass('selected');
+        this.$tabs.find('.navItem').removeClass('selected').attr('aria-pressed', 'false');
+        this.$tabs.find('.outlinesNav').addClass('selected').attr('aria-pressed', 'true');
         this.settings.presentation.strippetType = 'outlines';
 
 
@@ -1307,8 +1332,8 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      */
     private showThumbnails(data: any, append: boolean = false) {
         // highlight thumbnail tab
-        this.$tabs.find('.navItem').removeClass('selected');
-        this.$tabs.find('.thumbnailsNav').addClass('selected');
+        this.$tabs.find('.navItem').removeClass('selected').attr('aria-pressed', 'false');
+        this.$tabs.find('.thumbnailsNav').addClass('selected').attr('aria-pressed', 'true');
         this.settings.presentation.strippetType = 'thumbnails';
 
         if (this.outlines && $.contains(this.$container[0], this.outlines.$elem[0])) {
@@ -1342,7 +1367,6 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             this.outlines.instance.filter(null);
             this.outlines.instance.highlight(null);
             this.outlines.instance.loadData(data.items, append);
-            this.isLoadingMore = false;
         } else {
             // if first load, filter everything first before the real filter
             if (!append) {
@@ -1372,6 +1396,8 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      * @param {Boolean} wrapped - true if thumbnails should be rendered in multiple rows; false to keep them all in one row
      */
     private updateThumbnails(data: any, append: boolean, wrapped: boolean): any {
+        const version = this.renderVersion;
+        this.thumbnailsPending = true;
         if (!data.highlights) {
             this.thumbnails.instance.iconMap = data.iconMap;
             this.thumbnails.instance._outlineReader._iconMap = data.iconMap;
@@ -1384,31 +1410,26 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             const promises = [];
             data.items.forEach(item => {
                 if (!item.summary && item.content) {
-                    item.summary = item.content;
-                    if (this.settings.content.readerContentType === 'readability' && StrippetBrowser16424341054522.isUrl(item.summary) &&
+                    if (this.settings.content.readerContentType === 'readability' && StrippetBrowser16424341054522.isUrl(item.content) &&
                         this.settings.content.summaryUrl) {
-                        const promise = new Promise((resolve: any, reject: any) => {
-                            $.ajax({
-                                dataType: 'jsonp',
-                                method: 'GET',
-                                url: item.summary,
-                            }).done((responseBody) => {
-                                item.summary = StrippetBrowser16424341054522.sanitizeHTML(responseBody.content || responseBody, StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY);
-                                resolve(true);
-                            }).fail((err) => {
-                                reject(err);
-                            });
+                        const promise = StrippetBrowser16424341054522.fetchContent(item.content).then(content => {
+                            item.summary = StrippetBrowser16424341054522.sanitizeHTML(content, StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY);
+                        }).catch(() => {
+                            item.summary = '';
                         });
                         promises.push(promise);
                     } else {
-                        item.summary = StrippetBrowser16424341054522.sanitizeHTML(item.summary, StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY);
+                        item.summary = StrippetBrowser16424341054522.sanitizeHTML(item.content, StrippetBrowser16424341054522.HTML_WHITELIST_SUMMARY);
                     }
                 }
             });
 
             return Promise.all(promises).then(() => {
+                if (this.destroyed || version !== this.renderVersion) {
+                    return null;
+                }
                 this.thumbnails.instance.loadData(data.items, append);
-                this.isLoadingMore = false;
+                this.thumbnailsPending = false;
                 this.wrapThumbnails(wrapped);
                 return null;
             });
@@ -1432,6 +1453,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             this.thumbnails.instance.highlight(data.highlights.entities);
         }
 
+        this.thumbnailsPending = false;
         return Promise.resolve();
     }
 
@@ -1447,8 +1469,11 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      * Close any open reader,
      */
     public closeReader(): void {
+        if (this.destroyed || !this.data) {
+            return;
+        }
         if (this.settings.presentation.strippetType === 'outlines') {
-            const openOutline = _.find(this.outlines.instance._items, (outline: any) => {
+            const openOutline = _.find(this.outlines.instance?._items, (outline: any) => {
                 return outline.getCurrentState() === 'readingmode';
             });
             if (openOutline) {
@@ -1456,7 +1481,7 @@ export default class StrippetBrowser16424341054522 implements IVisual {
             }
         }
         else {
-            this.thumbnails.instance.closeReader();
+            this.thumbnails.instance?.closeReader();
         }
     }
 
@@ -1527,21 +1552,12 @@ export default class StrippetBrowser16424341054522 implements IVisual {
     //    ];
     // }
 
-    /**
-     * Enumerates the instances for the objects that appear in the PowerBI panel.
-     *
-     * @method enumerateObjectInstances
-     * @param {EnumerateVisualObjectInstancesOptions} options - Options object containing the objects to enumerate, as provided by PowerBI.
-     * @returns {VisualObjectInstance[]}
-     */
-    public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] {
-        let instances: VisualObjectInstance[] = [{
-            selector: null,
-            objectName: options.objectName,
-            properties: {}
-        }];
-        $.extend(true, instances[0].properties, this.settings[options.objectName]);
-        return instances;
+    public getFormattingModel(): powerbi.visuals.FormattingModel {
+        const service = new FormattingSettingsService();
+        const model = service.populateFormattingSettingsModel(VisualFormattingSettings, {
+            metadata: { columns: [], objects: this.settings },
+        });
+        return service.buildFormattingModel(model);
     }
 
     /**
@@ -1550,6 +1566,10 @@ export default class StrippetBrowser16424341054522 implements IVisual {
      * @method destroy
      */
     public destroy(): void {
+        this.destroyed = true;
+        this.renderVersion++;
+        this.resizeOutlines.cancel();
+        this.queueLoadMore.cancel();
         this.clearWrapTimeout();
         if (this.thumbnails && this.thumbnails.instance) {
             this.thumbnails.instance._resetThumbnailsContainer();
@@ -1559,7 +1579,15 @@ export default class StrippetBrowser16424341054522 implements IVisual {
         this.outlines = null;
 
         this.data = null;
+        this.lastDataView = null;
+        this.pendingViewEcho = null;
         this.selectionManager = null;
         this.host = null;
+        this.element.off();
+        this.$container.off();
+        this.element.remove();
     }
 }
+
+export default StrippetBrowser16424341054522;
+export { StrippetBrowser16424341054522 as Visual };

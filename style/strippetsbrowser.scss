@@ -41,6 +41,10 @@
     cursor: pointer;
     background-color: #f2f2f2;
     .navItem {
+        display: block;
+        padding: 0;
+        border-radius: 0;
+        cursor: pointer;
         border: 1px solid #ccc;
         width: 24px;
         height: 25px;

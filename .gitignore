@@ -2,6 +2,14 @@
 .tmp
 .npmrc
 dist
+coverage
+webpack.statistics.*.html
+core
+core.*
 node_modules
 typings
 *.bak
+generated
+style/strippetsbrowser.css
+test-results
+playwright-report

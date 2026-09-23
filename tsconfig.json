@@ -1,16 +1,24 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2022",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "rootDir": ".",
+    "esModuleInterop": true,
     "sourceMap": true,
     "allowJs": true,
     "experimentalDecorators": true,
     "lib": [
-      "es2015",
+      "es2022",
       "DOM"
     ],
     "outDir": "generated"
   },
   "compileOnSave": false,
+  "files": ["src/StrippetsVisual.ts"],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules"
   ]

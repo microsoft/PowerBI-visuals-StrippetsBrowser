@@ -90,6 +90,7 @@
   .center-item-container {
     display: none;
     position: absolute;
+    max-width: calc(100% - 10px);
     height: 100%;
     margin-left: auto;
     margin-right: auto;
